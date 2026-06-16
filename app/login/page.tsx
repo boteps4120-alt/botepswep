@@ -8,11 +8,9 @@ export default function LoginPage() {
   return (
     <section className="auth-page">
       <div className="auth-intro">
-        <p className="eyebrow">BOTEPS 계정</p>
+        <p className="eyebrow">BOTEPS</p>
         <h1>품새 강의를 이어서 학습하세요</h1>
-        <p>
-          로그인하면 구독 상태, 시청 기록, 찜한 강의, 동작별 챕터 학습을 BOTEPS 계정에 저장할 수 있습니다.
-        </p>
+        <p>로그인하면 구독 상태, 시청 기록, 찜한 강의, 동작별 챕터 학습을 계정에 저장할 수 있습니다.</p>
         <div className="auth-benefits">
           {benefits.map((benefit) => (
             <span key={benefit}>

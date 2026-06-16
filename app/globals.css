@@ -686,28 +686,109 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: var(--shadow);
-  padding: 28px;
+  overflow: hidden;
+  padding: 0;
 }
 
-.auth-card-header {
-  margin-bottom: 22px;
+.auth-mode-tabs {
+  background: #f4f4ef;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.auth-card-header h2 {
-  font-size: 34px;
-  line-height: 1.08;
-}
-
-.auth-card-header p {
+.auth-mode-tabs button {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
   color: var(--muted);
-  line-height: 1.55;
-  margin: 10px 0 0;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 900;
+  min-height: 58px;
 }
 
-.field-label {
+.auth-mode-tabs button:first-child {
+  border-right: 1px solid var(--line);
+}
+
+.auth-mode-tabs button.active {
+  background: #fff;
+  border-bottom-color: #fff;
   color: var(--ink);
+}
+
+.auth-mode-panel {
+  padding: 30px;
+}
+
+.auth-mode-panel h2 {
+  font-size: 38px;
+  line-height: 1.08;
+  margin: 0 0 22px;
+}
+
+.stacked-form {
+  display: grid;
+}
+
+.auth-input {
+  background: #fff;
+  border: 1px solid #cfd4d0;
+  font-size: 17px;
+  min-height: 58px;
+  padding: 0 18px;
+  width: 100%;
+}
+
+.auth-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 1px var(--teal);
+  outline: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-input.top {
+  border-radius: 8px 8px 0 0;
+}
+
+.auth-input.middle {
+  border-radius: 0;
+  margin-top: -1px;
+}
+
+.auth-input.bottom {
+  border-radius: 0 0 8px 8px;
+  margin-top: -1px;
+}
+
+.auth-links {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.auth-links a,
+.auth-links button {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
   font-size: 14px;
   font-weight: 900;
+}
+
+.auth-links a:not(:last-child)::after,
+.auth-links button:not(:last-child)::after {
+  color: #c0c0bc;
+  content: "|";
+  margin-left: 14px;
+}
+
+.auth-links.single button {
+  color: var(--blue);
 }
 
 .full-button {
@@ -750,21 +831,6 @@ h3 {
   content: "";
   flex: 1;
   height: 1px;
-}
-
-.signup-box {
-  background: #f8f8f3;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 20px;
-}
-
-.signup-box-head {
-  margin-bottom: 16px;
-}
-
-.signup-box-head h3 {
-  font-size: 26px;
 }
 
 .table-wrap {
