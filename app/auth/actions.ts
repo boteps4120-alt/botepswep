@@ -24,7 +24,7 @@ export async function signInWithPassword(_state: AuthState, formData: FormData):
   const password = String(formData.get("password") ?? "");
 
   if (!email || !password) {
-    return { message: "이메일과 비밀번호를 입력해주세요." };
+    return { message: "아이디와 비밀번호를 입력해주세요." };
   }
 
   const supabase = await createClient();
@@ -34,7 +34,7 @@ export async function signInWithPassword(_state: AuthState, formData: FormData):
   });
 
   if (error) {
-    return { message: "로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요." };
+    return { message: "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요." };
   }
 
   revalidatePath("/", "layout");
@@ -58,7 +58,7 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -67,10 +67,15 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
   });
 
   if (error) {
-    return { message: "회원가입에 실패했습니다. 이미 가입된 이메일인지 확인해주세요." };
+    return { message: "회원가입에 실패했습니다. 이미 가입된 아이디인지 확인해주세요." };
   }
 
-  return { message: "회원가입 이메일을 보냈습니다. 메일함에서 인증을 완료해주세요." };
+  if (data.session) {
+    revalidatePath("/", "layout");
+    redirect("/mypage");
+  }
+
+  return { message: "회원가입 요청이 완료되었습니다. 이메일 인증 설정을 확인해주세요." };
 }
 
 export async function signInWithGoogle() {
