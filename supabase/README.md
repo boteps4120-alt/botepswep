@@ -8,6 +8,8 @@ Set these values locally in `.env.local` and in Vercel Project Settings > Enviro
 NEXT_PUBLIC_SITE_URL=https://botepswep.vercel.app
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
+NEXT_PUBLIC_TOSS_CLIENT_KEY=test_ck_your_key
+TOSS_SECRET_KEY=test_sk_your_key
 ```
 
 For older Supabase projects, the legacy anon key can be used in `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, but new projects should prefer the publishable key.
