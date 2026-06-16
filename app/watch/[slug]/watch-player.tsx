@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { CheckCircle2, Play, SkipBack, SkipForward } from "lucide-react";
 import type { Course } from "@/lib/data";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type WatchPlayerProps = {
   course: Course;
@@ -11,9 +11,38 @@ type WatchPlayerProps = {
 };
 
 export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [activeChapter, setActiveChapter] = useState(course.chapters[0]);
   const [completed, setCompleted] = useState(course.progress === 100);
   const displayProgress = completed ? 100 : Math.max(course.progress, Math.round((activeChapter.seconds / 2400) * 100));
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !course.videoUrl) return;
+
+    if (!course.videoUrl.endsWith(".m3u8")) {
+      video.src = course.videoUrl;
+      return;
+    }
+
+    if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = course.videoUrl;
+      return;
+    }
+
+    let hls: import("hls.js").default | null = null;
+
+    import("hls.js").then(({ default: Hls }) => {
+      if (!videoRef.current || !Hls.isSupported()) return;
+      hls = new Hls();
+      hls.loadSource(course.videoUrl!);
+      hls.attachMedia(videoRef.current);
+    });
+
+    return () => {
+      hls?.destroy();
+    };
+  }, [course.videoUrl]);
 
   return (
     <section className="page-shell">
@@ -27,7 +56,7 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
         <div>
           <div className="video-shell">
             {course.videoUrl ? (
-              <video className="real-video" src={course.videoUrl} controls preload="metadata" playsInline />
+              <video className="real-video" ref={videoRef} controls preload="metadata" playsInline />
             ) : (
               <div className="fake-video">
                 <div>

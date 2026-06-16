@@ -55,7 +55,7 @@ export const courses: Course[] = [
       "유단자 수련생에게 고려 품새를 지도할 때 필요한 동작 분해, 박자, 시선, 감점 포인트를 한 번에 정리합니다.",
     audience: "승단 심사반과 대회반을 운영하는 관장/사범",
     thumbnail: "/images/taekwondo-hero.png",
-    videoUrl: "/videos/koryo.mp4",
+    videoUrl: "https://video.gumlet.io/6a30a6e756ebf5bb1c25e2f3/6a319009b02ffb1d837a7069/main.m3u8",
     isPremium: false,
     progress: 65,
     curriculum: [
@@ -116,7 +116,7 @@ export const courses: Course[] = [
       "태백 품새에서 점수 차이를 만드는 강약, 완급, 호흡, 시선 처리를 지도자 관점으로 정리합니다.",
     audience: "대회반 지도자와 선수반 사범",
     thumbnail: "/images/taekwondo-hero.png",
-    videoUrl: "/videos/side-kick.mp4",
+    videoUrl: "https://video.gumlet.io/6a30a6e756ebf5bb1c25e2f3/6a319026bf17ac22ca471941/main.m3u8",
     isPremium: true,
     progress: 0,
     curriculum: ["표현력 기준", "호흡과 시선", "강약 지도", "대회 전 체크리스트"],
