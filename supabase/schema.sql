@@ -103,35 +103,46 @@ alter table public.subscriptions enable row level security;
 alter table public.watch_progress enable row level security;
 alter table public.bookmarks enable row level security;
 
+drop policy if exists "Profiles are readable by owner" on public.profiles;
 create policy "Profiles are readable by owner" on public.profiles
   for select using (auth.uid() = id);
 
+drop policy if exists "Profiles are editable by owner" on public.profiles;
 create policy "Profiles are editable by owner" on public.profiles
   for update using (auth.uid() = id);
 
+drop policy if exists "Courses are readable by everyone" on public.courses;
 create policy "Courses are readable by everyone" on public.courses
   for select using (true);
 
+drop policy if exists "Course chapters are readable by everyone" on public.course_chapters;
 create policy "Course chapters are readable by everyone" on public.course_chapters
   for select using (true);
 
+drop policy if exists "Subscriptions are readable by owner" on public.subscriptions;
 create policy "Subscriptions are readable by owner" on public.subscriptions
   for select using (auth.uid() = user_id);
 
+drop policy if exists "Watch progress is readable by owner" on public.watch_progress;
 create policy "Watch progress is readable by owner" on public.watch_progress
   for select using (auth.uid() = user_id);
 
+drop policy if exists "Watch progress is writable by owner" on public.watch_progress;
 create policy "Watch progress is writable by owner" on public.watch_progress
   for insert with check (auth.uid() = user_id);
 
+drop policy if exists "Watch progress is updatable by owner" on public.watch_progress;
 create policy "Watch progress is updatable by owner" on public.watch_progress
   for update using (auth.uid() = user_id);
 
+drop policy if exists "Bookmarks are readable by owner" on public.bookmarks;
 create policy "Bookmarks are readable by owner" on public.bookmarks
   for select using (auth.uid() = user_id);
 
+drop policy if exists "Bookmarks are writable by owner" on public.bookmarks;
 create policy "Bookmarks are writable by owner" on public.bookmarks
   for insert with check (auth.uid() = user_id);
 
+drop policy if exists "Bookmarks are removable by owner" on public.bookmarks;
 create policy "Bookmarks are removable by owner" on public.bookmarks
   for delete using (auth.uid() = user_id);
