@@ -9,7 +9,11 @@ const initialState = {
   message: ""
 };
 
-export function AuthForm() {
+type AuthFormProps = {
+  nextPath?: string;
+};
+
+export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [loginState, loginAction, loginPending] = useActionState(signInWithPassword, initialState);
   const [signupState, signupAction, signupPending] = useActionState(signUpWithPassword, initialState);
@@ -29,6 +33,7 @@ export function AuthForm() {
         <div className="auth-mode-panel">
           <h2>로그인</h2>
           <form action={loginAction} className="stacked-form">
+            <input type="hidden" name="next" value={nextPath} />
             <input className="auth-input top" name="email" placeholder="아이디 또는 이메일" type="email" autoComplete="email" />
             <input className="auth-input bottom" name="password" placeholder="비밀번호" type="password" autoComplete="current-password" />
 
@@ -41,21 +46,23 @@ export function AuthForm() {
           </form>
 
           <form action={signInWithGoogle}>
+            <input type="hidden" name="next" value={nextPath} />
             <button className="icon-button subtle large full-button">
               <Chrome size={20} />
               <span>구글 로그인</span>
             </button>
           </form>
 
-        <div className="auth-links">
-          <Link href="/account-help">아이디 찾기</Link>
-          <Link href="/account-help">비밀번호 찾기</Link>
-        </div>
+          <div className="auth-links">
+            <Link href="/account-help">아이디 찾기</Link>
+            <Link href="/account-help">비밀번호 찾기</Link>
+          </div>
         </div>
       ) : (
         <div className="auth-mode-panel">
           <h2>회원가입</h2>
           <form action={signInWithGoogle}>
+            <input type="hidden" name="next" value={nextPath} />
             <button className="icon-button subtle large full-button">
               <Chrome size={20} />
               <span>구글로 회원가입</span>
@@ -67,6 +74,7 @@ export function AuthForm() {
           </div>
 
           <form action={signupAction} className="stacked-form">
+            <input type="hidden" name="next" value={nextPath} />
             <input className="auth-input top" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
             <input className="auth-input bottom" name="password" placeholder="비밀번호 6자 이상" type="password" autoComplete="new-password" />
 

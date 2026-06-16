@@ -4,7 +4,19 @@ import { AuthForm } from "@/components/auth-form";
 
 const benefits = ["도장 수업용 품새 강의", "동작별 챕터 학습", "시청 기록과 이어보기"];
 
-export default function LoginPage() {
+function safeNextPath(value?: string) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/mypage";
+  return value;
+}
+
+export default async function LoginPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ next?: string }>;
+}) {
+  const params = await searchParams;
+  const nextPath = safeNextPath(params?.next);
+
   return (
     <section className="auth-page">
       <div className="auth-intro">
@@ -24,7 +36,7 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      <AuthForm />
+      <AuthForm nextPath={nextPath} />
     </section>
   );
 }

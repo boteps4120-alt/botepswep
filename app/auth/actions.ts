@@ -15,6 +15,12 @@ function getBaseUrl() {
   return "http://localhost:3000";
 }
 
+function getSafeNext(formData: FormData) {
+  const next = String(formData.get("next") ?? "/mypage");
+  if (!next.startsWith("/") || next.startsWith("//")) return "/mypage";
+  return next;
+}
+
 export async function signInWithPassword(_state: AuthState, formData: FormData): Promise<AuthState> {
   if (!hasSupabaseEnv()) {
     return { message: "Supabase 환경변수가 아직 설정되지 않았습니다." };
@@ -22,6 +28,7 @@ export async function signInWithPassword(_state: AuthState, formData: FormData):
 
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const next = getSafeNext(formData);
 
   if (!email || !password) {
     return { message: "아이디와 비밀번호를 입력해주세요." };
@@ -38,7 +45,7 @@ export async function signInWithPassword(_state: AuthState, formData: FormData):
   }
 
   revalidatePath("/", "layout");
-  redirect("/mypage");
+  redirect(next);
 }
 
 export async function signUpWithPassword(_state: AuthState, formData: FormData): Promise<AuthState> {
@@ -48,6 +55,7 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
 
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const next = getSafeNext(formData);
 
   if (!email || !password) {
     return { message: "아이디와 비밀번호를 모두 입력해주세요." };
@@ -62,7 +70,7 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
     email,
     password,
     options: {
-      emailRedirectTo: `${getBaseUrl()}/auth/callback`
+      emailRedirectTo: `${getBaseUrl()}/auth/callback?next=${encodeURIComponent(next)}`
     }
   });
 
@@ -72,22 +80,23 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
 
   if (data.session) {
     revalidatePath("/", "layout");
-    redirect("/mypage");
+    redirect(next);
   }
 
   return { message: "회원가입 요청이 완료되었습니다. 이메일 인증 설정을 확인해주세요." };
 }
 
-export async function signInWithGoogle() {
+export async function signInWithGoogle(formData: FormData) {
   if (!hasSupabaseEnv()) {
     redirect("/login?message=supabase-not-configured");
   }
 
+  const next = getSafeNext(formData);
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${getBaseUrl()}/auth/callback`
+      redirectTo: `${getBaseUrl()}/auth/callback?next=${encodeURIComponent(next)}`
     }
   });
 
