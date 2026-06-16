@@ -636,9 +636,78 @@ h3 {
   padding: 24px;
 }
 
-.auth-stack {
+.auth-page {
+  align-items: start;
   display: grid;
-  gap: 18px;
+  gap: 56px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 480px);
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 72px 32px 96px;
+}
+
+.auth-intro {
+  padding-top: 54px;
+}
+
+.auth-intro h1 {
+  font-size: clamp(44px, 6vw, 72px);
+  line-height: 1.02;
+  margin: 0 0 22px;
+}
+
+.auth-intro p {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.7;
+  margin: 0 0 24px;
+  max-width: 560px;
+}
+
+.auth-benefits {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.auth-benefits span {
+  align-items: center;
+  display: inline-flex;
+  font-weight: 800;
+  gap: 9px;
+}
+
+.auth-benefits svg {
+  color: var(--teal);
+}
+
+.auth-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 28px;
+}
+
+.auth-card-header {
+  margin-bottom: 22px;
+}
+
+.auth-card-header h2 {
+  font-size: 34px;
+  line-height: 1.08;
+}
+
+.auth-card-header p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 10px 0 0;
+}
+
+.field-label {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 900;
 }
 
 .full-button {
@@ -663,6 +732,39 @@ h3 {
   font-weight: 900;
   gap: 7px;
   margin-top: 14px;
+}
+
+.auth-divider {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  font-size: 14px;
+  font-weight: 800;
+  gap: 14px;
+  margin: 28px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  background: var(--line);
+  content: "";
+  flex: 1;
+  height: 1px;
+}
+
+.signup-box {
+  background: #f8f8f3;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.signup-box-head {
+  margin-bottom: 16px;
+}
+
+.signup-box-head h3 {
+  font-size: 26px;
 }
 
 .table-wrap {
@@ -770,8 +872,17 @@ th {
   .dashboard-grid,
   .admin-grid,
   .subscribe-grid,
-  .auth-grid {
+  .auth-grid,
+  .auth-page {
     grid-template-columns: 1fr;
+  }
+
+  .auth-page {
+    gap: 28px;
+  }
+
+  .auth-intro {
+    padding-top: 0;
   }
 
   .feature-row,
@@ -806,6 +917,14 @@ th {
 
   .toolbar {
     grid-template-columns: 1fr;
+  }
+
+  .auth-page {
+    padding: 42px 20px 72px;
+  }
+
+  .auth-card {
+    padding: 22px;
   }
 
   .icon-button span {
