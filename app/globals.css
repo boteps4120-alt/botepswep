@@ -85,8 +85,13 @@ select {
 }
 
 .header-actions {
+  align-items: center;
   display: flex;
   gap: 8px;
+}
+
+.header-actions form {
+  margin: 0;
 }
 
 .icon-button,
@@ -629,6 +634,26 @@ h3 {
 .subscribe-panel,
 .auth-panel {
   padding: 24px;
+}
+
+.auth-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.full-button {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.form-message {
+  background: #fff8e1;
+  border: 1px solid #f1d992;
+  border-radius: 8px;
+  color: #6d4b00;
+  line-height: 1.5;
+  margin: 0;
+  padding: 12px 14px;
 }
 
 .table-wrap {

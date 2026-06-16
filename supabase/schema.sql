@@ -1,0 +1,137 @@
+create extension if not exists "pgcrypto";
+
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text,
+  display_name text,
+  role text not null default 'user' check (role in ('user', 'admin')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.courses (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  title text not null,
+  category text not null,
+  poomsae text,
+  instructor text,
+  description text,
+  difficulty text,
+  duration_seconds integer default 0,
+  thumbnail_url text,
+  gumlet_video_id text,
+  is_premium boolean not null default true,
+  published_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.course_chapters (
+  id uuid primary key default gen_random_uuid(),
+  course_id uuid not null references public.courses(id) on delete cascade,
+  title text not null,
+  starts_at_seconds integer not null default 0,
+  cue text,
+  sort_order integer not null default 0
+);
+
+create table if not exists public.subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  status text not null default 'inactive' check (status in ('inactive', 'active', 'past_due', 'canceled', 'expired')),
+  provider text check (provider in ('toss', 'stripe', 'manual')),
+  provider_customer_id text,
+  provider_subscription_id text,
+  current_period_end timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id)
+);
+
+create table if not exists public.watch_progress (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  course_id uuid not null references public.courses(id) on delete cascade,
+  last_position_seconds integer not null default 0,
+  progress_percent integer not null default 0 check (progress_percent between 0 and 100),
+  completed_at timestamptz,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, course_id)
+);
+
+create table if not exists public.bookmarks (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  course_id uuid not null references public.courses(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, course_id)
+);
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, email, display_name)
+  values (
+    new.id,
+    new.email,
+    coalesce(new.raw_user_meta_data ->> 'display_name', new.raw_user_meta_data ->> 'full_name', split_part(new.email, '@', 1))
+  )
+  on conflict (id) do update
+  set email = excluded.email,
+      display_name = coalesce(public.profiles.display_name, excluded.display_name),
+      updated_at = now();
+
+  insert into public.subscriptions (user_id, status, provider)
+  values (new.id, 'inactive', 'manual')
+  on conflict (user_id) do nothing;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+alter table public.profiles enable row level security;
+alter table public.courses enable row level security;
+alter table public.course_chapters enable row level security;
+alter table public.subscriptions enable row level security;
+alter table public.watch_progress enable row level security;
+alter table public.bookmarks enable row level security;
+
+create policy "Profiles are readable by owner" on public.profiles
+  for select using (auth.uid() = id);
+
+create policy "Profiles are editable by owner" on public.profiles
+  for update using (auth.uid() = id);
+
+create policy "Courses are readable by everyone" on public.courses
+  for select using (true);
+
+create policy "Course chapters are readable by everyone" on public.course_chapters
+  for select using (true);
+
+create policy "Subscriptions are readable by owner" on public.subscriptions
+  for select using (auth.uid() = user_id);
+
+create policy "Watch progress is readable by owner" on public.watch_progress
+  for select using (auth.uid() = user_id);
+
+create policy "Watch progress is writable by owner" on public.watch_progress
+  for insert with check (auth.uid() = user_id);
+
+create policy "Watch progress is updatable by owner" on public.watch_progress
+  for update using (auth.uid() = user_id);
+
+create policy "Bookmarks are readable by owner" on public.bookmarks
+  for select using (auth.uid() = user_id);
+
+create policy "Bookmarks are writable by owner" on public.bookmarks
+  for insert with check (auth.uid() = user_id);
+
+create policy "Bookmarks are removable by owner" on public.bookmarks
+  for delete using (auth.uid() = user_id);

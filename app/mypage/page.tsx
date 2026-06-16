@@ -1,15 +1,23 @@
 import Link from "next/link";
 import { Bookmark, CreditCard, PlayCircle, Settings, UserRound } from "lucide-react";
 import { courses, currentUser, payments } from "@/lib/data";
+import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { createClient } from "@/lib/supabase/server";
 
-export default function MyPage() {
+export default async function MyPage() {
+  const user = hasSupabaseEnv() ? (await (await createClient()).auth.getUser()).data.user : null;
+  const profileName =
+    user?.user_metadata?.display_name ??
+    user?.user_metadata?.full_name ??
+    user?.email ??
+    currentUser.name;
   const watching = courses.filter((course) => course.progress > 0);
 
   return (
     <section className="page-shell">
       <div className="page-title">
         <p className="eyebrow">마이페이지</p>
-        <h1>{currentUser.name}</h1>
+        <h1>{profileName}</h1>
         <p>계정, 구독 상태, 시청 기록, 찜한 강의를 한 화면에서 확인합니다.</p>
       </div>
 
@@ -17,7 +25,7 @@ export default function MyPage() {
         <div className="metric-card">
           <UserRound size={24} color="#2458a8" />
           <span className="stat-label">계정</span>
-          <strong>{currentUser.role}</strong>
+          <strong>{user ? "로그인" : currentUser.role}</strong>
         </div>
         <div className="metric-card">
           <CreditCard size={24} color="#167c76" />

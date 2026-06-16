@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Chrome, LogIn, Mail, RotateCcw } from "lucide-react";
+import { Mail, RotateCcw } from "lucide-react";
+import { AuthForm } from "@/components/auth-form";
 
 export default function LoginPage() {
   return (
@@ -8,25 +9,10 @@ export default function LoginPage() {
         <div className="page-title">
           <p className="eyebrow">로그인</p>
           <h1>도장 수업 자료를 이어서 확인하세요</h1>
-          <p>1차에서는 화면 흐름만 제공하고, 2차에서 Supabase Auth로 이메일/구글 로그인과 비밀번호 재설정을 연결합니다.</p>
-        </div>
-
-        <section className="auth-panel">
-          <h2>계정 접속</h2>
-          <div className="form-grid">
-            <input className="form-input" placeholder="이메일" type="email" />
-            <input className="form-input" placeholder="비밀번호" type="password" />
-          </div>
-          <div className="form-actions">
-            <Link className="icon-button primary large" href="/mypage">
-              <LogIn size={20} />
-              <span>더미 로그인</span>
-            </Link>
-            <button className="icon-button subtle large">
-              <Chrome size={20} />
-              <span>구글 로그인</span>
-            </button>
-          </div>
+          <p>
+            구글 계정으로 빠르게 시작하거나, BOTEPS 전용 이메일 계정으로 회원가입할 수 있습니다.
+            Supabase Auth를 통해 세션을 관리합니다.
+          </p>
           <div className="integration-list">
             <div className="integration-item">
               <span>이메일 인증</span>
@@ -37,7 +23,14 @@ export default function LoginPage() {
               <RotateCcw size={18} />
             </div>
           </div>
-        </section>
+          <div className="form-actions">
+            <Link className="text-link" href="/courses">
+              강의 먼저 둘러보기
+            </Link>
+          </div>
+        </div>
+
+        <AuthForm />
       </div>
     </section>
   );

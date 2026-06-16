@@ -1,6 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { LogIn, Search, ShieldCheck } from "lucide-react";
+import { LogIn, LogOut, Search, ShieldCheck, UserRound } from "lucide-react";
+import { signOut } from "@/app/auth/actions";
+import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { createClient } from "@/lib/supabase/server";
 
 const navItems = [
   { href: "/", label: "홈" },
@@ -10,11 +13,13 @@ const navItems = [
   { href: "/admin", label: "관리자" }
 ];
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const user = hasSupabaseEnv() ? (await (await createClient()).auth.getUser()).data.user : null;
+
   return (
     <header className="site-header">
-      <Link className="brand" href="/" aria-label="boteps 홈">
-        <Image src="/images/boteps-logo.png" alt="boteps" width={172} height={86} priority className="brand-logo" />
+      <Link className="brand" href="/" aria-label="BOTEPS 홈">
+        <Image src="/images/boteps-logo.png" alt="BOTEPS" width={172} height={86} priority className="brand-logo" />
         <span className="brand-word">BOTEPS</span>
       </Link>
       <nav className="nav-links" aria-label="주요 메뉴">
@@ -29,10 +34,25 @@ export function SiteHeader() {
           <Search size={18} />
           <span>검색</span>
         </Link>
-        <Link className="icon-button subtle" href="/login" title="로그인">
-          <LogIn size={18} />
-          <span>로그인</span>
-        </Link>
+        {user ? (
+          <>
+            <Link className="icon-button subtle" href="/mypage" title="내 계정">
+              <UserRound size={18} />
+              <span>내 계정</span>
+            </Link>
+            <form action={signOut}>
+              <button className="icon-button subtle" title="로그아웃">
+                <LogOut size={18} />
+                <span>로그아웃</span>
+              </button>
+            </form>
+          </>
+        ) : (
+          <Link className="icon-button subtle" href="/login" title="로그인">
+            <LogIn size={18} />
+            <span>로그인</span>
+          </Link>
+        )}
         <Link className="icon-button primary" href="/subscribe" title="월구독">
           <ShieldCheck size={18} />
           <span>월구독</span>
