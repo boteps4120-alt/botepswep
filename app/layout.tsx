@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Analytics } from "@/components/analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
+        <Analytics />
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

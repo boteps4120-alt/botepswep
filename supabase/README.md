@@ -10,6 +10,8 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
 NEXT_PUBLIC_TOSS_CLIENT_KEY=test_ck_your_key
 TOSS_SECRET_KEY=test_sk_your_key
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_CLARITY_PROJECT_ID=your_clarity_project_id
 ```
 
 For older Supabase projects, the legacy anon key can be used in `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, but new projects should prefer the publishable key.
