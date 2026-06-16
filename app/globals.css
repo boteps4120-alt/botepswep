@@ -556,6 +556,15 @@ h3 {
   font-size: clamp(28px, 5vw, 54px);
 }
 
+.real-video {
+  aspect-ratio: 16 / 9;
+  background: #000;
+  display: block;
+  max-height: 70vh;
+  object-fit: contain;
+  width: 100%;
+}
+
 .video-controls {
   align-items: center;
   background: #181818;

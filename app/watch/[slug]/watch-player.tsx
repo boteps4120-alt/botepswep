@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, Pause, Play, SkipBack, SkipForward } from "lucide-react";
+import { CheckCircle2, Play, SkipBack, SkipForward } from "lucide-react";
 import type { Course } from "@/lib/data";
 import { useState } from "react";
 
@@ -12,7 +12,6 @@ type WatchPlayerProps = {
 
 export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
   const [activeChapter, setActiveChapter] = useState(course.chapters[0]);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [completed, setCompleted] = useState(course.progress === 100);
   const displayProgress = completed ? 100 : Math.max(course.progress, Math.round((activeChapter.seconds / 2400) * 100));
 
@@ -27,18 +26,19 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
       <div className="watch-layout">
         <div>
           <div className="video-shell">
-            <div className="fake-video">
-              <div>
-                <Play size={54} />
-                <h2>{activeChapter.title}</h2>
-                <p>{activeChapter.cue}</p>
+            {course.videoUrl ? (
+              <video className="real-video" src={course.videoUrl} controls preload="metadata" playsInline />
+            ) : (
+              <div className="fake-video">
+                <div>
+                  <Play size={54} />
+                  <h2>{activeChapter.title}</h2>
+                  <p>{activeChapter.cue}</p>
+                </div>
               </div>
-            </div>
+            )}
             <div className="video-controls">
-              <button className="icon-button light compact" onClick={() => setIsPlaying((value) => !value)}>
-                {isPlaying ? <Pause size={17} /> : <Play size={17} />}
-                <span>{isPlaying ? "일시정지" : "재생"}</span>
-              </button>
+              <span className="chapter-time">{activeChapter.time}</span>
               <div className="progress-track" aria-label={`진도율 ${displayProgress}%`}>
                 <div className="progress-bar" style={{ width: `${displayProgress}%` }} />
               </div>
@@ -52,8 +52,8 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
               <strong>{activeChapter.time}</strong>
             </div>
             <div className="metric-card">
-              <span className="stat-label">재생속도</span>
-              <strong>1.0x</strong>
+              <span className="stat-label">영상 소스</span>
+              <strong>{course.videoUrl ? "업로드 영상" : "더미 플레이어"}</strong>
             </div>
             <div className="metric-card">
               <span className="stat-label">완료 상태</span>
