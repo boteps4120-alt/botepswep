@@ -656,6 +656,15 @@ h3 {
   padding: 12px 14px;
 }
 
+.account-help-link {
+  align-items: center;
+  color: var(--blue);
+  display: inline-flex;
+  font-weight: 900;
+  gap: 7px;
+  margin-top: 14px;
+}
+
 .table-wrap {
   overflow-x: auto;
 }

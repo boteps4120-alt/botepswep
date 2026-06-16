@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Mail, RotateCcw } from "lucide-react";
 import { AuthForm } from "@/components/auth-form";
 
 export default function LoginPage() {
@@ -7,20 +6,23 @@ export default function LoginPage() {
     <section className="page-shell">
       <div className="auth-grid">
         <div className="page-title">
-          <p className="eyebrow">로그인</p>
-          <h1>도장 수업 자료를 이어서 확인하세요</h1>
+          <p className="eyebrow">계정</p>
+          <h1>로그인하거나 새 계정을 만드세요</h1>
           <p>
-            구글 계정으로 빠르게 시작하거나, BOTEPS 전용 이메일 계정으로 회원가입할 수 있습니다.
-            Supabase Auth를 통해 세션을 관리합니다.
+            기존 BOTEPS 계정으로 로그인하거나, 이메일 또는 구글 계정으로 새 회원가입을 진행할 수 있습니다.
           </p>
           <div className="integration-list">
             <div className="integration-item">
-              <span>이메일 인증</span>
-              <Mail size={18} />
+              <span>보텝스 자체 회원가입</span>
+              <strong>이메일</strong>
             </div>
             <div className="integration-item">
-              <span>비밀번호 재설정</span>
-              <RotateCcw size={18} />
+              <span>간편 회원가입/로그인</span>
+              <strong>Google</strong>
+            </div>
+            <div className="integration-item">
+              <span>회원정보 찾기</span>
+              <strong>아이디/비밀번호</strong>
             </div>
           </div>
           <div className="form-actions">
