@@ -21,6 +21,7 @@ export type Course = {
   audience: string;
   thumbnail: string;
   videoUrl?: string;
+  embedUrl?: string;
   isPremium: boolean;
   progress: number;
   curriculum: string[];
@@ -56,6 +57,7 @@ export const courses: Course[] = [
     audience: "승단 심사반과 대회반을 운영하는 관장/사범",
     thumbnail: "/images/taekwondo-hero.png",
     videoUrl: "https://video.gumlet.io/6a30a6e756ebf5bb1c25e2f3/6a319009b02ffb1d837a7069/main.m3u8",
+    embedUrl: "https://gumlet.tv/watch/6a319009b02ffb1d837a7069",
     isPremium: false,
     progress: 65,
     curriculum: [
@@ -117,6 +119,7 @@ export const courses: Course[] = [
     audience: "대회반 지도자와 선수반 사범",
     thumbnail: "/images/taekwondo-hero.png",
     videoUrl: "https://video.gumlet.io/6a30a6e756ebf5bb1c25e2f3/6a319026bf17ac22ca471941/main.m3u8",
+    embedUrl: "https://gumlet.tv/watch/6a319026bf17ac22ca471941",
     isPremium: true,
     progress: 0,
     curriculum: ["표현력 기준", "호흡과 시선", "강약 지도", "대회 전 체크리스트"],

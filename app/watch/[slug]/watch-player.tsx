@@ -55,7 +55,15 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
       <div className="watch-layout">
         <div>
           <div className="video-shell">
-            {course.videoUrl ? (
+            {course.embedUrl ? (
+              <iframe
+                className="real-video"
+                src={course.embedUrl}
+                title={`${course.title} 영상`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                allowFullScreen
+              />
+            ) : course.videoUrl ? (
               <video className="real-video" ref={videoRef} controls preload="metadata" playsInline />
             ) : (
               <div className="fake-video">
