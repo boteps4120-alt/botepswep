@@ -5,16 +5,26 @@ import { signOut } from "@/app/auth/actions";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
-const navItems = [
+const baseNavItems = [
   { href: "/", label: "홈" },
   { href: "/courses", label: "강의" },
   { href: "/subscribe", label: "구독하기" },
-  { href: "/mypage", label: "마이페이지" },
-  { href: "/admin", label: "관리자" }
+  { href: "/mypage", label: "마이페이지" }
 ];
 
+type ProfileRow = {
+  role: string;
+};
+
 export async function SiteHeader() {
-  const user = hasSupabaseEnv() ? (await (await createClient()).auth.getUser()).data.user : null;
+  const supabase = hasSupabaseEnv() ? await createClient() : null;
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+  const { data: profile } =
+    supabase && user
+      ? await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle<ProfileRow>()
+      : { data: null };
+  const isAdmin = profile?.role === "admin";
+  const navItems = isAdmin ? [...baseNavItems, { href: "/admin", label: "관리자" }] : baseNavItems;
 
   return (
     <header className="site-header">

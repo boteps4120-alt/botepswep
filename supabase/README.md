@@ -50,3 +50,11 @@ In Supabase Dashboard > Authentication > Providers > Google:
 - BOTEPS email/password signup and login
 - Google OAuth login
 - Supabase session cookies through Next.js proxy
+
+## 6. Manager/admin account
+
+1. Create a normal account first through the BOTEPS signup screen or Supabase Dashboard > Authentication > Users > Add user.
+2. Open Supabase SQL Editor.
+3. Run `supabase/promote-manager.sql` after replacing `manager@boteps.test` with the manager email.
+
+An account with `profiles.role = 'admin'` can open `/admin` and watch premium videos without an active subscription.

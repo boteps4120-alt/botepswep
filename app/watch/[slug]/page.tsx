@@ -12,6 +12,10 @@ type SubscriptionRow = {
   status: string;
 };
 
+type ProfileRow = {
+  role: string;
+};
+
 function getNextCourse(slug: string) {
   const index = courses.findIndex((item) => item.slug === slug);
   return courses[(index + 1) % courses.length];
@@ -32,12 +36,16 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
     redirect(`/login?next=/watch/${course.slug}`);
   }
 
-  const { data: subscription } =
+  const [{ data: subscription }, { data: profile }] =
     supabase && user
-      ? await supabase.from("subscriptions").select("status").eq("user_id", user.id).maybeSingle<SubscriptionRow>()
-      : { data: null };
+      ? await Promise.all([
+          supabase.from("subscriptions").select("status").eq("user_id", user.id).maybeSingle<SubscriptionRow>(),
+          supabase.from("profiles").select("role").eq("id", user.id).maybeSingle<ProfileRow>()
+        ])
+      : [{ data: null }, { data: null }];
 
-  const hasAccess = !course.isPremium || !hasSupabaseEnv() || subscription?.status === "active";
+  const isAdmin = profile?.role === "admin";
+  const hasAccess = !course.isPremium || !hasSupabaseEnv() || isAdmin || subscription?.status === "active";
 
   if (!hasAccess) {
     return (

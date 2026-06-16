@@ -1,7 +1,32 @@
+import { redirect } from "next/navigation";
 import { BarChart3, Film, FolderPlus, UserRoundCheck } from "lucide-react";
 import { courses, currentUser } from "@/lib/data";
+import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { createClient } from "@/lib/supabase/server";
 
-export default function AdminPage() {
+export const dynamic = "force-dynamic";
+
+type ProfileRow = {
+  role: string;
+};
+
+export default async function AdminPage() {
+  const supabase = hasSupabaseEnv() ? await createClient() : null;
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+
+  if (hasSupabaseEnv() && !user) {
+    redirect("/login?next=/admin");
+  }
+
+  const { data: profile } =
+    supabase && user
+      ? await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle<ProfileRow>()
+      : { data: null };
+
+  if (hasSupabaseEnv() && profile?.role !== "admin") {
+    redirect("/mypage");
+  }
+
   return (
     <section className="page-shell">
       <div className="page-title">

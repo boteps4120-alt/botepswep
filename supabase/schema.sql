@@ -96,6 +96,21 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.profiles
+    where id = auth.uid()
+      and role = 'admin'
+  );
+$$;
+
 alter table public.profiles enable row level security;
 alter table public.courses enable row level security;
 alter table public.course_chapters enable row level security;
@@ -104,28 +119,48 @@ alter table public.watch_progress enable row level security;
 alter table public.bookmarks enable row level security;
 
 drop policy if exists "Profiles are readable by owner" on public.profiles;
-create policy "Profiles are readable by owner" on public.profiles
-  for select using (auth.uid() = id);
+drop policy if exists "Profiles are readable by owner or admin" on public.profiles;
+create policy "Profiles are readable by owner or admin" on public.profiles
+  for select using (auth.uid() = id or public.is_admin());
 
 drop policy if exists "Profiles are editable by owner" on public.profiles;
-create policy "Profiles are editable by owner" on public.profiles
-  for update using (auth.uid() = id);
+drop policy if exists "Profiles are editable by admin" on public.profiles;
+create policy "Profiles are editable by admin" on public.profiles
+  for update using (public.is_admin())
+  with check (public.is_admin());
 
 drop policy if exists "Courses are readable by everyone" on public.courses;
 create policy "Courses are readable by everyone" on public.courses
   for select using (true);
 
+drop policy if exists "Courses are manageable by admin" on public.courses;
+create policy "Courses are manageable by admin" on public.courses
+  for all using (public.is_admin())
+  with check (public.is_admin());
+
 drop policy if exists "Course chapters are readable by everyone" on public.course_chapters;
 create policy "Course chapters are readable by everyone" on public.course_chapters
   for select using (true);
 
+drop policy if exists "Course chapters are manageable by admin" on public.course_chapters;
+create policy "Course chapters are manageable by admin" on public.course_chapters
+  for all using (public.is_admin())
+  with check (public.is_admin());
+
 drop policy if exists "Subscriptions are readable by owner" on public.subscriptions;
-create policy "Subscriptions are readable by owner" on public.subscriptions
-  for select using (auth.uid() = user_id);
+drop policy if exists "Subscriptions are readable by owner or admin" on public.subscriptions;
+create policy "Subscriptions are readable by owner or admin" on public.subscriptions
+  for select using (auth.uid() = user_id or public.is_admin());
+
+drop policy if exists "Subscriptions are manageable by admin" on public.subscriptions;
+create policy "Subscriptions are manageable by admin" on public.subscriptions
+  for all using (public.is_admin())
+  with check (public.is_admin());
 
 drop policy if exists "Watch progress is readable by owner" on public.watch_progress;
-create policy "Watch progress is readable by owner" on public.watch_progress
-  for select using (auth.uid() = user_id);
+drop policy if exists "Watch progress is readable by owner or admin" on public.watch_progress;
+create policy "Watch progress is readable by owner or admin" on public.watch_progress
+  for select using (auth.uid() = user_id or public.is_admin());
 
 drop policy if exists "Watch progress is writable by owner" on public.watch_progress;
 create policy "Watch progress is writable by owner" on public.watch_progress
@@ -136,8 +171,9 @@ create policy "Watch progress is updatable by owner" on public.watch_progress
   for update using (auth.uid() = user_id);
 
 drop policy if exists "Bookmarks are readable by owner" on public.bookmarks;
-create policy "Bookmarks are readable by owner" on public.bookmarks
-  for select using (auth.uid() = user_id);
+drop policy if exists "Bookmarks are readable by owner or admin" on public.bookmarks;
+create policy "Bookmarks are readable by owner or admin" on public.bookmarks
+  for select using (auth.uid() = user_id or public.is_admin());
 
 drop policy if exists "Bookmarks are writable by owner" on public.bookmarks;
 create policy "Bookmarks are writable by owner" on public.bookmarks
