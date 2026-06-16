@@ -878,6 +878,17 @@ th {
   margin-top: 18px;
 }
 
+.inline-form {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.compact-select {
+  min-height: 40px;
+  min-width: 120px;
+}
+
 .integration-list {
   display: grid;
   gap: 10px;
