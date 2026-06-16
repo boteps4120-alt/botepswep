@@ -48,10 +48,9 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
 
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  const displayName = String(formData.get("displayName") ?? "").trim();
 
-  if (!email || !password || !displayName) {
-    return { message: "이름, 이메일, 비밀번호를 모두 입력해주세요." };
+  if (!email || !password) {
+    return { message: "아이디와 비밀번호를 모두 입력해주세요." };
   }
 
   if (password.length < 6) {
@@ -63,9 +62,6 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
     email,
     password,
     options: {
-      data: {
-        display_name: displayName
-      },
       emailRedirectTo: `${getBaseUrl()}/auth/callback`
     }
   });

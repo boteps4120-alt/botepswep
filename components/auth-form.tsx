@@ -47,13 +47,10 @@ export function AuthForm() {
             </button>
           </form>
 
-          <div className="auth-links">
-            <Link href="/account-help">아이디 찾기</Link>
-            <Link href="/account-help">비밀번호 찾기</Link>
-            <button onClick={() => setMode("signup")} type="button">
-              회원가입
-            </button>
-          </div>
+        <div className="auth-links">
+          <Link href="/account-help">아이디 찾기</Link>
+          <Link href="/account-help">비밀번호 찾기</Link>
+        </div>
         </div>
       ) : (
         <div className="auth-mode-panel">
@@ -70,8 +67,7 @@ export function AuthForm() {
           </div>
 
           <form action={signupAction} className="stacked-form">
-            <input className="auth-input top" name="displayName" placeholder="도장명 또는 이름" autoComplete="name" />
-            <input className="auth-input middle" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
+            <input className="auth-input top" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
             <input className="auth-input bottom" name="password" placeholder="비밀번호 6자 이상" type="password" autoComplete="new-password" />
 
             {signupState.message ? <p className="form-message">{signupState.message}</p> : null}
