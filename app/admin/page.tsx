@@ -178,7 +178,7 @@ export default async function AdminPage({
 
           <div className="table-wrap">
             <h2>회원 및 구독 상태</h2>
-            <table>
+            <table className="member-table">
               <thead>
                 <tr>
                   <th>회원</th>
