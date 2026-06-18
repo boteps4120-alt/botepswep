@@ -25,6 +25,22 @@ function clean(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
+function normalizeBirthDate(value: string) {
+  const digits = value.replace(/\D/g, "");
+  if (!/^\d{8}$/.test(digits)) return null;
+
+  const year = Number(digits.slice(0, 4));
+  const month = Number(digits.slice(4, 6));
+  const day = Number(digits.slice(6, 8));
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) {
+    return null;
+  }
+
+  return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}`;
+}
+
 export async function signInWithPassword(_state: AuthState, formData: FormData): Promise<AuthState> {
   if (!hasSupabaseEnv()) {
     return { message: "Supabase 환경변수가 아직 설정되지 않았습니다." };
@@ -60,14 +76,19 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
   const email = clean(formData, "email");
   const password = String(formData.get("password") ?? "");
   const fullName = clean(formData, "fullName");
-  const birthDate = clean(formData, "birthDate");
+  const birthDateInput = clean(formData, "birthDate");
+  const birthDate = normalizeBirthDate(birthDateInput);
   const gender = clean(formData, "gender");
   const phone = clean(formData, "phone");
   const address = clean(formData, "address");
   const next = getSafeNext(formData);
 
-  if (!email || !password || !fullName || !birthDate || !gender || !phone || !address) {
+  if (!email || !password || !fullName || !birthDateInput || !gender || !phone || !address) {
     return { message: "이름, 생년월일, 성별, 전화번호, 주소, 아이디와 비밀번호를 모두 입력해주세요." };
+  }
+
+  if (!birthDate) {
+    return { message: "생년월일은 19950101처럼 8자리 숫자로 입력해주세요." };
   }
 
   if (password.length < 6) {

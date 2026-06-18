@@ -872,24 +872,23 @@ h3 {
   margin-top: -1px;
 }
 
-.auth-date-field {
+.auth-birth-field {
   align-items: center;
   background: #fff;
   border: 1px solid #cfd4d0;
   display: grid;
-  gap: 10px;
-  grid-template-columns: 104px 1fr;
+  gap: 12px;
+  grid-template-columns: 28px 1fr;
   min-height: 58px;
   margin-top: -1px;
   padding: 0 18px;
 }
 
-.auth-date-field span {
-  color: #6c7370;
-  font-size: 17px;
+.auth-birth-field svg {
+  color: #9aa09d;
 }
 
-.auth-date-field input {
+.auth-birth-field input {
   border: 0;
   color: var(--ink);
   font-size: 17px;
@@ -898,7 +897,11 @@ h3 {
   width: 100%;
 }
 
-.auth-date-field:focus-within {
+.auth-birth-field input::placeholder {
+  color: #7c8580;
+}
+
+.auth-birth-field:focus-within {
   border-color: var(--teal);
   box-shadow: 0 0 0 1px var(--teal);
   position: relative;

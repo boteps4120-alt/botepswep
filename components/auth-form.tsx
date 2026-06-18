@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import Link from "next/link";
-import { Chrome, LogIn, MailPlus } from "lucide-react";
+import { CalendarDays, Chrome, LogIn, MailPlus } from "lucide-react";
 import { signInWithGoogle, signInWithPassword, signUpWithPassword } from "@/app/auth/actions";
 
 const initialState = {
@@ -105,9 +105,16 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
                 <input className="auth-input top" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
                 <input className="auth-input middle" name="password" placeholder="비밀번호 6자 이상" type="password" autoComplete="new-password" />
                 <input className="auth-input middle" name="fullName" placeholder="이름" autoComplete="name" />
-                <label className="auth-date-field">
-                  <span>생년월일</span>
-                  <input name="birthDate" type="date" aria-label="생년월일" />
+                <label className="auth-birth-field">
+                  <CalendarDays size={22} />
+                  <input
+                    name="birthDate"
+                    placeholder="생년월일 8자리"
+                    inputMode="numeric"
+                    maxLength={8}
+                    autoComplete="bday"
+                    aria-label="생년월일 8자리"
+                  />
                 </label>
                 <select className="auth-input middle" name="gender" defaultValue="" aria-label="성별">
                   <option value="" disabled>
