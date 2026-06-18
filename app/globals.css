@@ -801,6 +801,53 @@ h3 {
   color: var(--blue);
 }
 
+.contact-layout {
+  display: grid;
+  gap: 42px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 520px);
+}
+
+.contact-copy {
+  padding-top: 48px;
+}
+
+.contact-points {
+  display: grid;
+  gap: 10px;
+  margin: 24px 0 28px;
+}
+
+.contact-points span {
+  align-items: center;
+  display: inline-flex;
+  font-weight: 800;
+  gap: 9px;
+}
+
+.contact-points svg {
+  color: var(--teal);
+}
+
+.field-label {
+  color: var(--ink);
+  display: grid;
+  font-size: 14px;
+  font-weight: 900;
+  gap: 8px;
+}
+
+.textarea-input {
+  min-height: 160px;
+  padding: 14px;
+  resize: vertical;
+}
+
+.success-message {
+  background: #e9f8ef;
+  border-color: #a8dec0;
+  color: #14592d;
+}
+
 .full-button {
   margin-top: 12px;
   width: 100%;
@@ -960,6 +1007,7 @@ th {
   .admin-grid,
   .subscribe-grid,
   .auth-grid,
+  .contact-layout,
   .auth-page {
     grid-template-columns: 1fr;
   }
