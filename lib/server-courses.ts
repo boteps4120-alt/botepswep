@@ -104,12 +104,24 @@ export async function getRuntimeCourses() {
 
   try {
     const supabase = await createClient();
-    const { data: courseRows, error: courseError } = await supabase
+    let { data: courseRows, error: courseError } = await supabase
       .from("courses")
       .select(
         "id,slug,title,category,poomsae,instructor,description,difficulty,duration_seconds,thumbnail_url,gumlet_video_id,video_orientation,is_premium,published_at,created_at"
       )
       .order("created_at", { ascending: false });
+
+    if (courseError) {
+      const fallbackResult = await supabase
+        .from("courses")
+        .select(
+          "id,slug,title,category,poomsae,instructor,description,difficulty,duration_seconds,thumbnail_url,gumlet_video_id,is_premium,published_at,created_at"
+        )
+        .order("created_at", { ascending: false });
+
+      courseRows = fallbackResult.data?.map((course) => ({ ...course, video_orientation: "landscape" })) ?? null;
+      courseError = fallbackResult.error;
+    }
 
     if (courseError) return fallbackCourses;
 

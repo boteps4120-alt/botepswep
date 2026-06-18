@@ -111,7 +111,7 @@ export async function createCourse(formData: FormData) {
     throw new Error("영상 비율 값이 올바르지 않습니다.");
   }
 
-  const { error } = await supabase.from("courses").insert({
+  const coursePayload = {
     slug,
     title,
     category,
@@ -125,7 +125,27 @@ export async function createCourse(formData: FormData) {
     duration_seconds: 0,
     is_premium: isPremium,
     published_at: new Date().toISOString()
-  });
+  };
+
+  let { error } = await supabase.from("courses").insert(coursePayload);
+
+  if (error && error.message.includes("video_orientation")) {
+    const fallbackResult = await supabase.from("courses").insert({
+      slug,
+      title,
+      category,
+      poomsae,
+      instructor,
+      description,
+      difficulty: null,
+      gumlet_video_id: gumletVideoId,
+      thumbnail_url: thumbnailUrl,
+      duration_seconds: 0,
+      is_premium: isPremium,
+      published_at: new Date().toISOString()
+    });
+    error = fallbackResult.error;
+  }
 
   if (error) {
     throw new Error(error.message);

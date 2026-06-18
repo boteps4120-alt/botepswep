@@ -119,23 +119,42 @@ export default async function AdminPage({
     redirect("/mypage");
   }
 
-  const [{ data: profiles }, { data: subscriptions }, { data: dbCourses }] = supabase
+  const [{ data: profiles }, { data: subscriptions }] = supabase
     ? await Promise.all([
         supabase
           .from("profiles")
           .select("id,email,display_name,full_name,birth_date,gender,phone,address,role,created_at")
           .order("created_at", { ascending: false }),
-        supabase.from("subscriptions").select("user_id,status,provider,current_period_end,updated_at"),
-        supabase
-          .from("courses")
-          .select("id,slug,title,category,poomsae,instructor,gumlet_video_id,video_orientation,is_premium,published_at")
-          .order("created_at", { ascending: false })
+        supabase.from("subscriptions").select("user_id,status,provider,current_period_end,updated_at")
       ])
-    : [{ data: [] }, { data: [] }, { data: [] }];
+    : [{ data: [] }, { data: [] }];
+
+  let dbCourses: DbCourseRow[] = [];
+
+  if (supabase) {
+    const { data: courseRows, error: courseError } = await supabase
+      .from("courses")
+      .select("id,slug,title,category,poomsae,instructor,gumlet_video_id,video_orientation,is_premium,published_at")
+      .order("created_at", { ascending: false });
+
+    if (!courseError) {
+      dbCourses = (courseRows ?? []) as DbCourseRow[];
+    } else {
+      const { data: fallbackCourseRows } = await supabase
+        .from("courses")
+        .select("id,slug,title,category,poomsae,instructor,gumlet_video_id,is_premium,published_at")
+        .order("created_at", { ascending: false });
+
+      dbCourses = ((fallbackCourseRows ?? []) as Omit<DbCourseRow, "video_orientation">[]).map((course) => ({
+        ...course,
+        video_orientation: "landscape"
+      }));
+    }
+  }
 
   const profileRows = (profiles ?? []) as ProfileRow[];
   const subscriptionRows = (subscriptions ?? []) as SubscriptionRow[];
-  const courseRows = (dbCourses ?? []) as DbCourseRow[];
+  const courseRows = dbCourses;
   const subscriptionsByUser = new Map(subscriptionRows.map((subscription) => [subscription.user_id, subscription]));
   const activeSubscribers = subscriptionRows.filter((subscription) => subscription.status === "active").length;
   const adminCount = profileRows.filter((item) => item.role === "admin").length;
