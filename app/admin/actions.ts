@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const subscriptionStatuses = new Set(["inactive", "active", "past_due", "canceled", "expired"]);
 const roles = new Set(["user", "admin"]);
+const videoOrientations = new Set(["landscape", "portrait"]);
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -92,6 +93,7 @@ export async function createCourse(formData: FormData) {
   const poomsae = clean(formData.get("poomsae"));
   const instructor = clean(formData.get("instructor"));
   const gumletVideoId = extractGumletAssetId(clean(formData.get("gumletVideoId")));
+  const videoOrientation = clean(formData.get("videoOrientation")) || "landscape";
   const description = clean(formData.get("description"));
   const thumbnailUrl = clean(formData.get("thumbnailUrl")) || "/images/taekwondo-hero.png";
   const isPremium = clean(formData.get("isPremium")) === "true";
@@ -105,6 +107,10 @@ export async function createCourse(formData: FormData) {
     throw new Error("Gumlet Asset ID 또는 영상 URL을 입력해주세요.");
   }
 
+  if (!videoOrientations.has(videoOrientation)) {
+    throw new Error("영상 비율 값이 올바르지 않습니다.");
+  }
+
   const { error } = await supabase.from("courses").insert({
     slug,
     title,
@@ -114,6 +120,7 @@ export async function createCourse(formData: FormData) {
     description,
     difficulty: null,
     gumlet_video_id: gumletVideoId,
+    video_orientation: videoOrientation,
     thumbnail_url: thumbnailUrl,
     duration_seconds: 0,
     is_premium: isPremium,

@@ -32,10 +32,13 @@ create table if not exists public.courses (
   duration_seconds integer default 0,
   thumbnail_url text,
   gumlet_video_id text,
+  video_orientation text not null default 'landscape' check (video_orientation in ('landscape', 'portrait')),
   is_premium boolean not null default true,
   published_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+alter table public.courses add column if not exists video_orientation text not null default 'landscape' check (video_orientation in ('landscape', 'portrait'));
 
 create table if not exists public.course_chapters (
   id uuid primary key default gen_random_uuid(),

@@ -39,6 +39,7 @@ type DbCourseRow = {
   poomsae: string | null;
   instructor: string | null;
   gumlet_video_id: string | null;
+  video_orientation: string | null;
   is_premium: boolean;
   published_at: string | null;
 };
@@ -127,7 +128,7 @@ export default async function AdminPage({
         supabase.from("subscriptions").select("user_id,status,provider,current_period_end,updated_at"),
         supabase
           .from("courses")
-          .select("id,slug,title,category,poomsae,instructor,gumlet_video_id,is_premium,published_at")
+          .select("id,slug,title,category,poomsae,instructor,gumlet_video_id,video_orientation,is_premium,published_at")
           .order("created_at", { ascending: false })
       ])
     : [{ data: [] }, { data: [] }, { data: [] }];
@@ -281,6 +282,13 @@ export default async function AdminPage({
               <input className="form-input" name="gumletVideoId" placeholder="예: 6a3452e3a43952886a2e3bbb" required />
             </label>
             <label className="field-label">
+              영상 비율
+              <select className="select-input" name="videoOrientation" defaultValue="landscape">
+                <option value="landscape">가로 영상</option>
+                <option value="portrait">세로 영상</option>
+              </select>
+            </label>
+            <label className="field-label">
               공개 권한
               <select className="select-input" name="isPremium" defaultValue="true">
                 <option value="true">구독자 전용</option>
@@ -340,6 +348,7 @@ export default async function AdminPage({
                   <th>하위 항목</th>
                   <th>내부 강사명</th>
                   <th>권한</th>
+                  <th>비율</th>
                   <th>영상</th>
                   <th>확인</th>
                   <th>게시일</th>
@@ -357,6 +366,7 @@ export default async function AdminPage({
                     <td>{course.poomsae ?? "-"}</td>
                     <td>{course.instructor ?? "-"}</td>
                     <td>{course.is_premium ? "구독자 전용" : "무료"}</td>
+                    <td>{course.video_orientation === "portrait" ? "세로" : "가로"}</td>
                     <td>{course.gumlet_video_id ? "Gumlet" : "-"}</td>
                     <td>
                       <div className="inline-form">

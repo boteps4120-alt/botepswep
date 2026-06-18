@@ -23,6 +23,7 @@ type DbCourseRow = {
   duration_seconds: number | null;
   thumbnail_url: string | null;
   gumlet_video_id: string | null;
+  video_orientation: string | null;
   is_premium: boolean;
   published_at: string | null;
   created_at: string;
@@ -87,6 +88,7 @@ export function mapDbCourse(row: DbCourseRow): Course {
     thumbnail: row.thumbnail_url || "/images/taekwondo-hero.png",
     videoUrl: hlsUrl,
     embedUrl,
+    videoOrientation: row.video_orientation === "portrait" ? "portrait" : "landscape",
     isPremium: row.is_premium,
     progress: 0,
     curriculum: ["영상 시청", "동작별 챕터 학습", "지도 포인트 정리"],
@@ -105,7 +107,7 @@ export async function getRuntimeCourses() {
     const { data: courseRows, error: courseError } = await supabase
       .from("courses")
       .select(
-        "id,slug,title,category,poomsae,instructor,description,difficulty,duration_seconds,thumbnail_url,gumlet_video_id,is_premium,published_at,created_at"
+        "id,slug,title,category,poomsae,instructor,description,difficulty,duration_seconds,thumbnail_url,gumlet_video_id,video_orientation,is_premium,published_at,created_at"
       )
       .order("created_at", { ascending: false });
 

@@ -27,6 +27,7 @@ export type Course = {
   thumbnail: string;
   videoUrl?: string;
   embedUrl?: string;
+  videoOrientation?: "landscape" | "portrait";
   isPremium: boolean;
   progress: number;
   curriculum: string[];

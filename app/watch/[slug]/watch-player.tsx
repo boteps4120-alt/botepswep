@@ -17,6 +17,7 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
   const videoRef = useRef<HTMLVideoElement>(null);
   const [activeChapter, setActiveChapter] = useState(course.chapters[0]);
   const [, startTransition] = useTransition();
+  const isPortrait = course.videoOrientation === "portrait";
 
   function persistProgress(progressPercent: number, seconds = 0, isCompleted = false) {
     startTransition(() => {
@@ -81,17 +82,17 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
 
       <div className="watch-layout">
         <div>
-          <div className="video-shell">
+          <div className={`video-shell ${isPortrait ? "portrait" : "landscape"}`}>
             {course.embedUrl ? (
               <iframe
-                className="real-video"
+                className={`real-video ${isPortrait ? "portrait" : "landscape"}`}
                 src={course.embedUrl}
                 title={`${course.title} 영상`}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 allowFullScreen
               />
             ) : course.videoUrl ? (
-              <video className="real-video" ref={videoRef} controls preload="metadata" playsInline />
+              <video className={`real-video ${isPortrait ? "portrait" : "landscape"}`} ref={videoRef} controls preload="metadata" playsInline />
             ) : (
               <div className="fake-video">
                 <div>
