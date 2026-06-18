@@ -238,7 +238,7 @@ export default async function MyPage({
               <div className="integration-list">
                 {bookmarked.length > 0 ? (
                   bookmarked.map((bookmark) => (
-                    <Link className="integration-item" key={bookmark.courses!.slug} href={`/courses/${bookmark.courses!.slug}`}>
+                    <Link className="integration-item" key={bookmark.courses!.slug} href={`/watch/${bookmark.courses!.slug}`}>
                       <span>{bookmark.courses!.poomsae ?? bookmark.courses!.title}</span>
                       <Bookmark size={18} />
                     </Link>

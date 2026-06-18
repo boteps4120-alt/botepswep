@@ -4,7 +4,13 @@ import { useMemo, useState } from "react";
 import { CourseCard } from "@/components/course-card";
 import { categories, getSubcategories, type Course } from "@/lib/data";
 
-export function CoursesBrowser({ initialCourses }: { initialCourses: Course[] }) {
+export function CoursesBrowser({
+  initialBookmarkedSlugs = [],
+  initialCourses
+}: {
+  initialBookmarkedSlugs?: string[];
+  initialCourses: Course[];
+}) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("전체");
   const [subcategory, setSubcategory] = useState("전체");
@@ -88,7 +94,7 @@ export function CoursesBrowser({ initialCourses }: { initialCourses: Course[] })
 
       <div className="course-grid">
         {filteredCourses.map((course) => (
-          <CourseCard key={course.slug} course={course} />
+          <CourseCard key={course.slug} course={course} initialBookmarked={initialBookmarkedSlugs.includes(course.slug)} />
         ))}
       </div>
     </>

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { CheckCircle2, Play, SkipBack, SkipForward } from "lucide-react";
 import type { Course } from "@/lib/data";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { saveWatchProgress } from "../actions";
 
 type WatchPlayerProps = {
   course: Course;
@@ -14,7 +15,14 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [activeChapter, setActiveChapter] = useState(course.chapters[0]);
   const [completed, setCompleted] = useState(course.progress === 100);
+  const [, startTransition] = useTransition();
   const displayProgress = completed ? 100 : Math.max(course.progress, Math.round((activeChapter.seconds / 2400) * 100));
+
+  function persistProgress(progressPercent: number, seconds = 0, isCompleted = false) {
+    startTransition(() => {
+      void saveWatchProgress(course.slug, progressPercent, seconds, isCompleted);
+    });
+  }
 
   useEffect(() => {
     const video = videoRef.current;
@@ -43,6 +51,23 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
       hls?.destroy();
     };
   }, [course.videoUrl]);
+
+  useEffect(() => {
+    persistProgress(Math.max(1, course.progress), activeChapter.seconds);
+    // 시청 페이지 진입 시 이어보기 목록에 반영합니다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [course.slug]);
+
+  function selectChapter(chapter: Course["chapters"][number]) {
+    setActiveChapter(chapter);
+    const nextProgress = Math.max(1, Math.round((chapter.seconds / 2400) * 100));
+    persistProgress(nextProgress, chapter.seconds);
+  }
+
+  function completeCourse() {
+    setCompleted(true);
+    persistProgress(100, activeChapter.seconds, true);
+  }
 
   return (
     <section className="page-shell">
@@ -103,7 +128,7 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
               <SkipBack size={20} />
               <span>이전 강의</span>
             </button>
-            <button className="icon-button primary large" onClick={() => setCompleted(true)}>
+            <button className="icon-button primary large" onClick={completeCourse}>
               <CheckCircle2 size={20} />
               <span>강의 완료 처리</span>
             </button>
@@ -121,7 +146,7 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
               <button
                 key={chapter.title}
                 className={`chapter-button ${chapter.title === activeChapter.title ? "active" : ""}`}
-                onClick={() => setActiveChapter(chapter)}
+                onClick={() => selectChapter(chapter)}
               >
                 <span className="chapter-time">{chapter.time}</span>
                 <span>

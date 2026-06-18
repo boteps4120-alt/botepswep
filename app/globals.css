@@ -152,6 +152,17 @@ select {
   padding: 0 12px;
 }
 
+.favorite-button.active {
+  background: #fff0f0;
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.favorite-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .hero-section {
   min-height: calc(100svh - 72px);
   overflow: hidden;
@@ -361,6 +372,10 @@ h3 {
   padding: 20px;
 }
 
+.course-card h3 a {
+  color: inherit;
+}
+
 .course-meta {
   display: flex;
   gap: 14px;
@@ -377,9 +392,17 @@ h3 {
   align-items: center;
   border-top: 1px solid var(--line);
   display: flex;
+  gap: 12px;
   justify-content: space-between;
   margin-top: 18px;
   padding-top: 16px;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .workflow-list {

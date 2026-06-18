@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Bookmark, CheckCircle2, Lock, PlayCircle } from "lucide-react";
+import { ArrowRight, CheckCircle2, Lock, PlayCircle } from "lucide-react";
+import { BookmarkButton } from "@/components/bookmark-button";
 import { CourseCard } from "@/components/course-card";
 import { currentUser } from "@/lib/data";
 import { getRuntimeCourse, getRuntimeRelatedCourses } from "@/lib/server-courses";
@@ -35,10 +36,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                 {canWatch ? <PlayCircle size={20} /> : <Lock size={20} />}
                 <span>{canWatch ? "강의 시청" : "구독 후 시청"}</span>
               </Link>
-              <button className="icon-button subtle large">
-                <Bookmark size={20} />
-                <span>찜하기</span>
-              </button>
+              <BookmarkButton slug={course.slug} size="large" />
             </div>
           </div>
         </div>
