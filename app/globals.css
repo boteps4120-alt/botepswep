@@ -675,6 +675,77 @@ h3 {
   padding: 24px;
 }
 
+.admin-tabs {
+  background: #ecece6;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: inline-grid;
+  gap: 4px;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  margin-bottom: 24px;
+  padding: 5px;
+}
+
+.admin-tabs a {
+  align-items: center;
+  border-radius: 6px;
+  color: var(--muted);
+  display: inline-flex;
+  font-weight: 900;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+}
+
+.admin-tabs a.active {
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(20, 25, 35, 0.08);
+  color: var(--ink);
+}
+
+.admin-stack {
+  display: grid;
+  gap: 24px;
+}
+
+.admin-panel-heading,
+.table-heading {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.admin-form-panel {
+  max-width: 860px;
+}
+
+.course-create-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-span {
+  grid-column: 1 / -1;
+}
+
+.form-note {
+  background: #f6f6f1;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+  padding: 14px;
+}
+
+.empty-state {
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  margin-top: 18px;
+  padding: 24px;
+}
+
 .auth-page {
   align-items: start;
   display: grid;
@@ -1051,7 +1122,8 @@ th {
 
   .feature-row,
   .course-grid,
-  .metric-grid {
+  .metric-grid,
+  .course-create-form {
     grid-template-columns: 1fr;
   }
 
@@ -1089,6 +1161,12 @@ th {
 
   .auth-card {
     padding: 22px;
+  }
+
+  .admin-tabs {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
   }
 
   .icon-button span {

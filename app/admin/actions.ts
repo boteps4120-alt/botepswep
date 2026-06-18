@@ -91,13 +91,11 @@ export async function createCourse(formData: FormData) {
   const category = clean(formData.get("category"));
   const poomsae = clean(formData.get("poomsae"));
   const instructor = clean(formData.get("instructor"));
-  const difficulty = clean(formData.get("difficulty"));
   const gumletVideoId = extractGumletAssetId(clean(formData.get("gumletVideoId")));
   const description = clean(formData.get("description"));
   const thumbnailUrl = clean(formData.get("thumbnailUrl")) || "/images/taekwondo-hero.png";
-  const durationMinutes = Number(clean(formData.get("durationMinutes")) || "0");
   const isPremium = clean(formData.get("isPremium")) === "true";
-  const slug = slugify(clean(formData.get("slug")) || title);
+  const slug = slugify(title);
 
   if (!title || !category || !poomsae || !slug) {
     throw new Error("강의 제목, 카테고리, 하위 항목, 슬러그는 필수입니다.");
@@ -114,10 +112,10 @@ export async function createCourse(formData: FormData) {
     poomsae,
     instructor,
     description,
-    difficulty,
+    difficulty: null,
     gumlet_video_id: gumletVideoId,
     thumbnail_url: thumbnailUrl,
-    duration_seconds: Number.isFinite(durationMinutes) ? Math.max(0, Math.round(durationMinutes * 60)) : 0,
+    duration_seconds: 0,
     is_premium: isPremium,
     published_at: new Date().toISOString()
   });

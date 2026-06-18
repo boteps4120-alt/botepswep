@@ -1,11 +1,14 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BarChart3, FolderPlus, ShieldCheck, UserRoundCheck } from "lucide-react";
-import { courseCategoryTree, courses } from "@/lib/data";
+import { FolderPlus, ShieldCheck, UserRoundCheck, UsersRound } from "lucide-react";
+import { courseCategoryTree } from "@/lib/data";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { createCourse, updateProfileRole, updateSubscriptionStatus } from "./actions";
 
 export const dynamic = "force-dynamic";
+
+type AdminTab = "members" | "create" | "courses";
 
 type ProfileRow = {
   id: string;
@@ -36,6 +39,11 @@ type DbCourseRow = {
 };
 
 const statuses = ["inactive", "active", "past_due", "canceled", "expired"];
+const adminTabs: { key: AdminTab; label: string }[] = [
+  { key: "members", label: "회원관리" },
+  { key: "create", label: "강의등록" },
+  { key: "courses", label: "강의목록" }
+];
 
 function statusLabel(status?: string) {
   switch (status) {
@@ -62,7 +70,18 @@ function formatDate(date?: string | null) {
   }).format(new Date(date));
 }
 
-export default async function AdminPage() {
+function getTab(value?: string): AdminTab {
+  if (value === "create" || value === "courses") return value;
+  return "members";
+}
+
+export default async function AdminPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ tab?: string }>;
+}) {
+  const params = await searchParams;
+  const activeTab = getTab(params?.tab);
   const supabase = hasSupabaseEnv() ? await createClient() : null;
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
@@ -96,226 +115,234 @@ export default async function AdminPage() {
   const subscriptionsByUser = new Map(subscriptionRows.map((subscription) => [subscription.user_id, subscription]));
   const activeSubscribers = subscriptionRows.filter((subscription) => subscription.status === "active").length;
   const adminCount = profileRows.filter((item) => item.role === "admin").length;
+  const instructorOptions = Array.from(new Set(courseRows.map((course) => course.instructor).filter(Boolean))) as string[];
 
   return (
     <section className="page-shell">
       <div className="page-title">
         <p className="eyebrow">관리자</p>
         <h1>BOTEPS 운영 대시보드</h1>
-        <p>회원 권한, 구독 상태, Supabase 강의 데이터를 실제로 관리합니다.</p>
+        <p>회원, 강의 등록, 강의 목록을 나누어 관리합니다.</p>
       </div>
 
-      <div className="metric-grid">
-        <div className="metric-card">
-          <UserRoundCheck size={24} color="#2458a8" />
-          <span className="stat-label">전체 회원</span>
-          <strong>{profileRows.length}</strong>
-        </div>
-        <div className="metric-card">
-          <ShieldCheck size={24} color="#167c76" />
-          <span className="stat-label">구독 중</span>
-          <strong>{activeSubscribers}</strong>
-        </div>
-        <div className="metric-card">
-          <BarChart3 size={24} color="#c18a2b" />
-          <span className="stat-label">관리자</span>
-          <strong>{adminCount}</strong>
-        </div>
-      </div>
+      <nav className="admin-tabs" aria-label="관리자 메뉴">
+        {adminTabs.map((tab) => (
+          <Link className={activeTab === tab.key ? "active" : ""} href={`/admin?tab=${tab.key}`} key={tab.key}>
+            {tab.label}
+          </Link>
+        ))}
+      </nav>
 
-      <div className="admin-grid">
-        <section className="admin-panel">
-          <h2>강의 등록</h2>
-          <p>Gumlet 영상 정보를 저장하면 강의 목록, 상세, 시청 페이지에 바로 반영됩니다.</p>
-          <form action={createCourse} className="form-grid">
-            <input className="form-input" name="title" placeholder="강의 제목" required />
-            <input className="form-input" name="slug" placeholder="URL 슬러그 예: koryo-basic" />
-            <select className="select-input" name="category" defaultValue="유단자 품새">
-              {courseCategoryTree.map((category) => (
-                <option key={category.name}>{category.name}</option>
-              ))}
-            </select>
-            <input className="form-input" name="poomsae" list="course-subcategory-options" placeholder="하위 항목 예: 고려, 8장, 아래막기" required />
+      {activeTab === "members" ? (
+        <div className="admin-stack">
+          <div className="metric-grid">
+            <div className="metric-card">
+              <UsersRound size={24} color="#2458a8" />
+              <span className="stat-label">회원수</span>
+              <strong>{profileRows.length}</strong>
+            </div>
+            <div className="metric-card">
+              <ShieldCheck size={24} color="#167c76" />
+              <span className="stat-label">구독 중</span>
+              <strong>{activeSubscribers}</strong>
+            </div>
+            <div className="metric-card">
+              <UserRoundCheck size={24} color="#c18a2b" />
+              <span className="stat-label">관리자</span>
+              <strong>{adminCount}</strong>
+            </div>
+          </div>
+
+          <div className="table-wrap">
+            <h2>회원 및 구독 상태</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>회원</th>
+                  <th>권한</th>
+                  <th>구독 상태</th>
+                  <th>다음 갱신</th>
+                  <th>구독 변경</th>
+                  <th>권한 변경</th>
+                </tr>
+              </thead>
+              <tbody>
+                {profileRows.map((member) => {
+                  const subscription = subscriptionsByUser.get(member.id);
+
+                  return (
+                    <tr key={member.id}>
+                      <td>
+                        <strong>{member.display_name ?? member.email ?? "이름 없음"}</strong>
+                        <br />
+                        <span className="small-muted">{member.email}</span>
+                      </td>
+                      <td>{member.role === "admin" ? "관리자" : "회원"}</td>
+                      <td>{statusLabel(subscription?.status)}</td>
+                      <td>{formatDate(subscription?.current_period_end)}</td>
+                      <td>
+                        <form action={updateSubscriptionStatus} className="inline-form">
+                          <input type="hidden" name="userId" value={member.id} />
+                          <select className="select-input compact-select" name="status" defaultValue={subscription?.status ?? "inactive"}>
+                            {statuses.map((status) => (
+                              <option key={status} value={status}>
+                                {statusLabel(status)}
+                              </option>
+                            ))}
+                          </select>
+                          <button className="icon-button subtle compact">저장</button>
+                        </form>
+                      </td>
+                      <td>
+                        <form action={updateProfileRole} className="inline-form">
+                          <input type="hidden" name="userId" value={member.id} />
+                          <select className="select-input compact-select" name="role" defaultValue={member.role}>
+                            <option value="user">회원</option>
+                            <option value="admin">관리자</option>
+                          </select>
+                          <button className="icon-button subtle compact">저장</button>
+                        </form>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : null}
+
+      {activeTab === "create" ? (
+        <section className="admin-panel admin-form-panel">
+          <div className="admin-panel-heading">
+            <div>
+              <h2>강의 등록</h2>
+              <p>Gumlet Asset ID를 저장하면 강의 목록, 상세, 시청 페이지에 바로 반영됩니다.</p>
+            </div>
+            <FolderPlus size={28} color="#c93232" />
+          </div>
+          <form action={createCourse} className="form-grid course-create-form">
+            <label className="field-label">
+              강의 제목
+              <input className="form-input" name="title" placeholder="예: 몸통막기 기본 지도법" required />
+            </label>
+            <label className="field-label">
+              대분류
+              <select className="select-input" name="category" defaultValue="유단자 품새">
+                {courseCategoryTree.map((category) => (
+                  <option key={category.name}>{category.name}</option>
+                ))}
+              </select>
+            </label>
+            <label className="field-label">
+              하위 항목
+              <input className="form-input" name="poomsae" list="course-subcategory-options" placeholder="예: 고려, 몸통막기, 앞굽이" required />
+            </label>
             <datalist id="course-subcategory-options">
               {courseCategoryTree.flatMap((category) =>
                 category.items.map((item) => <option key={`${category.name}-${item}`} value={item} />)
               )}
             </datalist>
-            <input className="form-input" name="gumletVideoId" placeholder="Gumlet Asset ID, embed URL, watch URL, HLS URL" required />
-            <input className="form-input" name="durationMinutes" inputMode="numeric" placeholder="영상 길이(분) 예: 12" />
-            <input className="form-input" name="thumbnailUrl" placeholder="썸네일 URL 비우면 기본 이미지 사용" />
-            <input className="form-input" name="instructor" placeholder="내부 관리용 강사명 선택 입력" />
-            <select className="select-input" name="difficulty" defaultValue="지도자">
-              <option>입문</option>
-              <option>초급</option>
-              <option>중급</option>
-              <option>고급</option>
-              <option>지도자</option>
-            </select>
-            <select className="select-input" name="isPremium" defaultValue="true">
-              <option value="true">구독자 전용</option>
-              <option value="false">무료 공개</option>
-            </select>
-            <textarea className="form-input" name="description" placeholder="강의 설명" rows={4} />
-            <div className="form-actions">
+            <label className="field-label">
+              Gumlet Asset ID 또는 영상 URL
+              <input className="form-input" name="gumletVideoId" placeholder="예: 6a3452e3a43952886a2e3bbb" required />
+            </label>
+            <label className="field-label">
+              공개 권한
+              <select className="select-input" name="isPremium" defaultValue="true">
+                <option value="true">구독자 전용</option>
+                <option value="false">무료 공개</option>
+              </select>
+            </label>
+            <label className="field-label">
+              내부 관리용 강사명
+              <input className="form-input" name="instructor" list="instructor-options" placeholder="선택 입력" />
+            </label>
+            <datalist id="instructor-options">
+              {instructorOptions.map((name) => (
+                <option key={name} value={name} />
+              ))}
+            </datalist>
+            <label className="field-label">
+              썸네일 URL
+              <input className="form-input" name="thumbnailUrl" placeholder="비우면 기본 이미지 사용" />
+            </label>
+            <label className="field-label form-span">
+              강의 설명
+              <textarea className="form-input textarea-input" name="description" placeholder="강의 설명을 입력하세요." rows={5} />
+            </label>
+            <p className="form-note form-span">
+              영상 길이와 URL 슬러그는 직접 입력하지 않습니다. 길이는 Gumlet 영상 정보 연동 단계에서 자동 반영하고, URL은 강의 제목으로 자동 생성합니다.
+            </p>
+            <div className="form-actions form-span">
               <button className="icon-button primary large">
                 <FolderPlus size={20} />
-                <span>Supabase에 강의 저장</span>
+                <span>강의 저장</span>
               </button>
             </div>
           </form>
         </section>
+      ) : null}
 
-        <section className="admin-panel">
-          <h2>연동 상태</h2>
-          <p>현재 BOTEPS 2차 연동 진행 상태입니다.</p>
-          <div className="integration-list">
-            {[
-              ["Supabase Auth / DB", "연동"],
-              ["Gumlet Video", "연동"],
-              ["관리자 권한", "연동"],
-              ["Toss Payments", "다음"],
-              ["Stripe Billing", "대기"],
-              ["GA4 / Microsoft Clarity", "대기"]
-            ].map(([item, state]) => (
-              <div className="integration-item" key={item}>
-                <span>{item}</span>
-                <strong>{state}</strong>
-              </div>
-            ))}
+      {activeTab === "courses" ? (
+        <div className="table-wrap">
+          <div className="table-heading">
+            <div>
+              <h2>강의 목록</h2>
+              <p className="small-muted">관리자에서 등록한 Supabase 강의 데이터입니다.</p>
+            </div>
+            <Link className="icon-button subtle" href="/admin?tab=create">
+              <FolderPlus size={18} />
+              <span>강의 등록</span>
+            </Link>
           </div>
-        </section>
-      </div>
-
-      <div className="table-wrap" style={{ marginTop: 24 }}>
-        <h2>회원 및 구독 상태</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>회원</th>
-              <th>권한</th>
-              <th>구독 상태</th>
-              <th>다음 갱신</th>
-              <th>구독 변경</th>
-              <th>권한 변경</th>
-            </tr>
-          </thead>
-          <tbody>
-            {profileRows.map((member) => {
-              const subscription = subscriptionsByUser.get(member.id);
-
-              return (
-                <tr key={member.id}>
-                  <td>
-                    <strong>{member.display_name ?? member.email ?? "이름 없음"}</strong>
-                    <br />
-                    <span className="small-muted">{member.email}</span>
-                  </td>
-                  <td>{member.role === "admin" ? "관리자" : "회원"}</td>
-                  <td>{statusLabel(subscription?.status)}</td>
-                  <td>{formatDate(subscription?.current_period_end)}</td>
-                  <td>
-                    <form action={updateSubscriptionStatus} className="inline-form">
-                      <input type="hidden" name="userId" value={member.id} />
-                      <select className="select-input compact-select" name="status" defaultValue={subscription?.status ?? "inactive"}>
-                        {statuses.map((status) => (
-                          <option key={status} value={status}>
-                            {statusLabel(status)}
-                          </option>
-                        ))}
-                      </select>
-                      <button className="icon-button subtle compact">저장</button>
-                    </form>
-                  </td>
-                  <td>
-                    <form action={updateProfileRole} className="inline-form">
-                      <input type="hidden" name="userId" value={member.id} />
-                      <select className="select-input compact-select" name="role" defaultValue={member.role}>
-                        <option value="user">회원</option>
-                        <option value="admin">관리자</option>
-                      </select>
-                      <button className="icon-button subtle compact">저장</button>
-                    </form>
-                  </td>
+          {courseRows.length === 0 ? (
+            <div className="empty-state">아직 Supabase에 저장된 강의가 없습니다. 강의 등록 탭에서 첫 강의를 저장해보세요.</div>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>강의</th>
+                  <th>대분류</th>
+                  <th>하위 항목</th>
+                  <th>내부 강사명</th>
+                  <th>권한</th>
+                  <th>영상</th>
+                  <th>확인</th>
+                  <th>게시일</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="table-wrap" style={{ marginTop: 24 }}>
-        <h2>Supabase 강의 데이터</h2>
-        {courseRows.length === 0 ? (
-          <div className="empty-state">아직 Supabase에 저장된 강의가 없습니다. 위 등록 폼으로 첫 강의를 저장해보세요.</div>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>강의</th>
-                <th>카테고리</th>
-                <th>강사</th>
-                <th>권한</th>
-                <th>Gumlet</th>
-                <th>확인</th>
-                <th>게시일</th>
-              </tr>
-            </thead>
-            <tbody>
-              {courseRows.map((course) => (
-                <tr key={course.id}>
-                  <td>
-                    <strong>{course.title}</strong>
-                    <br />
-                    <span className="small-muted">{course.slug}</span>
-                  </td>
-                  <td>{course.category}</td>
-                  <td>{course.instructor ?? "-"}</td>
-                  <td>{course.is_premium ? "구독자 전용" : "무료"}</td>
-                  <td>{course.gumlet_video_id ? "등록됨" : "-"}</td>
-                  <td>
-                    <div className="inline-form">
-                      <a className="text-link" href={`/courses/${course.slug}`}>
-                        상세
-                      </a>
-                      <a className="text-link" href={`/watch/${course.slug}`}>
-                        시청
-                      </a>
-                    </div>
-                  </td>
-                  <td>{formatDate(course.published_at)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      <div className="table-wrap" style={{ marginTop: 24 }}>
-        <h2>MVP 더미 강의</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>강의</th>
-              <th>카테고리</th>
-              <th>강사</th>
-              <th>권한</th>
-              <th>영상</th>
-            </tr>
-          </thead>
-          <tbody>
-            {courses.map((course) => (
-              <tr key={course.slug}>
-                <td>{course.title}</td>
-                <td>{course.category}</td>
-                <td>{course.instructor}</td>
-                <td>{course.isPremium ? "구독자 전용" : "무료"}</td>
-                <td>{course.embedUrl ? "Gumlet" : "더미"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody>
+                {courseRows.map((course) => (
+                  <tr key={course.id}>
+                    <td>
+                      <strong>{course.title}</strong>
+                      <br />
+                      <span className="small-muted">{course.slug}</span>
+                    </td>
+                    <td>{course.category}</td>
+                    <td>{course.poomsae ?? "-"}</td>
+                    <td>{course.instructor ?? "-"}</td>
+                    <td>{course.is_premium ? "구독자 전용" : "무료"}</td>
+                    <td>{course.gumlet_video_id ? "Gumlet" : "-"}</td>
+                    <td>
+                      <div className="inline-form">
+                        <Link className="text-link" href={`/courses/${course.slug}`}>
+                          상세
+                        </Link>
+                        <Link className="text-link" href={`/watch/${course.slug}`}>
+                          시청
+                        </Link>
+                      </div>
+                    </td>
+                    <td>{formatDate(course.published_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      ) : null}
     </section>
   );
 }
