@@ -4,6 +4,7 @@ import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
 type DbChapterRow = {
+  course_id?: string;
   title: string;
   starts_at_seconds: number;
   cue: string | null;
@@ -101,16 +102,40 @@ export async function getRuntimeCourses() {
 
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
+    const { data: courseRows, error: courseError } = await supabase
       .from("courses")
       .select(
-        "id,slug,title,category,poomsae,instructor,description,difficulty,duration_seconds,thumbnail_url,gumlet_video_id,is_premium,published_at,created_at,course_chapters(title,starts_at_seconds,cue,sort_order)"
+        "id,slug,title,category,poomsae,instructor,description,difficulty,duration_seconds,thumbnail_url,gumlet_video_id,is_premium,published_at,created_at"
       )
       .order("created_at", { ascending: false });
 
-    if (error) return fallbackCourses;
+    if (courseError) return fallbackCourses;
 
-    const dbCourses = ((data ?? []) as DbCourseRow[]).map(mapDbCourse);
+    const rows = (courseRows ?? []) as DbCourseRow[];
+    const courseIds = rows.map((row) => row.id);
+    const chaptersByCourse = new Map<string, DbChapterRow[]>();
+
+    if (courseIds.length > 0) {
+      const { data: chapterRows } = await supabase
+        .from("course_chapters")
+        .select("course_id,title,starts_at_seconds,cue,sort_order")
+        .in("course_id", courseIds)
+        .order("sort_order", { ascending: true });
+
+      for (const chapter of (chapterRows ?? []) as DbChapterRow[]) {
+        if (!chapter.course_id) continue;
+        const chapters = chaptersByCourse.get(chapter.course_id) ?? [];
+        chapters.push(chapter);
+        chaptersByCourse.set(chapter.course_id, chapters);
+      }
+    }
+
+    const dbCourses = rows.map((row) =>
+      mapDbCourse({
+        ...row,
+        course_chapters: chaptersByCourse.get(row.id) ?? []
+      })
+    );
     const dbSlugs = new Set(dbCourses.map((course) => course.slug));
     return [...dbCourses, ...fallbackCourses.filter((course) => !dbSlugs.has(course.slug))];
   } catch {
@@ -118,19 +143,24 @@ export async function getRuntimeCourses() {
   }
 }
 
+function matchesSlug(course: Course, slug: string) {
+  const decodedSlug = decodeURIComponent(slug);
+  return course.slug === slug || course.slug === decodedSlug;
+}
+
 export async function getRuntimeCourse(slug: string) {
   const runtimeCourses = await getRuntimeCourses();
-  return runtimeCourses.find((course) => course.slug === slug);
+  return runtimeCourses.find((course) => matchesSlug(course, slug));
 }
 
 export async function getRuntimeRelatedCourses(slug: string) {
   const runtimeCourses = await getRuntimeCourses();
-  const active = runtimeCourses.find((course) => course.slug === slug);
-  return runtimeCourses.filter((course) => course.slug !== slug && course.category === active?.category).slice(0, 2);
+  const active = runtimeCourses.find((course) => matchesSlug(course, slug));
+  return runtimeCourses.filter((course) => !matchesSlug(course, slug) && course.category === active?.category).slice(0, 2);
 }
 
 export async function getRuntimeNextCourse(slug: string) {
   const runtimeCourses = await getRuntimeCourses();
-  const index = runtimeCourses.findIndex((item) => item.slug === slug);
+  const index = runtimeCourses.findIndex((item) => matchesSlug(item, slug));
   return runtimeCourses[(index + 1) % runtimeCourses.length] ?? fallbackCourses[0];
 }
