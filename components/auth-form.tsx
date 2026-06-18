@@ -102,8 +102,13 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
               <h2>회원정보 입력</h2>
               <form action={signupAction} className="stacked-form">
                 <input type="hidden" name="next" value={nextPath} />
-                <input className="auth-input top" name="fullName" placeholder="이름" autoComplete="name" />
-                <input className="auth-input middle" name="birthDate" type="date" aria-label="생년월일" />
+                <input className="auth-input top" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
+                <input className="auth-input middle" name="password" placeholder="비밀번호 6자 이상" type="password" autoComplete="new-password" />
+                <input className="auth-input middle" name="fullName" placeholder="이름" autoComplete="name" />
+                <label className="auth-date-field">
+                  <span>생년월일</span>
+                  <input name="birthDate" type="date" aria-label="생년월일" />
+                </label>
                 <select className="auth-input middle" name="gender" defaultValue="" aria-label="성별">
                   <option value="" disabled>
                     성별
@@ -112,9 +117,7 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
                   <option value="female">여성</option>
                 </select>
                 <input className="auth-input middle" name="phone" placeholder="전화번호" type="tel" autoComplete="tel" />
-                <input className="auth-input middle" name="address" placeholder="주소" autoComplete="street-address" />
-                <input className="auth-input middle" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
-                <input className="auth-input bottom" name="password" placeholder="비밀번호 6자 이상" type="password" autoComplete="new-password" />
+                <input className="auth-input bottom" name="address" placeholder="주소" autoComplete="street-address" />
 
                 {signupState.message ? <p className="form-message">{signupState.message}</p> : null}
 

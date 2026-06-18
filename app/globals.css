@@ -872,6 +872,39 @@ h3 {
   margin-top: -1px;
 }
 
+.auth-date-field {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #cfd4d0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 104px 1fr;
+  min-height: 58px;
+  margin-top: -1px;
+  padding: 0 18px;
+}
+
+.auth-date-field span {
+  color: #6c7370;
+  font-size: 17px;
+}
+
+.auth-date-field input {
+  border: 0;
+  color: var(--ink);
+  font-size: 17px;
+  min-height: 54px;
+  outline: 0;
+  width: 100%;
+}
+
+.auth-date-field:focus-within {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 1px var(--teal);
+  position: relative;
+  z-index: 1;
+}
+
 .auth-links {
   align-items: center;
   display: flex;
