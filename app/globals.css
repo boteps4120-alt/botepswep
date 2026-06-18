@@ -1012,6 +1012,11 @@ th {
   font-size: 13px;
 }
 
+.address-cell {
+  max-width: 280px;
+  white-space: normal;
+}
+
 .form-grid {
   display: grid;
   gap: 12px;

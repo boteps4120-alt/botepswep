@@ -14,6 +14,11 @@ type ProfileRow = {
   id: string;
   email: string | null;
   display_name: string | null;
+  full_name: string | null;
+  birth_date: string | null;
+  gender: string | null;
+  phone: string | null;
+  address: string | null;
   role: string;
   created_at: string;
 };
@@ -70,6 +75,21 @@ function formatDate(date?: string | null) {
   }).format(new Date(date));
 }
 
+function genderLabel(gender?: string | null) {
+  switch (gender) {
+    case "male":
+      return "남성";
+    case "female":
+      return "여성";
+    case "other":
+      return "기타";
+    case "prefer_not_to_say":
+      return "응답하지 않음";
+    default:
+      return "-";
+  }
+}
+
 function getTab(value?: string): AdminTab {
   if (value === "create" || value === "courses") return value;
   return "members";
@@ -100,7 +120,10 @@ export default async function AdminPage({
 
   const [{ data: profiles }, { data: subscriptions }, { data: dbCourses }] = supabase
     ? await Promise.all([
-        supabase.from("profiles").select("id,email,display_name,role,created_at").order("created_at", { ascending: false }),
+        supabase
+          .from("profiles")
+          .select("id,email,display_name,full_name,birth_date,gender,phone,address,role,created_at")
+          .order("created_at", { ascending: false }),
         supabase.from("subscriptions").select("user_id,status,provider,current_period_end,updated_at"),
         supabase
           .from("courses")
@@ -159,6 +182,11 @@ export default async function AdminPage({
               <thead>
                 <tr>
                   <th>회원</th>
+                  <th>이름</th>
+                  <th>생년월일</th>
+                  <th>성별</th>
+                  <th>전화번호</th>
+                  <th>주소</th>
                   <th>권한</th>
                   <th>구독 상태</th>
                   <th>다음 갱신</th>
@@ -177,6 +205,11 @@ export default async function AdminPage({
                         <br />
                         <span className="small-muted">{member.email}</span>
                       </td>
+                      <td>{member.full_name ?? member.display_name ?? "-"}</td>
+                      <td>{formatDate(member.birth_date)}</td>
+                      <td>{genderLabel(member.gender)}</td>
+                      <td>{member.phone ?? "-"}</td>
+                      <td className="address-cell">{member.address ?? "-"}</td>
                       <td>{member.role === "admin" ? "관리자" : "회원"}</td>
                       <td>{statusLabel(subscription?.status)}</td>
                       <td>{formatDate(subscription?.current_period_end)}</td>

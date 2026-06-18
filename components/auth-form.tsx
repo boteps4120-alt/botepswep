@@ -75,7 +75,20 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
 
           <form action={signupAction} className="stacked-form">
             <input type="hidden" name="next" value={nextPath} />
-            <input className="auth-input top" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
+            <input className="auth-input top" name="fullName" placeholder="이름" autoComplete="name" />
+            <input className="auth-input middle" name="birthDate" type="date" aria-label="생년월일" />
+            <select className="auth-input middle" name="gender" defaultValue="" aria-label="성별">
+              <option value="" disabled>
+                성별
+              </option>
+              <option value="male">남성</option>
+              <option value="female">여성</option>
+              <option value="other">기타</option>
+              <option value="prefer_not_to_say">응답하지 않음</option>
+            </select>
+            <input className="auth-input middle" name="phone" placeholder="전화번호" type="tel" autoComplete="tel" />
+            <input className="auth-input middle" name="address" placeholder="주소" autoComplete="street-address" />
+            <input className="auth-input middle" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
             <input className="auth-input bottom" name="password" placeholder="비밀번호 6자 이상" type="password" autoComplete="new-password" />
 
             {signupState.message ? <p className="form-message">{signupState.message}</p> : null}

@@ -21,12 +21,16 @@ function getSafeNext(formData: FormData) {
   return next;
 }
 
+function clean(formData: FormData, key: string) {
+  return String(formData.get(key) ?? "").trim();
+}
+
 export async function signInWithPassword(_state: AuthState, formData: FormData): Promise<AuthState> {
   if (!hasSupabaseEnv()) {
     return { message: "Supabase 환경변수가 아직 설정되지 않았습니다." };
   }
 
-  const email = String(formData.get("email") ?? "").trim();
+  const email = clean(formData, "email");
   const password = String(formData.get("password") ?? "");
   const next = getSafeNext(formData);
 
@@ -53,12 +57,17 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
     return { message: "Supabase 환경변수가 아직 설정되지 않았습니다." };
   }
 
-  const email = String(formData.get("email") ?? "").trim();
+  const email = clean(formData, "email");
   const password = String(formData.get("password") ?? "");
+  const fullName = clean(formData, "fullName");
+  const birthDate = clean(formData, "birthDate");
+  const gender = clean(formData, "gender");
+  const phone = clean(formData, "phone");
+  const address = clean(formData, "address");
   const next = getSafeNext(formData);
 
-  if (!email || !password) {
-    return { message: "아이디와 비밀번호를 모두 입력해주세요." };
+  if (!email || !password || !fullName || !birthDate || !gender || !phone || !address) {
+    return { message: "이름, 생년월일, 성별, 전화번호, 주소, 아이디와 비밀번호를 모두 입력해주세요." };
   }
 
   if (password.length < 6) {
@@ -70,7 +79,15 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
     email,
     password,
     options: {
-      emailRedirectTo: `${getBaseUrl()}/auth/callback?next=${encodeURIComponent(next)}`
+      emailRedirectTo: `${getBaseUrl()}/auth/callback?next=${encodeURIComponent(next)}`,
+      data: {
+        display_name: fullName,
+        full_name: fullName,
+        birth_date: birthDate,
+        gender,
+        phone,
+        address
+      }
     }
   });
 
@@ -79,6 +96,22 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
   }
 
   if (data.session) {
+    if (data.user?.id) {
+      await supabase
+        .from("profiles")
+        .update({
+          email,
+          display_name: fullName,
+          full_name: fullName,
+          birth_date: birthDate,
+          gender,
+          phone,
+          address,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", data.user.id);
+    }
+
     revalidatePath("/", "layout");
     redirect(next);
   }

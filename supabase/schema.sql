@@ -4,10 +4,21 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text,
   display_name text,
+  full_name text,
+  birth_date date,
+  gender text check (gender in ('male', 'female', 'other', 'prefer_not_to_say')),
+  phone text,
+  address text,
   role text not null default 'user' check (role in ('user', 'admin')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.profiles add column if not exists full_name text;
+alter table public.profiles add column if not exists birth_date date;
+alter table public.profiles add column if not exists gender text;
+alter table public.profiles add column if not exists phone text;
+alter table public.profiles add column if not exists address text;
 
 create table if not exists public.courses (
   id uuid primary key default gen_random_uuid(),
@@ -72,15 +83,25 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, email, display_name)
+  insert into public.profiles (id, email, display_name, full_name, birth_date, gender, phone, address)
   values (
     new.id,
     new.email,
-    coalesce(new.raw_user_meta_data ->> 'display_name', new.raw_user_meta_data ->> 'full_name', split_part(new.email, '@', 1))
+    coalesce(new.raw_user_meta_data ->> 'display_name', new.raw_user_meta_data ->> 'full_name', split_part(new.email, '@', 1)),
+    nullif(new.raw_user_meta_data ->> 'full_name', ''),
+    nullif(new.raw_user_meta_data ->> 'birth_date', '')::date,
+    nullif(new.raw_user_meta_data ->> 'gender', ''),
+    nullif(new.raw_user_meta_data ->> 'phone', ''),
+    nullif(new.raw_user_meta_data ->> 'address', '')
   )
   on conflict (id) do update
   set email = excluded.email,
       display_name = coalesce(public.profiles.display_name, excluded.display_name),
+      full_name = coalesce(public.profiles.full_name, excluded.full_name),
+      birth_date = coalesce(public.profiles.birth_date, excluded.birth_date),
+      gender = coalesce(public.profiles.gender, excluded.gender),
+      phone = coalesce(public.profiles.phone, excluded.phone),
+      address = coalesce(public.profiles.address, excluded.address),
       updated_at = now();
 
   insert into public.subscriptions (user_id, status, provider)
@@ -124,6 +145,10 @@ create policy "Profiles are readable by owner or admin" on public.profiles
   for select using (auth.uid() = id or public.is_admin());
 
 drop policy if exists "Profiles are editable by owner" on public.profiles;
+create policy "Profiles are editable by owner" on public.profiles
+  for update using (auth.uid() = id)
+  with check (auth.uid() = id);
+
 drop policy if exists "Profiles are editable by admin" on public.profiles;
 create policy "Profiles are editable by admin" on public.profiles
   for update using (public.is_admin())
