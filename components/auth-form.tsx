@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { type FormEvent, useActionState, useState } from "react";
 import Link from "next/link";
 import { CalendarDays, Chrome, LogIn, MailPlus } from "lucide-react";
 import { signInWithGoogle, signInWithPassword, signUpWithPassword } from "@/app/auth/actions";
@@ -27,6 +27,28 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
   function showSignup() {
     setMode("signup");
     setSignupStep("choice");
+  }
+
+  function handleSignupSubmit(event: FormEvent<HTMLFormElement>) {
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const birthDate = String(formData.get("birthDate") ?? "").trim();
+    const phone = String(formData.get("phone") ?? "").trim();
+
+    if (birthDate && !/^\d{8}$/.test(birthDate)) {
+      event.preventDefault();
+      alert("생년월일은 8자리 숫자로 입력해주세요.");
+      const birthDateInput = form.elements.namedItem("birthDate");
+      if (birthDateInput instanceof HTMLElement) birthDateInput.focus();
+      return;
+    }
+
+    if (phone && !/^\d+$/.test(phone)) {
+      event.preventDefault();
+      alert("핸드폰 번호는 숫자로 입력해주세요.");
+      const phoneInput = form.elements.namedItem("phone");
+      if (phoneInput instanceof HTMLElement) phoneInput.focus();
+    }
   }
 
   return (
@@ -100,7 +122,7 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
           ) : (
             <>
               <h2>회원정보 입력</h2>
-              <form action={signupAction} className="stacked-form">
+              <form action={signupAction} className="stacked-form" onSubmit={handleSignupSubmit}>
                 <input type="hidden" name="next" value={nextPath} />
                 <input className="auth-input top" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
                 <input className="auth-input middle" name="password" placeholder="비밀번호 6자 이상" type="password" autoComplete="new-password" />
@@ -123,7 +145,14 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
                   <option value="male">남성</option>
                   <option value="female">여성</option>
                 </select>
-                <input className="auth-input middle" name="phone" placeholder="전화번호" type="tel" autoComplete="tel" />
+                <input
+                  className="auth-input middle"
+                  name="phone"
+                  placeholder="전화번호"
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
+                />
                 <input className="auth-input bottom" name="address" placeholder="주소" autoComplete="street-address" />
 
                 {signupState.message ? <p className="form-message">{signupState.message}</p> : null}

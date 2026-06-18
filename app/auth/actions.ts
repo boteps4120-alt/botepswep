@@ -87,6 +87,10 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
     return { message: "이름, 생년월일, 성별, 전화번호, 주소, 아이디와 비밀번호를 모두 입력해주세요." };
   }
 
+  if (!/^\d+$/.test(phone)) {
+    return { message: "핸드폰 번호는 숫자로 입력해주세요." };
+  }
+
   if (!birthDate) {
     return { message: "생년월일은 19950101처럼 8자리 숫자로 입력해주세요." };
   }
