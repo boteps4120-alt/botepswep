@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bookmark, CreditCard, PlayCircle, Settings, UserRound } from "lucide-react";
-import { courses, currentUser, payments } from "@/lib/data";
+import { Bookmark, CreditCard, Settings, UserRound } from "lucide-react";
+import { currentUser, payments } from "@/lib/data";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,6 +23,21 @@ type ProfileRow = {
 type SubscriptionRow = {
   status: string;
   current_period_end: string | null;
+};
+
+type CourseSummary = {
+  slug: string;
+  title: string;
+  poomsae: string | null;
+};
+
+type WatchProgressRow = {
+  progress_percent: number;
+  courses: CourseSummary | null;
+};
+
+type BookmarkRow = {
+  courses: CourseSummary | null;
 };
 
 const mypageTabs: { key: MyPageTab; label: string }[] = [
@@ -91,7 +106,7 @@ export default async function MyPage({
     redirect("/login?next=/mypage");
   }
 
-  const [{ data: subscription }, { data: profile }] =
+  const [{ data: subscription }, { data: profile }, { data: watchProgress }, { data: bookmarks }] =
     supabase && user
       ? await Promise.all([
           supabase
@@ -103,9 +118,20 @@ export default async function MyPage({
             .from("profiles")
             .select("email,display_name,full_name,birth_date,gender,phone,address,role")
             .eq("id", user.id)
-            .maybeSingle<ProfileRow>()
+            .maybeSingle<ProfileRow>(),
+          supabase
+            .from("watch_progress")
+            .select("progress_percent,courses(slug,title,poomsae)")
+            .eq("user_id", user.id)
+            .gt("progress_percent", 0)
+            .order("updated_at", { ascending: false }),
+          supabase
+            .from("bookmarks")
+            .select("courses(slug,title,poomsae)")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
         ])
-      : [{ data: null }, { data: null }];
+      : [{ data: null }, { data: null }, { data: [] }, { data: [] }];
 
   const profileName =
     profile?.full_name ??
@@ -117,8 +143,8 @@ export default async function MyPage({
   const accountEmail = profile?.email ?? user?.email ?? "-";
   const subscriptionStatus = subscriptionLabel(subscription?.status);
   const renewsAt = subscription?.status === "active" ? formatDate(subscription.current_period_end) : "결제 연동 전";
-  const watching = courses.filter((course) => course.progress > 0);
-  const bookmarked = courses.slice(0, 3);
+  const watching = ((watchProgress ?? []) as unknown as WatchProgressRow[]).filter((item) => item.courses);
+  const bookmarked = ((bookmarks ?? []) as unknown as BookmarkRow[]).filter((item) => item.courses);
 
   return (
     <section className="page-shell">
@@ -179,23 +205,12 @@ export default async function MyPage({
                 <span>전화번호</span>
                 <strong>{valueOrDash(profile?.phone)}</strong>
               </div>
-              <div className="profile-info-item">
-                <span>권한</span>
-                <strong>{profile?.role === "admin" ? "관리자" : "회원"}</strong>
-              </div>
               <div className="profile-info-item wide">
                 <span>주소</span>
                 <strong>{valueOrDash(profile?.address)}</strong>
               </div>
             </div>
           </section>
-
-          <div className="form-actions">
-            <button className="icon-button subtle large">
-              <Settings size={20} />
-              <span>계정 설정</span>
-            </button>
-          </div>
         </div>
       ) : null}
 
@@ -207,13 +222,13 @@ export default async function MyPage({
               <div className="integration-list">
                 {watching.length > 0 ? (
                   watching.map((course) => (
-                    <Link className="integration-item" key={course.slug} href={`/watch/${course.slug}`}>
-                      <span>{course.title}</span>
-                      <strong>{course.progress}%</strong>
+                    <Link className="integration-item" key={course.courses!.slug} href={`/watch/${course.courses!.slug}`}>
+                      <span>{course.courses!.title}</span>
+                      <strong>{course.progress_percent}%</strong>
                     </Link>
                   ))
                 ) : (
-                  <div className="empty-state">아직 시청 중인 강의가 없습니다.</div>
+                  <div className="empty-state">아직 이어볼 강의가 없습니다.</div>
                 )}
               </div>
             </section>
@@ -221,21 +236,18 @@ export default async function MyPage({
             <section className="player-panel">
               <h2>찜한 강의</h2>
               <div className="integration-list">
-                {bookmarked.map((course) => (
-                  <Link className="integration-item" key={course.slug} href={`/courses/${course.slug}`}>
-                    <span>{course.poomsae}</span>
-                    <Bookmark size={18} />
-                  </Link>
-                ))}
+                {bookmarked.length > 0 ? (
+                  bookmarked.map((bookmark) => (
+                    <Link className="integration-item" key={bookmark.courses!.slug} href={`/courses/${bookmark.courses!.slug}`}>
+                      <span>{bookmark.courses!.poomsae ?? bookmark.courses!.title}</span>
+                      <Bookmark size={18} />
+                    </Link>
+                  ))
+                ) : (
+                  <div className="empty-state">아직 찜한 강의가 없습니다.</div>
+                )}
               </div>
             </section>
-          </div>
-
-          <div className="form-actions">
-            <Link className="icon-button primary large" href={`/watch/${watching[0]?.slug ?? courses[0].slug}`}>
-              <PlayCircle size={20} />
-              <span>마지막 강의 이어보기</span>
-            </Link>
           </div>
         </div>
       ) : null}
