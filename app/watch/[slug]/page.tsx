@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { LockKeyhole } from "lucide-react";
-import { courses, getCourse } from "@/lib/data";
+import { getRuntimeCourse, getRuntimeNextCourse } from "@/lib/server-courses";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { WatchPlayer } from "./watch-player";
@@ -16,14 +16,9 @@ type ProfileRow = {
   role: string;
 };
 
-function getNextCourse(slug: string) {
-  const index = courses.findIndex((item) => item.slug === slug);
-  return courses[(index + 1) % courses.length];
-}
-
 export default async function WatchPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getRuntimeCourse(slug);
 
   if (!course) {
     notFound();
@@ -75,5 +70,5 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
     );
   }
 
-  return <WatchPlayer course={course} nextCourse={getNextCourse(course.slug)} />;
+  return <WatchPlayer course={course} nextCourse={await getRuntimeNextCourse(course.slug)} />;
 }

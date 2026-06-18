@@ -3,15 +3,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Bookmark, CheckCircle2, Lock, PlayCircle } from "lucide-react";
 import { CourseCard } from "@/components/course-card";
-import { currentUser, getCourse, relatedCourses } from "@/lib/data";
+import { currentUser } from "@/lib/data";
+import { getRuntimeCourse, getRuntimeRelatedCourses } from "@/lib/server-courses";
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getRuntimeCourse(slug);
   if (!course) notFound();
 
   const canWatch = !course.isPremium || currentUser.isSubscribed;
-  const related = relatedCourses(course.slug);
+  const related = await getRuntimeRelatedCourses(course.slug);
 
   return (
     <section className="page-shell">

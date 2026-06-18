@@ -126,23 +126,25 @@ export default async function AdminPage() {
       <div className="admin-grid">
         <section className="admin-panel">
           <h2>강의 등록</h2>
-          <p>Gumlet Asset ID 또는 embed URL을 저장해두는 단계입니다. 강의 목록 실제 전환 때 이 데이터를 사용합니다.</p>
+          <p>Gumlet 영상 정보를 저장하면 강의 목록, 상세, 시청 페이지에 바로 반영됩니다.</p>
           <form action={createCourse} className="form-grid">
             <input className="form-input" name="title" placeholder="강의 제목" required />
             <input className="form-input" name="slug" placeholder="URL 슬러그 예: koryo-basic" />
-            <input className="form-input" name="poomsae" list="course-subcategory-options" placeholder="하위 항목 예: 고려, 8장, 아래막기" />
-            <datalist id="course-subcategory-options">
-              {courseCategoryTree.flatMap((category) =>
-                category.items.map((item) => <option key={`${category.name}-${item}`} value={item} />)
-              )}
-            </datalist>
-            <input className="form-input" name="instructor" placeholder="강사명" />
-            <input className="form-input" name="gumletVideoId" placeholder="Gumlet Asset ID 또는 embed URL" />
             <select className="select-input" name="category" defaultValue="유단자 품새">
               {courseCategoryTree.map((category) => (
                 <option key={category.name}>{category.name}</option>
               ))}
             </select>
+            <input className="form-input" name="poomsae" list="course-subcategory-options" placeholder="하위 항목 예: 고려, 8장, 아래막기" required />
+            <datalist id="course-subcategory-options">
+              {courseCategoryTree.flatMap((category) =>
+                category.items.map((item) => <option key={`${category.name}-${item}`} value={item} />)
+              )}
+            </datalist>
+            <input className="form-input" name="gumletVideoId" placeholder="Gumlet Asset ID, embed URL, watch URL, HLS URL" required />
+            <input className="form-input" name="durationMinutes" inputMode="numeric" placeholder="영상 길이(분) 예: 12" />
+            <input className="form-input" name="thumbnailUrl" placeholder="썸네일 URL 비우면 기본 이미지 사용" />
+            <input className="form-input" name="instructor" placeholder="내부 관리용 강사명 선택 입력" />
             <select className="select-input" name="difficulty" defaultValue="지도자">
               <option>입문</option>
               <option>초급</option>
@@ -255,6 +257,7 @@ export default async function AdminPage() {
                 <th>강사</th>
                 <th>권한</th>
                 <th>Gumlet</th>
+                <th>확인</th>
                 <th>게시일</th>
               </tr>
             </thead>
@@ -270,6 +273,16 @@ export default async function AdminPage() {
                   <td>{course.instructor ?? "-"}</td>
                   <td>{course.is_premium ? "구독자 전용" : "무료"}</td>
                   <td>{course.gumlet_video_id ? "등록됨" : "-"}</td>
+                  <td>
+                    <div className="inline-form">
+                      <a className="text-link" href={`/courses/${course.slug}`}>
+                        상세
+                      </a>
+                      <a className="text-link" href={`/watch/${course.slug}`}>
+                        시청
+                      </a>
+                    </div>
+                  </td>
                   <td>{formatDate(course.published_at)}</td>
                 </tr>
               ))}

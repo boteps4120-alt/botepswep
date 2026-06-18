@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { extractGumletAssetId } from "@/lib/gumlet";
 import { createClient } from "@/lib/supabase/server";
 
 const subscriptionStatuses = new Set(["inactive", "active", "past_due", "canceled", "expired"]);
@@ -91,13 +92,19 @@ export async function createCourse(formData: FormData) {
   const poomsae = clean(formData.get("poomsae"));
   const instructor = clean(formData.get("instructor"));
   const difficulty = clean(formData.get("difficulty"));
-  const gumletVideoId = clean(formData.get("gumletVideoId"));
+  const gumletVideoId = extractGumletAssetId(clean(formData.get("gumletVideoId")));
   const description = clean(formData.get("description"));
+  const thumbnailUrl = clean(formData.get("thumbnailUrl")) || "/images/taekwondo-hero.png";
+  const durationMinutes = Number(clean(formData.get("durationMinutes")) || "0");
   const isPremium = clean(formData.get("isPremium")) === "true";
   const slug = slugify(clean(formData.get("slug")) || title);
 
-  if (!title || !category || !slug) {
-    throw new Error("강의 제목, 카테고리, 슬러그는 필수입니다.");
+  if (!title || !category || !poomsae || !slug) {
+    throw new Error("강의 제목, 카테고리, 하위 항목, 슬러그는 필수입니다.");
+  }
+
+  if (!gumletVideoId) {
+    throw new Error("Gumlet Asset ID 또는 영상 URL을 입력해주세요.");
   }
 
   const { error } = await supabase.from("courses").insert({
@@ -109,7 +116,8 @@ export async function createCourse(formData: FormData) {
     description,
     difficulty,
     gumlet_video_id: gumletVideoId,
-    thumbnail_url: "/images/taekwondo-hero.png",
+    thumbnail_url: thumbnailUrl,
+    duration_seconds: Number.isFinite(durationMinutes) ? Math.max(0, Math.round(durationMinutes * 60)) : 0,
     is_premium: isPremium,
     published_at: new Date().toISOString()
   });
@@ -119,4 +127,7 @@ export async function createCourse(formData: FormData) {
   }
 
   revalidatePath("/admin");
+  revalidatePath("/courses");
+  revalidatePath(`/courses/${slug}`);
+  revalidatePath(`/watch/${slug}`);
 }
