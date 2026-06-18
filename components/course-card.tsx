@@ -22,7 +22,7 @@ export function CourseCard({ course }: { course: Course }) {
         <h3>{course.title}</h3>
         <p>{course.description}</p>
         <div className="card-footer">
-          <span>{course.instructor}</span>
+          <span>{course.poomsae}</span>
           <Link className="icon-button compact" href={`/watch/${course.slug}`}>
             <PlayCircle size={17} />
             <span>시청</span>
