@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, ClipboardList, PlayCircle, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, PlayCircle, ShieldCheck } from "lucide-react";
 import { CourseCard } from "@/components/course-card";
 import { courses } from "@/lib/data";
 
@@ -73,22 +73,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell workflow-band">
-        <div className="workflow-copy">
-          <p className="eyebrow">1차 MVP 흐름</p>
-          <h2>검색, 구독, 시청, 관리까지 한 번에 확인</h2>
-          <p>현재 버전은 외부서비스 없이 더미 데이터로 동작합니다. 2차에서 Supabase, Gumlet, Toss, Stripe로 실제 서비스를 연결합니다.</p>
-        </div>
-        <div className="workflow-list">
-          {["강의 검색", "구독 권한 확인", "동작별 시청", "진도 저장", "관리자 등록"].map((item, index) => (
-            <div className="workflow-step" key={item}>
-              <span>{index + 1}</span>
-              <strong>{item}</strong>
-              <ClipboardList size={18} />
-            </div>
-          ))}
-        </div>
-      </section>
     </>
   );
 }
