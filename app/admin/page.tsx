@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { BarChart3, FolderPlus, ShieldCheck, UserRoundCheck } from "lucide-react";
-import { courses } from "@/lib/data";
+import { courseCategoryTree, courses } from "@/lib/data";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { createCourse, updateProfileRole, updateSubscriptionStatus } from "./actions";
@@ -130,21 +130,24 @@ export default async function AdminPage() {
           <form action={createCourse} className="form-grid">
             <input className="form-input" name="title" placeholder="강의 제목" required />
             <input className="form-input" name="slug" placeholder="URL 슬러그 예: koryo-basic" />
-            <input className="form-input" name="poomsae" placeholder="품새명" />
+            <input className="form-input" name="poomsae" list="course-subcategory-options" placeholder="하위 항목 예: 고려, 8장, 아래막기" />
+            <datalist id="course-subcategory-options">
+              {courseCategoryTree.flatMap((category) =>
+                category.items.map((item) => <option key={`${category.name}-${item}`} value={item} />)
+              )}
+            </datalist>
             <input className="form-input" name="instructor" placeholder="강사명" />
             <input className="form-input" name="gumletVideoId" placeholder="Gumlet Asset ID 또는 embed URL" />
             <select className="select-input" name="category" defaultValue="유단자 품새">
-              <option>태극 품새</option>
-              <option>유단자 품새</option>
-              <option>경기 품새</option>
-              <option>품새 이론</option>
-              <option>표현력</option>
-              <option>실수 교정</option>
+              {courseCategoryTree.map((category) => (
+                <option key={category.name}>{category.name}</option>
+              ))}
             </select>
             <select className="select-input" name="difficulty" defaultValue="지도자">
               <option>입문</option>
+              <option>초급</option>
               <option>중급</option>
-              <option>상급</option>
+              <option>고급</option>
               <option>지도자</option>
             </select>
             <select className="select-input" name="isPremium" defaultValue="true">

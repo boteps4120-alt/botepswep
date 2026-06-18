@@ -2,19 +2,23 @@
 
 import { useMemo, useState } from "react";
 import { CourseCard } from "@/components/course-card";
-import { categories, courses } from "@/lib/data";
+import { categories, courses, getSubcategories } from "@/lib/data";
 
 export default function CoursesPage() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("전체");
+  const [subcategory, setSubcategory] = useState("전체");
   const [sort, setSort] = useState("popular");
+
+  const subcategories = useMemo(() => getSubcategories(category), [category]);
 
   const filteredCourses = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     const list = courses.filter((course) => {
       const matchesCategory = category === "전체" || course.category === category;
-      const haystack = `${course.title} ${course.poomsae} ${course.instructor} ${course.description}`.toLowerCase();
-      return matchesCategory && (!normalized || haystack.includes(normalized));
+      const matchesSubcategory = subcategory === "전체" || course.poomsae === subcategory;
+      const haystack = `${course.title} ${course.category} ${course.poomsae} ${course.instructor} ${course.description}`.toLowerCase();
+      return matchesCategory && matchesSubcategory && (!normalized || haystack.includes(normalized));
     });
 
     return [...list].sort((a, b) => {
@@ -22,14 +26,19 @@ export default function CoursesPage() {
       if (sort === "difficulty") return a.difficulty.localeCompare(b.difficulty, "ko");
       return b.popularity - a.popularity;
     });
-  }, [category, query, sort]);
+  }, [category, query, sort, subcategory]);
+
+  function selectCategory(nextCategory: string) {
+    setCategory(nextCategory);
+    setSubcategory("전체");
+  }
 
   return (
     <section className="page-shell">
       <div className="page-title">
         <p className="eyebrow">강의 검색</p>
         <h1>품새 수업에 바로 연결되는 강의</h1>
-        <p>품새명, 동작명, 강사명으로 찾고 도장 수업 목적에 맞는 강의를 빠르게 고르세요.</p>
+        <p>유급자 품새, 유단자 품새, 기본동작, 서기, 품새 이론 기준으로 강의를 빠르게 고르세요.</p>
       </div>
 
       <div className="toolbar">
@@ -37,7 +46,7 @@ export default function CoursesPage() {
           className="search-input"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="예: 고려, 앞굽이, 표현력, 김도윤"
+          placeholder="예: 고려, 8장, 아래막기, 앞굽이"
           aria-label="강의 검색"
         />
         <select className="select-input" value={sort} onChange={(event) => setSort(event.target.value)} aria-label="정렬">
@@ -47,12 +56,40 @@ export default function CoursesPage() {
         </select>
       </div>
 
-      <div className="filter-row" aria-label="카테고리 필터">
-        {categories.map((item) => (
-          <button key={item} className={`filter-button ${item === category ? "active" : ""}`} onClick={() => setCategory(item)}>
-            {item}
-          </button>
-        ))}
+      <div className="filter-group">
+        <span className="filter-label">대분류</span>
+        <div className="filter-row" aria-label="대분류 필터">
+          {categories.map((item) => (
+            <button key={item} className={`filter-button ${item === category ? "active" : ""}`} onClick={() => selectCategory(item)}>
+              {item}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {subcategories.length > 0 ? (
+        <div className="filter-group">
+          <span className="filter-label">하위 항목</span>
+          <div className="filter-row" aria-label="하위 항목 필터">
+            {["전체", ...subcategories].map((item) => (
+              <button
+                key={item}
+                className={`filter-button ${item === subcategory ? "active" : ""}`}
+                onClick={() => setSubcategory(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="course-result-bar">
+        <strong>{filteredCourses.length}개 강의</strong>
+        <span>
+          {category}
+          {subcategory !== "전체" ? ` / ${subcategory}` : ""}
+        </span>
       </div>
 
       <div className="course-grid">
