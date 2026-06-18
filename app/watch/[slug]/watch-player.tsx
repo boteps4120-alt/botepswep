@@ -2,21 +2,21 @@
 
 import Link from "next/link";
 import { CheckCircle2, Play, SkipBack, SkipForward } from "lucide-react";
+import { BookmarkButton } from "@/components/bookmark-button";
 import type { Course } from "@/lib/data";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { saveWatchProgress } from "../actions";
 
 type WatchPlayerProps = {
   course: Course;
+  initialBookmarked?: boolean;
   nextCourse: Course;
 };
 
-export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
+export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: WatchPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [activeChapter, setActiveChapter] = useState(course.chapters[0]);
-  const [completed, setCompleted] = useState(course.progress === 100);
   const [, startTransition] = useTransition();
-  const displayProgress = completed ? 100 : Math.max(course.progress, Math.round((activeChapter.seconds / 2400) * 100));
 
   function persistProgress(progressPercent: number, seconds = 0, isCompleted = false) {
     startTransition(() => {
@@ -65,7 +65,6 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
   }
 
   function completeCourse() {
-    setCompleted(true);
     persistProgress(100, activeChapter.seconds, true);
   }
 
@@ -75,6 +74,9 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
         <p className="eyebrow">동작별 챕터 학습</p>
         <h1>{course.title}</h1>
         <p>{course.poomsae} 품새를 특정 동작으로 바로 이동하며 지도 포인트를 확인합니다.</p>
+        <div className="form-actions">
+          <BookmarkButton slug={course.slug} initialBookmarked={initialBookmarked} size="large" />
+        </div>
       </div>
 
       <div className="watch-layout">
@@ -99,28 +101,6 @@ export function WatchPlayer({ course, nextCourse }: WatchPlayerProps) {
                 </div>
               </div>
             )}
-            <div className="video-controls">
-              <span className="chapter-time">{activeChapter.time}</span>
-              <div className="progress-track" aria-label={`진도율 ${displayProgress}%`}>
-                <div className="progress-bar" style={{ width: `${displayProgress}%` }} />
-              </div>
-              <strong>{displayProgress}%</strong>
-            </div>
-          </div>
-
-          <div className="metric-grid" style={{ marginTop: 20 }}>
-            <div className="metric-card">
-              <span className="stat-label">이어보기</span>
-              <strong>{activeChapter.time}</strong>
-            </div>
-            <div className="metric-card">
-              <span className="stat-label">영상 소스</span>
-              <strong>{course.videoUrl ? "업로드 영상" : "더미 플레이어"}</strong>
-            </div>
-            <div className="metric-card">
-              <span className="stat-label">완료 상태</span>
-              <strong>{completed ? "완료" : "진행 중"}</strong>
-            </div>
           </div>
 
           <div className="form-actions">

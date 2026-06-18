@@ -16,6 +16,10 @@ type ProfileRow = {
   role: string;
 };
 
+type BookmarkRow = {
+  course_id: string;
+};
+
 export default async function WatchPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const course = await getRuntimeCourse(slug);
@@ -31,13 +35,19 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
     redirect(`/login?next=/watch/${course.slug}`);
   }
 
-  const [{ data: subscription }, { data: profile }] =
+  const [{ data: subscription }, { data: profile }, { data: bookmark }] =
     supabase && user
       ? await Promise.all([
           supabase.from("subscriptions").select("status").eq("user_id", user.id).maybeSingle<SubscriptionRow>(),
-          supabase.from("profiles").select("role").eq("id", user.id).maybeSingle<ProfileRow>()
+          supabase.from("profiles").select("role").eq("id", user.id).maybeSingle<ProfileRow>(),
+          supabase
+            .from("bookmarks")
+            .select("course_id,courses!inner(slug)")
+            .eq("user_id", user.id)
+            .eq("courses.slug", course.slug)
+            .maybeSingle<BookmarkRow>()
         ])
-      : [{ data: null }, { data: null }];
+      : [{ data: null }, { data: null }, { data: null }];
 
   const isAdmin = profile?.role === "admin";
   const hasAccess = !course.isPremium || !hasSupabaseEnv() || isAdmin || subscription?.status === "active";
@@ -70,5 +80,5 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
     );
   }
 
-  return <WatchPlayer course={course} nextCourse={await getRuntimeNextCourse(course.slug)} />;
+  return <WatchPlayer course={course} initialBookmarked={Boolean(bookmark)} nextCourse={await getRuntimeNextCourse(course.slug)} />;
 }
