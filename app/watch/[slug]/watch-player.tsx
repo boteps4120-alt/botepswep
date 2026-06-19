@@ -4,7 +4,7 @@ import Link from "next/link";
 import { CheckCircle2, Play, SkipBack, SkipForward } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmark-button";
 import type { Course } from "@/lib/data";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useTransition } from "react";
 import { saveWatchProgress } from "../actions";
 
 type WatchPlayerProps = {
@@ -15,7 +15,7 @@ type WatchPlayerProps = {
 
 export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: WatchPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [activeChapter, setActiveChapter] = useState(course.chapters[0]);
+  const activeChapter = course.chapters[0];
   const [, startTransition] = useTransition();
   const isPortrait = course.videoOrientation === "portrait";
 
@@ -59,22 +59,16 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [course.slug]);
 
-  function selectChapter(chapter: Course["chapters"][number]) {
-    setActiveChapter(chapter);
-    const nextProgress = Math.max(1, Math.round((chapter.seconds / 2400) * 100));
-    persistProgress(nextProgress, chapter.seconds);
-  }
-
   function completeCourse() {
     persistProgress(100, activeChapter.seconds, true);
   }
 
   return (
-    <section className="page-shell">
+    <section className="page-shell watch-page-shell">
       <div className="page-title">
-        <p className="eyebrow">동작별 챕터 학습</p>
+        <p className="eyebrow">강의 시청</p>
         <h1>{course.title}</h1>
-        <p>{course.poomsae} 품새를 특정 동작으로 바로 이동하며 지도 포인트를 확인합니다.</p>
+        <p>{course.poomsae} 품새 영상을 크게 보며 지도 포인트를 확인합니다.</p>
         <div className="form-actions">
           <BookmarkButton slug={course.slug} initialBookmarked={initialBookmarked} size="large" />
         </div>
@@ -119,25 +113,6 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
             </Link>
           </div>
         </div>
-
-        <aside className="player-panel">
-          <h2>챕터</h2>
-          <div className="chapter-list">
-            {course.chapters.map((chapter) => (
-              <button
-                key={chapter.title}
-                className={`chapter-button ${chapter.title === activeChapter.title ? "active" : ""}`}
-                onClick={() => selectChapter(chapter)}
-              >
-                <span className="chapter-time">{chapter.time}</span>
-                <span>
-                  <strong>{chapter.title}</strong>
-                  <small className="small-muted">{chapter.cue}</small>
-                </span>
-              </button>
-            ))}
-          </div>
-        </aside>
       </div>
 
       <div className="dashboard-grid" style={{ marginTop: 24 }}>
