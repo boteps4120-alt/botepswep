@@ -1,16 +1,12 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
-import { ArrowRight, LockKeyhole } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getRuntimeCourse, getRuntimeNextCourse } from "@/lib/server-courses";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { WatchPlayer } from "./watch-player";
 
 export const dynamic = "force-dynamic";
-
-type SubscriptionRow = {
-  status: string;
-};
 
 type ProfileRow = {
   role: string;
@@ -19,22 +15,6 @@ type ProfileRow = {
 type BookmarkRow = {
   course_id: string;
 };
-
-function subscriptionLabel(status?: string | null) {
-  switch (status) {
-    case "active":
-      return "구독 중";
-    case "past_due":
-      return "결제 확인 필요";
-    case "canceled":
-      return "해지됨";
-    case "expired":
-      return "만료됨";
-    case "inactive":
-    default:
-      return "미구독";
-  }
-}
 
 export default async function WatchPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -54,7 +34,7 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
   const [{ data: subscription }, { data: profile }, { data: bookmark }] =
     supabase && user
       ? await Promise.all([
-          supabase.from("subscriptions").select("status").eq("user_id", user.id).maybeSingle<SubscriptionRow>(),
+          supabase.from("subscriptions").select("status").eq("user_id", user.id).maybeSingle<{ status: string }>(),
           supabase.from("profiles").select("role").eq("id", user.id).maybeSingle<ProfileRow>(),
           supabase
             .from("bookmarks")
@@ -81,19 +61,6 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
           </div>
 
           <section className="player-panel access-denied-panel">
-            <div className="access-lock-icon">
-              <LockKeyhole size={32} />
-            </div>
-            <div className="access-status-grid">
-              <div>
-                <span className="stat-label">현재 구독 상태</span>
-                <strong>{subscriptionLabel(subscription?.status)}</strong>
-              </div>
-              <div>
-                <span className="stat-label">강의 권한</span>
-                <strong>구독자 전용</strong>
-              </div>
-            </div>
             <div className="form-actions">
               <Link className="icon-button primary large" href="/subscribe">
                 구독 안내 보기

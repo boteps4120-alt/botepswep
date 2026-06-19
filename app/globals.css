@@ -1406,7 +1406,10 @@ th {
 }
 
 .access-denied-panel {
+  align-content: center;
   box-shadow: 0 18px 50px rgba(20, 20, 18, 0.08);
+  display: grid;
+  min-height: 210px;
 }
 
 .access-denied-panel h2 {
