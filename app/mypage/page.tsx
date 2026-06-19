@@ -80,7 +80,7 @@ function genderLabel(gender?: string | null) {
 }
 
 function formatDate(date?: string | null) {
-  if (!date) return "결제 연동 전";
+  if (!date) return "-";
 
   return new Intl.DateTimeFormat("ko-KR", {
     year: "numeric",
@@ -92,10 +92,6 @@ function formatDate(date?: string | null) {
 function birthDateDigits(date?: string | null) {
   if (!date) return "";
   return date.replace(/\D/g, "").slice(0, 8);
-}
-
-function valueOrDash(value?: string | null) {
-  return value?.trim() ? value : "-";
 }
 
 export default async function MyPage({
@@ -188,46 +184,16 @@ export default async function MyPage({
             </div>
           </div>
 
-          <section className="player-panel">
-            <h2>회원정보</h2>
-            <div className="profile-info-grid">
-              <div className="profile-info-item">
-                <span>이름</span>
-                <strong>{profileName}</strong>
-              </div>
-              <div className="profile-info-item">
-                <span>아이디</span>
-                <strong>{accountEmail}</strong>
-              </div>
-              <div className="profile-info-item">
-                <span>생년월일</span>
-                <strong>{formatDate(profile?.birth_date)}</strong>
-              </div>
-              <div className="profile-info-item">
-                <span>성별</span>
-                <strong>{genderLabel(profile?.gender)}</strong>
-              </div>
-              <div className="profile-info-item">
-                <span>전화번호</span>
-                <strong>{valueOrDash(profile?.phone)}</strong>
-              </div>
-              <div className="profile-info-item wide">
-                <span>주소</span>
-                <strong>{valueOrDash(profile?.address)}</strong>
-              </div>
-            </div>
-          </section>
-
-          <section className="player-panel">
-            <h2>회원정보 변경</h2>
-            <ProfileEditForm
-              fullName={profile?.full_name ?? profile?.display_name ?? ""}
-              birthDate={birthDateDigits(profile?.birth_date)}
-              gender={profile?.gender ?? ""}
-              phone={profile?.phone ?? ""}
-              address={profile?.address ?? ""}
-            />
-          </section>
+          <ProfileEditForm
+            fullName={profile?.full_name ?? profile?.display_name ?? ""}
+            birthDate={birthDateDigits(profile?.birth_date)}
+            formattedBirthDate={formatDate(profile?.birth_date)}
+            gender={profile?.gender ?? ""}
+            genderLabel={genderLabel(profile?.gender)}
+            phone={profile?.phone ?? ""}
+            address={profile?.address ?? ""}
+            accountEmail={accountEmail}
+          />
         </div>
       ) : null}
 

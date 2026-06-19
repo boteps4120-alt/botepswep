@@ -857,6 +857,18 @@ h3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.profile-section-heading {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.profile-section-heading h2 {
+  margin: 0;
+}
+
 .profile-info-item {
   background: #f7f7f3;
   border: 1px solid var(--line);
