@@ -1,3 +1,5 @@
+const gumletWorkspaceId = "6a30a6e756ebf5bb1c25e2f3";
+
 export function extractGumletAssetId(value: string) {
   const input = value.trim();
   if (!input) return "";
@@ -31,5 +33,9 @@ export function getGumletEmbedUrl(value?: string | null) {
 
 export function getGumletHlsUrl(value?: string | null) {
   const input = (value ?? "").trim();
-  return input.endsWith(".m3u8") ? input : undefined;
+  if (!input) return undefined;
+  if (input.endsWith(".m3u8")) return input;
+
+  const assetId = extractGumletAssetId(input);
+  return assetId ? `https://video.gumlet.io/${gumletWorkspaceId}/${assetId}/main.m3u8` : undefined;
 }
