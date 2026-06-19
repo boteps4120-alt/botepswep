@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
-import { ArrowRight, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowRight, LockKeyhole } from "lucide-react";
 import { getRuntimeCourse, getRuntimeNextCourse } from "@/lib/server-courses";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
@@ -76,8 +76,7 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
             <p className="eyebrow">구독자 전용 강의</p>
             <h1>구독 권한이 필요합니다</h1>
             <p>
-              <strong>{course.title}</strong> 강의는 월구독 회원에게 제공됩니다. 지금은 Toss 결제 연동 전이라 관리자가 회원관리에서
-              구독 상태를 직접 변경해 접근 테스트를 진행할 수 있습니다.
+              <strong>{course.title}</strong> 강의는 구독 회원에게 제공됩니다. 구독을 활성화한 뒤 다시 시도해주세요.
             </p>
           </div>
 
@@ -85,7 +84,6 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
             <div className="access-lock-icon">
               <LockKeyhole size={32} />
             </div>
-            <h2>현재 계정은 아직 구독 중이 아닙니다</h2>
             <div className="access-status-grid">
               <div>
                 <span className="stat-label">현재 구독 상태</span>
@@ -96,23 +94,9 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
                 <strong>구독자 전용</strong>
               </div>
             </div>
-            <ol className="access-flow-list">
-              <li>
-                <ShieldCheck size={18} />
-                <span>관리자 계정으로 로그인합니다.</span>
-              </li>
-              <li>
-                <ShieldCheck size={18} />
-                <span>관리자 &gt; 회원관리에서 해당 회원의 구독 변경을 구독 중으로 저장합니다.</span>
-              </li>
-              <li>
-                <ShieldCheck size={18} />
-                <span>회원이 페이지를 새로고침하면 구독자 전용 강의를 바로 시청할 수 있습니다.</span>
-              </li>
-            </ol>
             <div className="form-actions">
               <Link className="icon-button primary large" href="/subscribe">
-                월구독 안내 보기
+                구독 안내 보기
                 <ArrowRight size={18} />
               </Link>
               <Link className="icon-button subtle large" href="/courses">
