@@ -117,10 +117,11 @@ function getTab(value?: string): AdminTab {
 export default async function AdminPage({
   searchParams
 }: {
-  searchParams?: Promise<{ tab?: string }>;
+  searchParams?: Promise<{ tab?: string; notice?: string }>;
 }) {
   const params = await searchParams;
   const activeTab = getTab(params?.tab);
+  const notice = params?.notice;
   const supabase = hasSupabaseEnv() ? await createClient() : null;
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
@@ -196,6 +197,13 @@ export default async function AdminPage({
 
       {activeTab === "members" ? (
         <div className="admin-stack">
+          {notice === "subscription-updated" ? (
+            <div className="notice-banner success">구독 상태가 저장되었습니다. 회원이 새로고침하면 권한이 바로 반영됩니다.</div>
+          ) : null}
+          {notice === "subscription-error" ? (
+            <div className="notice-banner error">구독 상태를 저장하지 못했습니다. 잠시 후 다시 시도하거나 Supabase subscriptions 테이블 상태를 확인해주세요.</div>
+          ) : null}
+
           <div className="metric-grid">
             <div className="metric-card">
               <UsersRound size={24} color="#2458a8" />

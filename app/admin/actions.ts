@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { extractGumletAssetId } from "@/lib/gumlet";
 import { createClient } from "@/lib/supabase/server";
 
@@ -46,31 +47,61 @@ function normalizeGumletVideoValue(value: string) {
 }
 
 export async function updateSubscriptionStatus(formData: FormData) {
-  const supabase = await requireAdmin();
-  const userId = clean(formData.get("userId"));
-  const status = clean(formData.get("status"));
+  let redirectUrl = "/admin?tab=members&notice=subscription-updated";
 
-  if (!userId || !subscriptionStatuses.has(status)) {
-    throw new Error("구독 상태 값이 올바르지 않습니다.");
+  try {
+    const supabase = await requireAdmin();
+    const userId = clean(formData.get("userId"));
+    const status = clean(formData.get("status"));
+
+    if (!userId || !subscriptionStatuses.has(status)) {
+      throw new Error("구독 상태 값이 올바르지 않습니다.");
+    }
+
+    const now = new Date().toISOString();
+    const currentPeriodEnd = status === "active" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null;
+    const payload = {
+      status,
+      provider: "manual",
+      current_period_end: currentPeriodEnd,
+      updated_at: now
+    };
+
+    const { data: existing, error: selectError } = await supabase
+      .from("subscriptions")
+      .select("user_id")
+      .eq("user_id", userId)
+      .maybeSingle<{ user_id: string }>();
+
+    if (selectError) {
+      throw new Error(selectError.message);
+    }
+
+    if (existing) {
+      const { error } = await supabase.from("subscriptions").update(payload).eq("user_id", userId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    } else {
+      const { error } = await supabase.from("subscriptions").insert({
+        user_id: userId,
+        ...payload
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    }
+
+    revalidatePath("/admin");
+    revalidatePath("/mypage");
+  } catch (error) {
+    console.error("Failed to update subscription status", error);
+    redirectUrl = "/admin?tab=members&notice=subscription-error";
   }
 
-  const currentPeriodEnd =
-    status === "active" ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null;
-
-  const { error } = await supabase.from("subscriptions").upsert({
-    user_id: userId,
-    status,
-    provider: "manual",
-    current_period_end: currentPeriodEnd,
-    updated_at: new Date().toISOString()
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  revalidatePath("/admin");
-  revalidatePath("/mypage");
+  redirect(redirectUrl);
 }
 
 export async function updateProfileRole(formData: FormData) {
