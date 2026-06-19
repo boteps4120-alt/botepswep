@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@/components/analytics";
-import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
@@ -20,7 +19,6 @@ export default function RootLayout({
         <Analytics />
         <SiteHeader />
         <main>{children}</main>
-        <SiteFooter />
       </body>
     </html>
   );

@@ -29,11 +29,6 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-        <div className="hero-next">
-          <span>오늘 이어볼 강의</span>
-          <strong>{featured.title}</strong>
-          <small>진도율 {featured.progress}% · 동작별 챕터 지원</small>
-        </div>
       </section>
 
       <section className="section-shell intro-band">
