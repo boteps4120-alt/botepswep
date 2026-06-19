@@ -4,6 +4,7 @@ import { Bookmark, CreditCard, Settings, UserRound } from "lucide-react";
 import { currentUser, payments } from "@/lib/data";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
+import { ProfileEditForm } from "./profile-edit-form";
 
 export const dynamic = "force-dynamic";
 
@@ -86,6 +87,11 @@ function formatDate(date?: string | null) {
     month: "2-digit",
     day: "2-digit"
   }).format(new Date(date));
+}
+
+function birthDateDigits(date?: string | null) {
+  if (!date) return "";
+  return date.replace(/\D/g, "").slice(0, 8);
 }
 
 function valueOrDash(value?: string | null) {
@@ -210,6 +216,17 @@ export default async function MyPage({
                 <strong>{valueOrDash(profile?.address)}</strong>
               </div>
             </div>
+          </section>
+
+          <section className="player-panel">
+            <h2>회원정보 변경</h2>
+            <ProfileEditForm
+              fullName={profile?.full_name ?? profile?.display_name ?? ""}
+              birthDate={birthDateDigits(profile?.birth_date)}
+              gender={profile?.gender ?? ""}
+              phone={profile?.phone ?? ""}
+              address={profile?.address ?? ""}
+            />
           </section>
         </div>
       ) : null}
