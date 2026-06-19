@@ -70,6 +70,21 @@ function statusLabel(status?: string) {
   }
 }
 
+function statusClass(status?: string) {
+  switch (status) {
+    case "active":
+      return "status-badge active";
+    case "past_due":
+      return "status-badge warning";
+    case "canceled":
+    case "expired":
+      return "status-badge muted";
+    case "inactive":
+    default:
+      return "status-badge inactive";
+  }
+}
+
 function formatDate(date?: string | null) {
   if (!date) return "-";
   return new Intl.DateTimeFormat("ko-KR", {
@@ -200,7 +215,16 @@ export default async function AdminPage({
           </div>
 
           <div className="table-wrap">
-            <h2>회원 및 구독 상태</h2>
+            <div className="table-heading">
+              <div>
+                <h2>회원 및 구독 상태</h2>
+                <p className="small-muted">Toss 결제 연동 전에는 이 화면에서 구독 테스트 권한을 직접 바꿉니다.</p>
+              </div>
+              <div className="admin-helper-card">
+                <strong>테스트 흐름</strong>
+                <span>미구독 회원을 구독 중으로 저장하면 구독자 전용 강의가 바로 열립니다.</span>
+              </div>
+            </div>
             <table className="member-table">
               <thead>
                 <tr>
@@ -234,7 +258,9 @@ export default async function AdminPage({
                       <td>{member.phone ?? "-"}</td>
                       <td className="address-cell">{member.address ?? "-"}</td>
                       <td>{member.role === "admin" ? "관리자" : "회원"}</td>
-                      <td>{statusLabel(subscription?.status)}</td>
+                      <td>
+                        <span className={statusClass(subscription?.status)}>{statusLabel(subscription?.status)}</span>
+                      </td>
                       <td>{formatDate(subscription?.current_period_end)}</td>
                       <td>
                         <form action={updateSubscriptionStatus} className="inline-form">

@@ -4,15 +4,38 @@ import { notFound } from "next/navigation";
 import { ArrowRight, CheckCircle2, Lock, PlayCircle } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { CourseCard } from "@/components/course-card";
-import { currentUser } from "@/lib/data";
 import { getRuntimeCourse, getRuntimeRelatedCourses } from "@/lib/server-courses";
+import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { createClient } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
+
+type SubscriptionRow = {
+  status: string;
+};
+
+type ProfileRow = {
+  role: string;
+};
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const course = await getRuntimeCourse(slug);
   if (!course) notFound();
 
-  const canWatch = !course.isPremium || currentUser.isSubscribed;
+  const supabase = hasSupabaseEnv() ? await createClient() : null;
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+  const [{ data: subscription }, { data: profile }] =
+    supabase && user && course.isPremium
+      ? await Promise.all([
+          supabase.from("subscriptions").select("status").eq("user_id", user.id).maybeSingle<SubscriptionRow>(),
+          supabase.from("profiles").select("role").eq("id", user.id).maybeSingle<ProfileRow>()
+        ])
+      : [{ data: null }, { data: null }];
+  const isAdmin = profile?.role === "admin";
+  const canWatch = !course.isPremium || !hasSupabaseEnv() || isAdmin || subscription?.status === "active";
+  const watchHref = canWatch ? `/watch/${course.slug}` : user ? "/subscribe" : `/login?next=/watch/${course.slug}`;
+  const watchLabel = canWatch ? "강의 시청" : user ? "구독 후 시청" : "로그인 후 시청";
   const related = await getRuntimeRelatedCourses(course.slug);
 
   return (
@@ -32,9 +55,9 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
               ))}
             </ul>
             <div className="form-actions">
-              <Link className="icon-button primary large" href={canWatch ? `/watch/${course.slug}` : "/subscribe"}>
+              <Link className="icon-button primary large" href={watchHref}>
                 {canWatch ? <PlayCircle size={20} /> : <Lock size={20} />}
-                <span>{canWatch ? "강의 시청" : "구독 후 시청"}</span>
+                <span>{watchLabel}</span>
               </Link>
               <BookmarkButton slug={course.slug} size="large" />
             </div>

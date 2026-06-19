@@ -1321,6 +1321,132 @@ th {
   min-width: 120px;
 }
 
+.status-badge {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  padding: 8px 10px;
+}
+
+.status-badge.active {
+  background: #e2f5ec;
+  color: #167c4b;
+}
+
+.status-badge.inactive {
+  background: #f1f1ed;
+  color: #4e4e48;
+}
+
+.status-badge.warning {
+  background: #fff3d6;
+  color: #986312;
+}
+
+.status-badge.muted {
+  background: #f3e7e7;
+  color: #a53232;
+}
+
+.admin-helper-card {
+  background: #f7f7f3;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--red);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  max-width: 420px;
+  padding: 14px 16px;
+}
+
+.admin-helper-card strong {
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.admin-helper-card span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.access-denied-layout {
+  align-items: start;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1fr);
+}
+
+.access-denied-copy {
+  margin: 0;
+  max-width: none;
+  padding: 24px 0;
+}
+
+.access-denied-panel {
+  box-shadow: 0 18px 50px rgba(20, 20, 18, 0.08);
+}
+
+.access-denied-panel h2 {
+  margin-bottom: 14px;
+}
+
+.access-lock-icon {
+  align-items: center;
+  background: #fff2f0;
+  border: 1px solid #f1cbc7;
+  border-radius: 8px;
+  color: var(--red);
+  display: inline-flex;
+  height: 56px;
+  justify-content: center;
+  margin-bottom: 18px;
+  width: 56px;
+}
+
+.access-status-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 18px 0;
+}
+
+.access-status-grid > div {
+  background: #f7f7f3;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.access-status-grid strong {
+  font-size: 20px;
+}
+
+.access-flow-list {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+}
+
+.access-flow-list li {
+  align-items: center;
+  color: var(--ink);
+  display: flex;
+  gap: 10px;
+  line-height: 1.45;
+}
+
+.access-flow-list svg {
+  color: #167c76;
+  flex: 0 0 auto;
+}
+
 .integration-list {
   display: grid;
   gap: 10px;
@@ -1393,6 +1519,7 @@ th {
   .subscribe-grid,
   .auth-grid,
   .contact-layout,
+  .access-denied-layout,
   .auth-page {
     grid-template-columns: 1fr;
   }
@@ -1412,7 +1539,8 @@ th {
   .course-edit-form,
   .course-manage-grid,
   .profile-edit-form,
-  .profile-info-grid {
+  .profile-info-grid,
+  .access-status-grid {
     grid-template-columns: 1fr;
   }
 
