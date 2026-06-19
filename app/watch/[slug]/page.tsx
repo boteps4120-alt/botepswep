@@ -51,26 +51,21 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
   if (!hasAccess) {
     return (
       <section className="page-shell">
-        <div className="access-denied-layout">
-          <div className="page-title access-denied-copy">
-            <p className="eyebrow">구독자 전용 강의</p>
-            <h1>구독 권한이 필요합니다</h1>
-            <p>
-              <strong>{course.title}</strong> 강의는 구독 회원에게 제공됩니다. 구독을 활성화한 뒤 다시 시도해주세요.
-            </p>
+        <div className="page-title access-denied-copy">
+          <p className="eyebrow">구독자 전용 강의</p>
+          <h1>구독 권한이 필요합니다</h1>
+          <p>
+            <strong>{course.title}</strong> 강의는 구독 회원에게 제공됩니다. 구독을 활성화한 뒤 다시 시도해주세요.
+          </p>
+          <div className="form-actions">
+            <Link className="icon-button primary large" href="/subscribe">
+              구독 안내 보기
+              <ArrowRight size={18} />
+            </Link>
+            <Link className="icon-button subtle large" href="/courses">
+              강의 목록으로 이동
+            </Link>
           </div>
-
-          <section className="player-panel access-denied-panel">
-            <div className="form-actions">
-              <Link className="icon-button primary large" href="/subscribe">
-                구독 안내 보기
-                <ArrowRight size={18} />
-              </Link>
-              <Link className="icon-button subtle large" href="/courses">
-                강의 목록으로 이동
-              </Link>
-            </div>
-          </section>
         </div>
       </section>
     );
