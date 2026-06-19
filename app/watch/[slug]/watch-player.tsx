@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, Play, SkipBack, SkipForward } from "lucide-react";
+import { CheckCircle2, Maximize2, Pause, Play, RotateCcw, RotateCw, SkipBack, SkipForward } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmark-button";
 import type { Course } from "@/lib/data";
-import { useEffect, useRef, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { saveWatchProgress } from "../actions";
 
 type WatchPlayerProps = {
@@ -17,7 +17,19 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
   const videoRef = useRef<HTMLVideoElement>(null);
   const activeChapter = course.chapters[0];
   const [, startTransition] = useTransition();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const isPortrait = course.videoOrientation === "portrait";
+  const progressValue = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  function formatTime(seconds: number) {
+    if (!Number.isFinite(seconds)) return "0:00";
+    const safeSeconds = Math.max(0, Math.floor(seconds));
+    const minutes = Math.floor(safeSeconds / 60);
+    const rest = String(safeSeconds % 60).padStart(2, "0");
+    return `${minutes}:${rest}`;
+  }
 
   function persistProgress(progressPercent: number, seconds = 0, isCompleted = false) {
     startTransition(() => {
@@ -63,6 +75,38 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
     persistProgress(100, activeChapter.seconds, true);
   }
 
+  function togglePlayback() {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      void video.play();
+      return;
+    }
+
+    video.pause();
+  }
+
+  function skipSeconds(seconds: number) {
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = Math.min(Math.max(video.currentTime + seconds, 0), video.duration || video.currentTime + seconds);
+  }
+
+  function seekToPercent(value: string) {
+    const video = videoRef.current;
+    if (!video || !duration) return;
+    const nextTime = (Number(value) / 100) * duration;
+    video.currentTime = nextTime;
+    setCurrentTime(nextTime);
+  }
+
+  function openFullscreen() {
+    const video = videoRef.current;
+    if (!video) return;
+    void video.requestFullscreen?.();
+  }
+
   return (
     <section className="page-shell watch-page-shell">
       <div className="page-title">
@@ -77,7 +121,53 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
       <div className="watch-layout">
         <div>
           <div className={`video-shell ${isPortrait ? "portrait" : "landscape"}`}>
-            {course.embedUrl ? (
+            {course.videoUrl ? (
+              <div className={`boteps-video-player ${isPortrait ? "portrait" : "landscape"}`}>
+                <video
+                  className={`real-video ${isPortrait ? "portrait" : "landscape"}`}
+                  ref={videoRef}
+                  preload="metadata"
+                  playsInline
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onLoadedMetadata={(event) => setDuration(event.currentTarget.duration || 0)}
+                  onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+                />
+                <div className="boteps-video-controls" aria-label="영상 컨트롤">
+                  <div className="video-time-row">
+                    <span>{formatTime(currentTime)}</span>
+                    <input
+                      aria-label="영상 위치"
+                      className="video-range"
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      value={progressValue}
+                      onChange={(event) => seekToPercent(event.target.value)}
+                    />
+                    <span>{formatTime(duration)}</span>
+                  </div>
+                  <div className="video-control-row">
+                    <button className="video-control-button" type="button" onClick={() => skipSeconds(-5)}>
+                      <RotateCcw size={20} />
+                      <span>5초</span>
+                    </button>
+                    <button className="video-play-button" type="button" onClick={togglePlayback}>
+                      {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+                      <span>{isPlaying ? "일시정지" : "재생"}</span>
+                    </button>
+                    <button className="video-control-button" type="button" onClick={() => skipSeconds(5)}>
+                      <RotateCw size={20} />
+                      <span>5초</span>
+                    </button>
+                    <button className="video-control-button icon-only" type="button" onClick={openFullscreen} aria-label="전체 화면">
+                      <Maximize2 size={20} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : course.embedUrl ? (
               <iframe
                 className={`real-video ${isPortrait ? "portrait" : "landscape"}`}
                 src={course.embedUrl}
@@ -85,8 +175,6 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 allowFullScreen
               />
-            ) : course.videoUrl ? (
-              <video className={`real-video ${isPortrait ? "portrait" : "landscape"}`} ref={videoRef} controls preload="metadata" playsInline />
             ) : (
               <div className="fake-video">
                 <div>

@@ -604,6 +604,21 @@ h3 {
     linear-gradient(135deg, #050505 0%, #1a1a1a 100%);
 }
 
+.boteps-video-player {
+  align-items: center;
+  display: grid;
+  justify-items: center;
+  width: 100%;
+}
+
+.boteps-video-player.landscape {
+  grid-template-rows: 1fr auto;
+}
+
+.boteps-video-player.portrait {
+  min-height: min(84vh, 760px);
+}
+
 .fake-video {
   align-items: center;
   background-image: linear-gradient(rgba(10, 10, 10, 0.35), rgba(10, 10, 10, 0.8)), url("/images/taekwondo-hero.png");
@@ -638,7 +653,73 @@ h3 {
   aspect-ratio: 9 / 16;
   max-height: 84vh;
   min-height: min(84vh, 620px);
-  width: min(100%, 560px);
+  width: min(100%, 640px);
+}
+
+.boteps-video-controls {
+  background: rgba(0, 0, 0, 0.82);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  width: 100%;
+}
+
+.video-time-row,
+.video-control-row {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.video-time-row span {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  min-width: 42px;
+  text-align: center;
+}
+
+.video-range {
+  accent-color: var(--red);
+  flex: 1;
+  min-width: 0;
+}
+
+.video-control-row {
+  justify-content: center;
+}
+
+.video-control-button,
+.video-play-button {
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 900;
+  gap: 6px;
+  justify-content: center;
+  min-height: 42px;
+}
+
+.video-control-button {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 0 14px;
+}
+
+.video-play-button {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+  min-width: 132px;
+  padding: 0 18px;
+}
+
+.video-control-button.icon-only {
+  padding: 0;
+  width: 44px;
 }
 
 .progress-track {
