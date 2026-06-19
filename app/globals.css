@@ -1393,9 +1393,15 @@ th {
 }
 
 .access-denied-copy {
-  margin: 0;
+  margin: 0 auto;
   max-width: 760px;
   padding: 56px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.access-denied-copy .form-actions {
+  justify-content: center;
 }
 
 .integration-list {
