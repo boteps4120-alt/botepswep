@@ -40,6 +40,11 @@ function slugify(value: string) {
     .slice(0, 80);
 }
 
+function normalizeGumletVideoValue(value: string) {
+  if (value.endsWith(".m3u8")) return value;
+  return extractGumletAssetId(value);
+}
+
 export async function updateSubscriptionStatus(formData: FormData) {
   const supabase = await requireAdmin();
   const userId = clean(formData.get("userId"));
@@ -92,7 +97,7 @@ export async function createCourse(formData: FormData) {
   const category = clean(formData.get("category"));
   const poomsae = clean(formData.get("poomsae"));
   const instructor = clean(formData.get("instructor"));
-  const gumletVideoId = extractGumletAssetId(clean(formData.get("gumletVideoId")));
+  const gumletVideoId = normalizeGumletVideoValue(clean(formData.get("gumletVideoId")));
   const videoOrientation = clean(formData.get("videoOrientation")) || "landscape";
   const description = clean(formData.get("description"));
   const thumbnailUrl = clean(formData.get("thumbnailUrl")) || "/images/taekwondo-hero.png";

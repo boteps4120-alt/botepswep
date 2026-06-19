@@ -20,6 +20,8 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [useEmbedFallback, setUseEmbedFallback] = useState(false);
+  const [videoError, setVideoError] = useState("");
   const isPortrait = course.videoOrientation === "portrait";
   const progressValue = duration > 0 ? (currentTime / duration) * 100 : 0;
 
@@ -39,7 +41,9 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !course.videoUrl) return;
+    if (!video || !course.videoUrl || useEmbedFallback) return;
+
+    setVideoError("");
 
     if (!course.videoUrl.endsWith(".m3u8")) {
       video.src = course.videoUrl;
@@ -56,6 +60,11 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
     import("hls.js").then(({ default: Hls }) => {
       if (!videoRef.current || !Hls.isSupported()) return;
       hls = new Hls();
+      hls.on(Hls.Events.ERROR, (_, data) => {
+        if (!data.fatal) return;
+        setVideoError("Gumlet HLS 원본에 접근할 수 없습니다. 영상의 HLS 공개/처리 상태를 확인해주세요.");
+        if (course.embedUrl) setUseEmbedFallback(true);
+      });
       hls.loadSource(course.videoUrl!);
       hls.attachMedia(videoRef.current);
     });
@@ -63,7 +72,7 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
     return () => {
       hls?.destroy();
     };
-  }, [course.videoUrl]);
+  }, [course.embedUrl, course.videoUrl, useEmbedFallback]);
 
   useEffect(() => {
     persistProgress(Math.max(1, course.progress), activeChapter.seconds);
@@ -107,6 +116,11 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
     void video.requestFullscreen?.();
   }
 
+  function handleVideoError() {
+    setVideoError("영상 원본을 불러오지 못했습니다. Gumlet HLS URL 또는 영상 처리 상태를 확인해주세요.");
+    if (course.embedUrl) setUseEmbedFallback(true);
+  }
+
   return (
     <section className="page-shell watch-page-shell">
       <div className="page-title">
@@ -121,7 +135,7 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
       <div className="watch-layout">
         <div>
           <div className={`video-shell ${isPortrait ? "portrait" : "landscape"}`}>
-            {course.videoUrl ? (
+            {course.videoUrl && !useEmbedFallback ? (
               <div className={`boteps-video-player ${isPortrait ? "portrait" : "landscape"}`}>
                 <video
                   className={`real-video ${isPortrait ? "portrait" : "landscape"}`}
@@ -132,7 +146,9 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
                   onPause={() => setIsPlaying(false)}
                   onLoadedMetadata={(event) => setDuration(event.currentTarget.duration || 0)}
                   onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+                  onError={handleVideoError}
                 />
+                {videoError ? <p className="video-error">{videoError}</p> : null}
                 <div className="boteps-video-controls" aria-label="영상 컨트롤">
                   <div className="video-time-row">
                     <span>{formatTime(currentTime)}</span>
@@ -168,13 +184,16 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
                 </div>
               </div>
             ) : course.embedUrl ? (
-              <iframe
-                className={`real-video ${isPortrait ? "portrait" : "landscape"}`}
-                src={course.embedUrl}
-                title={`${course.title} 영상`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                allowFullScreen
-              />
+              <div className={`boteps-video-player ${isPortrait ? "portrait" : "landscape"}`}>
+                {videoError ? <p className="video-error">{videoError} 임시로 Gumlet 임베드 플레이어로 재생합니다.</p> : null}
+                <iframe
+                  className={`real-video ${isPortrait ? "portrait" : "landscape"}`}
+                  src={course.embedUrl}
+                  title={`${course.title} 영상`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                  allowFullScreen
+                />
+              </div>
             ) : (
               <div className="fake-video">
                 <div>
