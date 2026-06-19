@@ -80,5 +80,5 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
     );
   }
 
-  return <WatchPlayer course={course} initialBookmarked={Boolean(bookmark)} nextCourse={await getRuntimeNextCourse(course.slug)} />;
+  return <WatchPlayer key={course.slug} course={course} initialBookmarked={Boolean(bookmark)} nextCourse={await getRuntimeNextCourse(course.slug)} />;
 }

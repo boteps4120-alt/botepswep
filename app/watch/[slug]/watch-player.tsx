@@ -185,7 +185,6 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
               </div>
             ) : course.embedUrl ? (
               <div className={`boteps-video-player ${isPortrait ? "portrait" : "landscape"}`}>
-                {videoError ? <p className="video-error">{videoError} 임시로 Gumlet 임베드 플레이어로 재생합니다.</p> : null}
                 <iframe
                   className={`real-video ${isPortrait ? "portrait" : "landscape"}`}
                   src={course.embedUrl}
