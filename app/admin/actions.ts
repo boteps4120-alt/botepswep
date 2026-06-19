@@ -161,3 +161,96 @@ export async function createCourse(formData: FormData) {
   revalidatePath(`/courses/${slug}`);
   revalidatePath(`/watch/${slug}`);
 }
+
+export async function updateCourse(formData: FormData) {
+  const supabase = await requireAdmin();
+  const courseId = clean(formData.get("courseId"));
+  const oldSlug = clean(formData.get("oldSlug"));
+  const title = clean(formData.get("title"));
+  const category = clean(formData.get("category"));
+  const poomsae = clean(formData.get("poomsae"));
+  const instructor = clean(formData.get("instructor"));
+  const gumletVideoId = normalizeGumletVideoValue(clean(formData.get("gumletVideoId")));
+  const videoOrientation = clean(formData.get("videoOrientation")) || "landscape";
+  const description = clean(formData.get("description"));
+  const thumbnailUrl = clean(formData.get("thumbnailUrl")) || "/images/taekwondo-hero.png";
+  const isPremium = clean(formData.get("isPremium")) === "true";
+
+  if (!courseId || !title || !category || !poomsae) {
+    throw new Error("강의 ID, 제목, 카테고리, 하위 항목은 필수입니다.");
+  }
+
+  if (!gumletVideoId) {
+    throw new Error("Gumlet Asset ID 또는 영상 URL을 입력해주세요.");
+  }
+
+  if (!videoOrientations.has(videoOrientation)) {
+    throw new Error("영상 비율 값이 올바르지 않습니다.");
+  }
+
+  const coursePayload = {
+    title,
+    category,
+    poomsae,
+    instructor,
+    description,
+    gumlet_video_id: gumletVideoId,
+    video_orientation: videoOrientation,
+    thumbnail_url: thumbnailUrl,
+    is_premium: isPremium
+  };
+
+  let { error } = await supabase.from("courses").update(coursePayload).eq("id", courseId);
+
+  if (error && error.message.includes("video_orientation")) {
+    const fallbackResult = await supabase
+      .from("courses")
+      .update({
+        title,
+        category,
+        poomsae,
+        instructor,
+        description,
+        gumlet_video_id: gumletVideoId,
+        thumbnail_url: thumbnailUrl,
+        is_premium: isPremium
+      })
+      .eq("id", courseId);
+    error = fallbackResult.error;
+  }
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/courses");
+  if (oldSlug) {
+    revalidatePath(`/courses/${oldSlug}`);
+    revalidatePath(`/watch/${oldSlug}`);
+  }
+}
+
+export async function deleteCourse(formData: FormData) {
+  const supabase = await requireAdmin();
+  const courseId = clean(formData.get("courseId"));
+  const oldSlug = clean(formData.get("oldSlug"));
+  const confirmed = clean(formData.get("deleteConfirm")) === "on";
+
+  if (!courseId || !confirmed) {
+    throw new Error("삭제할 강의를 선택하고 삭제 확인에 체크해주세요.");
+  }
+
+  const { error } = await supabase.from("courses").delete().eq("id", courseId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/courses");
+  if (oldSlug) {
+    revalidatePath(`/courses/${oldSlug}`);
+    revalidatePath(`/watch/${oldSlug}`);
+  }
+}

@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import { redirect } from "next/navigation";
 import { FolderPlus, ShieldCheck, UserRoundCheck, UsersRound } from "lucide-react";
 import { courseCategoryTree } from "@/lib/data";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
-import { createCourse, updateProfileRole, updateSubscriptionStatus } from "./actions";
+import { createCourse, deleteCourse, updateCourse, updateProfileRole, updateSubscriptionStatus } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,8 @@ type DbCourseRow = {
   category: string;
   poomsae: string | null;
   instructor: string | null;
+  description: string | null;
+  thumbnail_url: string | null;
   gumlet_video_id: string | null;
   video_orientation: string | null;
   is_premium: boolean;
@@ -134,7 +137,7 @@ export default async function AdminPage({
   if (supabase) {
     const { data: courseRows, error: courseError } = await supabase
       .from("courses")
-      .select("id,slug,title,category,poomsae,instructor,gumlet_video_id,video_orientation,is_premium,published_at")
+      .select("id,slug,title,category,poomsae,instructor,description,thumbnail_url,gumlet_video_id,video_orientation,is_premium,published_at")
       .order("created_at", { ascending: false });
 
     if (!courseError) {
@@ -142,7 +145,7 @@ export default async function AdminPage({
     } else {
       const { data: fallbackCourseRows } = await supabase
         .from("courses")
-        .select("id,slug,title,category,poomsae,instructor,gumlet_video_id,is_premium,published_at")
+        .select("id,slug,title,category,poomsae,instructor,description,thumbnail_url,gumlet_video_id,is_premium,published_at")
         .order("created_at", { ascending: false });
 
       dbCourses = ((fallbackCourseRows ?? []) as Omit<DbCourseRow, "video_orientation">[]).map((course) => ({
@@ -375,30 +378,105 @@ export default async function AdminPage({
               </thead>
               <tbody>
                 {courseRows.map((course) => (
-                  <tr key={course.id}>
-                    <td>
-                      <strong>{course.title}</strong>
-                      <br />
-                      <span className="small-muted">{course.slug}</span>
-                    </td>
-                    <td>{course.category}</td>
-                    <td>{course.poomsae ?? "-"}</td>
-                    <td>{course.instructor ?? "-"}</td>
-                    <td>{course.is_premium ? "구독자 전용" : "무료"}</td>
-                    <td>{course.video_orientation === "portrait" ? "세로" : "가로"}</td>
-                    <td>{course.gumlet_video_id ? "Gumlet" : "-"}</td>
-                    <td>
-                      <div className="inline-form">
-                        <Link className="text-link" href={`/courses/${course.slug}`}>
-                          상세
-                        </Link>
-                        <Link className="text-link" href={`/watch/${course.slug}`}>
-                          시청
-                        </Link>
-                      </div>
-                    </td>
-                    <td>{formatDate(course.published_at)}</td>
-                  </tr>
+                  <Fragment key={course.id}>
+                    <tr key={course.id}>
+                      <td>
+                        <strong>{course.title}</strong>
+                        <br />
+                        <span className="small-muted">{course.slug}</span>
+                      </td>
+                      <td>{course.category}</td>
+                      <td>{course.poomsae ?? "-"}</td>
+                      <td>{course.instructor ?? "-"}</td>
+                      <td>{course.is_premium ? "구독자 전용" : "무료"}</td>
+                      <td>{course.video_orientation === "portrait" ? "세로" : "가로"}</td>
+                      <td>{course.gumlet_video_id ? "Gumlet" : "-"}</td>
+                      <td>
+                        <div className="inline-form">
+                          <Link className="text-link" href={`/courses/${course.slug}`}>
+                            상세
+                          </Link>
+                          <Link className="text-link" href={`/watch/${course.slug}`}>
+                            시청
+                          </Link>
+                        </div>
+                      </td>
+                      <td>{formatDate(course.published_at)}</td>
+                    </tr>
+                    <tr key={`${course.id}-manage`} className="course-manage-row">
+                      <td colSpan={9}>
+                        <details className="course-manage-details">
+                          <summary>수정 / 삭제</summary>
+                          <div className="course-manage-grid">
+                            <form action={updateCourse} className="form-grid course-edit-form">
+                              <input type="hidden" name="courseId" value={course.id} />
+                              <input type="hidden" name="oldSlug" value={course.slug} />
+                              <label className="field-label">
+                                강의 제목
+                                <input className="form-input" name="title" defaultValue={course.title} required />
+                              </label>
+                              <label className="field-label">
+                                대분류
+                                <select className="select-input" name="category" defaultValue={course.category}>
+                                  {courseCategoryTree.map((category) => (
+                                    <option key={category.name}>{category.name}</option>
+                                  ))}
+                                </select>
+                              </label>
+                              <label className="field-label">
+                                하위 항목
+                                <input className="form-input" name="poomsae" list="course-subcategory-options" defaultValue={course.poomsae ?? ""} required />
+                              </label>
+                              <label className="field-label">
+                                Gumlet Asset ID 또는 영상 URL
+                                <input className="form-input" name="gumletVideoId" defaultValue={course.gumlet_video_id ?? ""} required />
+                              </label>
+                              <label className="field-label">
+                                영상 비율
+                                <select className="select-input" name="videoOrientation" defaultValue={course.video_orientation ?? "landscape"}>
+                                  <option value="landscape">가로 영상</option>
+                                  <option value="portrait">세로 영상</option>
+                                </select>
+                              </label>
+                              <label className="field-label">
+                                공개 권한
+                                <select className="select-input" name="isPremium" defaultValue={String(course.is_premium)}>
+                                  <option value="true">구독자 전용</option>
+                                  <option value="false">무료 공개</option>
+                                </select>
+                              </label>
+                              <label className="field-label">
+                                내부 관리용 강사명
+                                <input className="form-input" name="instructor" list="instructor-options" defaultValue={course.instructor ?? ""} />
+                              </label>
+                              <label className="field-label">
+                                썸네일 URL
+                                <input className="form-input" name="thumbnailUrl" defaultValue={course.thumbnail_url ?? ""} />
+                              </label>
+                              <label className="field-label form-span">
+                                강의 설명
+                                <textarea className="form-input textarea-input" name="description" rows={4} defaultValue={course.description ?? ""} />
+                              </label>
+                              <div className="form-actions form-span">
+                                <button className="icon-button primary large">수정 저장</button>
+                              </div>
+                            </form>
+                            <form action={deleteCourse} className="delete-course-box">
+                              <input type="hidden" name="courseId" value={course.id} />
+                              <input type="hidden" name="oldSlug" value={course.slug} />
+                              <strong>강의 삭제</strong>
+                              <p className="small-muted">삭제하면 연결된 챕터, 이어보기, 찜 데이터도 함께 정리됩니다.</p>
+                              <label className="check-row">
+                                <input type="checkbox" name="deleteConfirm" required />
+                                삭제 확인
+                              </label>
+                              <button className="icon-button danger large">강의 삭제</button>
+                            </form>
+                          </div>
+                        </details>
+                      </td>
+                    </tr>
+                  </Fragment>
                 ))}
               </tbody>
             </table>

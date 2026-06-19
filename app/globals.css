@@ -125,6 +125,15 @@ select {
   background: var(--red-dark);
 }
 
+.icon-button.danger {
+  background: #151515;
+  color: #fff;
+}
+
+.icon-button.danger:hover {
+  background: #000;
+}
+
 .icon-button.subtle,
 .filter-button {
   background: #f1f1ec;
@@ -891,6 +900,50 @@ h3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.course-edit-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.course-manage-row td {
+  background: #fafaf7;
+  padding-top: 0;
+}
+
+.course-manage-details {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.course-manage-details summary {
+  cursor: pointer;
+  font-weight: 900;
+  list-style-position: inside;
+}
+
+.course-manage-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  margin-top: 16px;
+}
+
+.delete-course-box {
+  align-content: start;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+}
+
+.check-row {
+  align-items: center;
+  display: inline-flex;
+  font-weight: 900;
+  gap: 8px;
+}
+
 .form-span {
   grid-column: 1 / -1;
 }
@@ -1340,6 +1393,8 @@ th {
   .course-grid,
   .metric-grid,
   .course-create-form,
+  .course-edit-form,
+  .course-manage-grid,
   .profile-info-grid {
     grid-template-columns: 1fr;
   }
