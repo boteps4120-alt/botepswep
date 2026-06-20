@@ -5,7 +5,7 @@ import { CheckCircle2, Maximize2, Pause, Play, RotateCcw, RotateCw, SkipBack, Sk
 import { BookmarkButton } from "@/components/bookmark-button";
 import type { Course } from "@/lib/data";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { saveWatchProgress } from "../actions";
+import { saveWatchProgress, trackCourseEvent } from "../actions";
 
 type WatchPlayerProps = {
   course: Course;
@@ -22,6 +22,7 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
   const [duration, setDuration] = useState(0);
   const [useEmbedFallback, setUseEmbedFallback] = useState(false);
   const [videoError, setVideoError] = useState("");
+  const [trackedPlayStart, setTrackedPlayStart] = useState(false);
   const isPortrait = course.videoOrientation === "portrait";
   const progressValue = duration > 0 ? (currentTime / duration) * 100 : 0;
 
@@ -84,6 +85,16 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
     persistProgress(100, activeChapter.seconds, true);
   }
 
+  function handlePlayStart() {
+    setIsPlaying(true);
+
+    if (trackedPlayStart) return;
+    setTrackedPlayStart(true);
+    startTransition(() => {
+      void trackCourseEvent(course.slug, "play_start");
+    });
+  }
+
   function togglePlayback() {
     const video = videoRef.current;
     if (!video) return;
@@ -142,7 +153,7 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
                   ref={videoRef}
                   preload="metadata"
                   playsInline
-                  onPlay={() => setIsPlaying(true)}
+                  onPlay={handlePlayStart}
                   onPause={() => setIsPlaying(false)}
                   onLoadedMetadata={(event) => setDuration(event.currentTarget.duration || 0)}
                   onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}

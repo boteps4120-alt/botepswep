@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { getRuntimeCourse, getRuntimeNextCourse } from "@/lib/server-courses";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
+import { trackCourseEvent } from "../actions";
 import { WatchPlayer } from "./watch-player";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +29,7 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
   if (hasSupabaseEnv() && course.isPremium && !user) {
+    await trackCourseEvent(course.slug, "premium_click");
     redirect(`/login?next=/watch/${course.slug}`);
   }
 
@@ -49,6 +51,8 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
   const hasAccess = !course.isPremium || !hasSupabaseEnv() || isAdmin || subscription?.status === "active";
 
   if (!hasAccess) {
+    await trackCourseEvent(course.slug, "premium_click");
+
     return (
       <section className="page-shell">
         <div className="page-title access-denied-copy">
@@ -70,6 +74,8 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
       </section>
     );
   }
+
+  await trackCourseEvent(course.slug, "course_view");
 
   return <WatchPlayer key={course.slug} course={course} initialBookmarked={Boolean(bookmark)} nextCourse={await getRuntimeNextCourse(course.slug)} />;
 }

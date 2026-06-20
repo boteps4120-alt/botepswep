@@ -47,6 +47,31 @@ type DbCourseRow = {
   published_at: string | null;
 };
 
+type CourseEventRow = {
+  course_id: string;
+  event_type: string;
+  created_at: string;
+};
+
+type CourseMetricRow = {
+  course_id: string;
+};
+
+type WatchProgressMetricRow = {
+  course_id: string;
+  completed_at: string | null;
+};
+
+type CourseStats = {
+  views: number;
+  playStarts: number;
+  completed: number;
+  bookmarks: number;
+  recent7Days: number;
+  recent30Days: number;
+  premiumClicks: number;
+};
+
 const statuses = ["inactive", "active", "past_due", "canceled", "expired"];
 const adminTabs: { key: AdminTab; label: string }[] = [
   { key: "members", label: "회원관리" },
@@ -114,6 +139,60 @@ function getTab(value?: string): AdminTab {
   return "members";
 }
 
+function emptyCourseStats(): CourseStats {
+  return {
+    views: 0,
+    playStarts: 0,
+    completed: 0,
+    bookmarks: 0,
+    recent7Days: 0,
+    recent30Days: 0,
+    premiumClicks: 0
+  };
+}
+
+function buildCourseStats(
+  courseRows: DbCourseRow[],
+  events: CourseEventRow[],
+  bookmarks: CourseMetricRow[],
+  progressRows: WatchProgressMetricRow[]
+) {
+  const stats = new Map<string, CourseStats>();
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+
+  for (const course of courseRows) {
+    stats.set(course.id, emptyCourseStats());
+  }
+
+  for (const event of events) {
+    const courseStats = stats.get(event.course_id);
+    if (!courseStats) continue;
+
+    const createdAt = new Date(event.created_at).getTime();
+
+    if (event.event_type === "course_view") courseStats.views += 1;
+    if (event.event_type === "play_start") {
+      courseStats.playStarts += 1;
+      if (createdAt >= sevenDaysAgo) courseStats.recent7Days += 1;
+      if (createdAt >= thirtyDaysAgo) courseStats.recent30Days += 1;
+    }
+    if (event.event_type === "premium_click") courseStats.premiumClicks += 1;
+  }
+
+  for (const bookmark of bookmarks) {
+    const courseStats = stats.get(bookmark.course_id);
+    if (courseStats) courseStats.bookmarks += 1;
+  }
+
+  for (const progress of progressRows) {
+    const courseStats = stats.get(progress.course_id);
+    if (courseStats && progress.completed_at) courseStats.completed += 1;
+  }
+
+  return stats;
+}
+
 export default async function AdminPage({
   searchParams
 }: {
@@ -178,6 +257,24 @@ export default async function AdminPage({
   const activeSubscribers = subscriptionRows.filter((subscription) => subscription.status === "active").length;
   const adminCount = profileRows.filter((item) => item.role === "admin").length;
   const instructorOptions = Array.from(new Set(courseRows.map((course) => course.instructor).filter(Boolean))) as string[];
+  const courseIds = courseRows.map((course) => course.id);
+  let eventRows: CourseEventRow[] = [];
+  let bookmarkMetricRows: CourseMetricRow[] = [];
+  let watchProgressMetricRows: WatchProgressMetricRow[] = [];
+
+  if (supabase && courseIds.length > 0) {
+    const [{ data: events }, { data: bookmarkMetrics }, { data: watchProgressMetrics }] = await Promise.all([
+      supabase.from("course_events").select("course_id,event_type,created_at").in("course_id", courseIds),
+      supabase.from("bookmarks").select("course_id").in("course_id", courseIds),
+      supabase.from("watch_progress").select("course_id,completed_at").in("course_id", courseIds)
+    ]);
+
+    eventRows = (events ?? []) as CourseEventRow[];
+    bookmarkMetricRows = (bookmarkMetrics ?? []) as CourseMetricRow[];
+    watchProgressMetricRows = (watchProgressMetrics ?? []) as WatchProgressMetricRow[];
+  }
+
+  const courseStatsById = buildCourseStats(courseRows, eventRows, bookmarkMetricRows, watchProgressMetricRows);
 
   return (
     <section className="page-shell">
@@ -406,6 +503,7 @@ export default async function AdminPage({
                   <th>권한</th>
                   <th>비율</th>
                   <th>영상</th>
+                  <th>시청 데이터</th>
                   <th>확인</th>
                   <th>게시일</th>
                 </tr>
@@ -426,6 +524,23 @@ export default async function AdminPage({
                       <td>{course.video_orientation === "portrait" ? "세로" : "가로"}</td>
                       <td>{course.gumlet_video_id ? "Gumlet" : "-"}</td>
                       <td>
+                        {(() => {
+                          const stats = courseStatsById.get(course.id) ?? emptyCourseStats();
+
+                          return (
+                            <div className="course-stats-grid">
+                              <span>조회 {stats.views}</span>
+                              <span>재생 {stats.playStarts}</span>
+                              <span>완료 {stats.completed}</span>
+                              <span>찜 {stats.bookmarks}</span>
+                              <span>7일 {stats.recent7Days}</span>
+                              <span>30일 {stats.recent30Days}</span>
+                              <span>구독클릭 {stats.premiumClicks}</span>
+                            </div>
+                          );
+                        })()}
+                      </td>
+                      <td>
                         <div className="inline-form">
                           <Link className="text-link" href={`/courses/${course.slug}`}>
                             상세
@@ -438,7 +553,7 @@ export default async function AdminPage({
                       <td>{formatDate(course.published_at)}</td>
                     </tr>
                     <tr key={`${course.id}-manage`} className="course-manage-row">
-                      <td colSpan={9}>
+                      <td colSpan={10}>
                         <details className="course-manage-details">
                           <summary>수정 / 삭제</summary>
                           <div className="course-manage-grid">

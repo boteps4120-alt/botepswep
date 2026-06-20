@@ -1318,6 +1318,24 @@ th {
   min-width: 1280px;
 }
 
+.course-stats-grid {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(2, minmax(76px, 1fr));
+  min-width: 210px;
+  white-space: normal;
+}
+
+.course-stats-grid span {
+  background: #f7f7f3;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: #363636;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 7px 8px;
+}
+
 .form-grid {
   display: grid;
   gap: 12px;

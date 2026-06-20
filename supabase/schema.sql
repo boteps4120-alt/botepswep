@@ -79,6 +79,17 @@ create table if not exists public.bookmarks (
   primary key (user_id, course_id)
 );
 
+create table if not exists public.course_events (
+  id uuid primary key default gen_random_uuid(),
+  course_id uuid not null references public.courses(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete set null,
+  event_type text not null check (event_type in ('course_view', 'play_start', 'watch_complete', 'premium_click', 'bookmark_add')),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists course_events_course_id_idx on public.course_events(course_id);
+create index if not exists course_events_type_created_idx on public.course_events(event_type, created_at);
+
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -141,6 +152,7 @@ alter table public.course_chapters enable row level security;
 alter table public.subscriptions enable row level security;
 alter table public.watch_progress enable row level security;
 alter table public.bookmarks enable row level security;
+alter table public.course_events enable row level security;
 
 drop policy if exists "Profiles are readable by owner" on public.profiles;
 drop policy if exists "Profiles are readable by owner or admin" on public.profiles;
@@ -210,3 +222,11 @@ create policy "Bookmarks are writable by owner" on public.bookmarks
 drop policy if exists "Bookmarks are removable by owner" on public.bookmarks;
 create policy "Bookmarks are removable by owner" on public.bookmarks
   for delete using (auth.uid() = user_id);
+
+drop policy if exists "Course events are readable by admin" on public.course_events;
+create policy "Course events are readable by admin" on public.course_events
+  for select using (public.is_admin());
+
+drop policy if exists "Course events are writable by visitors" on public.course_events;
+create policy "Course events are writable by visitors" on public.course_events
+  for insert with check (user_id is null or auth.uid() = user_id);

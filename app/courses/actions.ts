@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
+import { trackCourseEvent } from "@/app/watch/actions";
 
 type BookmarkResult = {
   ok: boolean;
@@ -74,6 +75,10 @@ export async function toggleBookmark(slug: string, shouldBookmark: boolean): Pro
   revalidatePath("/courses");
   revalidatePath("/mypage");
   revalidatePath(`/courses/${slug}`);
+
+  if (shouldBookmark) {
+    await trackCourseEvent(slug, "bookmark_add");
+  }
 
   return {
     ok: true,
