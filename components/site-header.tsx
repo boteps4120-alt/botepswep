@@ -8,7 +8,6 @@ import { createClient } from "@/lib/supabase/server";
 const baseNavItems = [
   { href: "/", label: "홈" },
   { href: "/courses", label: "강의" },
-  { href: "/subscribe", label: "구독하기" },
   { href: "/mypage", label: "마이페이지" }
 ];
 

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, CheckCircle2, Clock, Lock, PlayCircle, Star, Unlock } from "lucide-react";
+import { ArrowRight, CalendarDays, CheckCircle2, Clock, Lock, PlayCircle, Star, Unlock } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { CourseCard } from "@/components/course-card";
 import { getRuntimeCourse, getRuntimeRelatedCourses } from "@/lib/server-courses";
@@ -17,6 +17,13 @@ type SubscriptionRow = {
 type ProfileRow = {
   role: string;
 };
+
+function formatUploadDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return `${date.getFullYear()}. ${String(date.getMonth() + 1).padStart(2, "0")}. ${String(date.getDate()).padStart(2, "0")}.`;
+}
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -58,6 +65,10 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
             <span>
               <Star size={16} />
               {course.difficulty}
+            </span>
+            <span>
+              <CalendarDays size={16} />
+              {formatUploadDate(course.publishedAt)} 업로드
             </span>
           </div>
           <div className="form-actions">

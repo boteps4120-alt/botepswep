@@ -1,8 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, LockKeyhole, PlayCircle, Star, Unlock } from "lucide-react";
+import { CalendarDays, Clock, LockKeyhole, PlayCircle, Star, Unlock } from "lucide-react";
 import type { Course } from "@/lib/data";
 import { BookmarkButton } from "./bookmark-button";
+
+function formatUploadDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return `${date.getFullYear()}. ${String(date.getMonth() + 1).padStart(2, "0")}. ${String(date.getDate()).padStart(2, "0")}.`;
+}
 
 export function CourseCard({ course, initialBookmarked = false }: { course: Course; initialBookmarked?: boolean }) {
   return (
@@ -24,6 +31,9 @@ export function CourseCard({ course, initialBookmarked = false }: { course: Cour
           </span>
           <span>
             <Star size={15} /> {course.difficulty}
+          </span>
+          <span>
+            <CalendarDays size={15} /> {formatUploadDate(course.publishedAt)} 업로드
           </span>
         </div>
 

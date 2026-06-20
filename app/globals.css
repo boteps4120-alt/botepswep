@@ -214,6 +214,11 @@ select {
   z-index: 1;
 }
 
+.home-hero-single {
+  align-items: center;
+  grid-template-columns: minmax(0, 820px);
+}
+
 .home-hero-content {
   max-width: 760px;
   padding: 0;

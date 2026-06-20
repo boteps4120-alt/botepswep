@@ -18,7 +18,7 @@ export default async function HomePage() {
       <section className="hero-section home-hero">
         <Image src="/images/taekwondo-hero.png" alt="태권도 사범이 품새 동작을 지도하는 모습" fill priority className="hero-image" />
         <div className="hero-overlay" />
-        <div className="home-hero-inner">
+        <div className="home-hero-inner home-hero-single">
           <div className="hero-content home-hero-content">
             <p className="eyebrow">태권도장 관장·사범을 위한 품새 강의 플랫폼</p>
             <h1>BOTEPS</h1>
@@ -45,22 +45,13 @@ export default async function HomePage() {
               <span>무료·구독 강의 운영</span>
             </div>
           </div>
-
-          <aside className="hero-featured-course" aria-label="대표 강의">
-            <span className="featured-kicker">오늘 추천 강의</span>
-            <strong>{featured.title}</strong>
-            <p>{featured.description}</p>
-            <Link href={`/watch/${featured.slug}`}>
-              바로 시청하기 <ArrowRight size={16} />
-            </Link>
-          </aside>
         </div>
       </section>
 
       <section className="section-shell home-value-band">
         <div className="home-value-heading">
           <p className="eyebrow">왜 BOTEPS인가</p>
-          <h2>품새 수업 준비 시간을 줄이고, 지도 품질은 더 일정하게</h2>
+          <h2>품새 수업 준비 시간을 줄이고 지도 품질은 더 일정하게</h2>
         </div>
         <div className="feature-row">
           {[
