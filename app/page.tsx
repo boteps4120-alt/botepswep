@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const courses = await getRuntimeCourses();
   const featured = courses[0];
+  const newCourses = [...courses].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 5);
   const topCourses = [...courses].sort((a, b) => b.popularity - a.popularity);
   const freeTopCourses = topCourses.filter((course) => !course.isPremium).slice(0, 5);
   const paidTopCourses = topCourses.filter((course) => course.isPremium).slice(0, 5);
@@ -83,8 +84,8 @@ export default async function HomePage() {
       <section className="section-shell home-course-sections">
         <div className="section-heading refined-heading">
           <div>
-            <p className="eyebrow">TOP 5</p>
-            <h2>지금 바로 볼 수 있는 BOTEPS 강의</h2>
+            <p className="eyebrow">BOTEPS 강의</p>
+            <h2>신규강의부터 인기강의까지 한 번에</h2>
           </div>
           <Link className="text-link" href="/courses">
             전체 강의 <ArrowRight size={17} />
@@ -93,7 +94,19 @@ export default async function HomePage() {
 
         <div className="course-section-block">
           <div className="course-section-title">
-            <p className="eyebrow">무료강의 TOP 5</p>
+            <p className="eyebrow">신규강의</p>
+            <h3>최근 업로드된 품새 강의</h3>
+          </div>
+          <div className="course-grid home-course-grid">
+            {newCourses.map((course) => (
+              <CourseCard key={course.slug} course={course} />
+            ))}
+          </div>
+        </div>
+
+        <div className="course-section-block">
+          <div className="course-section-title">
+            <p className="eyebrow">무료인기</p>
             <h3>처음 방문한 회원도 바로 시작할 수 있는 강의</h3>
           </div>
           <div className="course-grid home-course-grid">
@@ -105,7 +118,7 @@ export default async function HomePage() {
 
         <div className="course-section-block">
           <div className="course-section-title">
-            <p className="eyebrow">유료강의 TOP 5</p>
+            <p className="eyebrow">유료인기</p>
             <h3>구독 회원에게 제공되는 심화 강의</h3>
           </div>
           <div className="course-grid home-course-grid">
