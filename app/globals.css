@@ -440,12 +440,21 @@ h3 {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 12px 30px rgba(20, 25, 35, 0.08);
+  box-shadow: 0 12px 30px rgba(20, 25, 35, 0.07);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.course-card:hover {
+  border-color: rgba(201, 50, 50, 0.34);
+  box-shadow: 0 18px 42px rgba(20, 25, 35, 0.12);
+  transform: translateY(-3px);
 }
 
 .course-image-link {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   display: block;
   position: relative;
 }
@@ -460,27 +469,74 @@ h3 {
 .course-badge {
   background: rgba(255, 255, 255, 0.94);
   border-radius: 8px;
-  bottom: 12px;
   font-size: 13px;
   font-weight: 900;
+  left: 12px;
+  padding: 7px 10px;
+  position: absolute;
+  top: 12px;
+  z-index: 2;
+}
+
+.course-access-badge {
+  align-items: center;
+  border-radius: 999px;
+  bottom: 12px;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 900;
+  gap: 5px;
   left: 12px;
   padding: 7px 10px;
   position: absolute;
   z-index: 2;
 }
 
+.course-access-badge.free {
+  background: #e7f5ef;
+  color: #106642;
+}
+
+.course-access-badge.premium {
+  background: #fff0f0;
+  color: var(--red);
+}
+
 .course-card-body {
-  padding: 20px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 18px 18px 16px;
 }
 
 .course-card h3 a {
   color: inherit;
 }
 
+.course-card h3 {
+  font-size: 21px;
+  line-height: 1.32;
+}
+
+.course-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.course-poomsae-label {
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
 .course-meta {
   display: flex;
+  flex-wrap: wrap;
   gap: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .course-meta span {
@@ -494,8 +550,8 @@ h3 {
   border-top: 1px solid var(--line);
   display: flex;
   gap: 12px;
-  justify-content: space-between;
-  margin-top: 18px;
+  justify-content: flex-end;
+  margin-top: auto;
   padding-top: 16px;
 }
 
@@ -504,6 +560,15 @@ h3 {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
+  width: 100%;
+}
+
+.card-actions .favorite-button {
+  flex: 1;
+}
+
+.card-actions .icon-button.primary {
+  min-width: 86px;
 }
 
 .workflow-list {
