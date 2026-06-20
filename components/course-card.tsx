@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, Clock, LockKeyhole, PlayCircle, Star, Unlock } from "lucide-react";
+import { CalendarDays, LockKeyhole, PlayCircle, Unlock } from "lucide-react";
 import type { Course } from "@/lib/data";
 import { BookmarkButton } from "./bookmark-button";
 
@@ -26,12 +26,6 @@ export function CourseCard({ course, initialBookmarked = false }: { course: Cour
       <div className="course-card-body">
         <span className="course-poomsae-label">{course.poomsae}</span>
         <div className="course-meta">
-          <span>
-            <Clock size={15} /> {course.duration}
-          </span>
-          <span>
-            <Star size={15} /> {course.difficulty}
-          </span>
           <span>
             <CalendarDays size={15} /> {formatUploadDate(course.publishedAt)} 업로드
           </span>
