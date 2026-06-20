@@ -610,6 +610,10 @@ h3 {
   max-width: 1360px;
 }
 
+.course-detail-shell {
+  max-width: 1240px;
+}
+
 .page-title {
   display: grid;
   gap: 14px;
@@ -717,6 +721,179 @@ h3 {
   grid-template-columns: minmax(0, 1.15fr) 380px;
 }
 
+.detail-hero {
+  align-items: stretch;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
+  margin-bottom: 28px;
+}
+
+.detail-hero-copy {
+  align-content: center;
+  display: grid;
+  gap: 18px;
+}
+
+.detail-hero-copy h1 {
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 1.02;
+}
+
+.detail-hero-copy p {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.detail-hero-media {
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 18px 42px rgba(20, 25, 35, 0.12);
+  overflow: hidden;
+  position: relative;
+}
+
+.detail-hero-media::after {
+  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.62));
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.detail-hero-media span {
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 8px;
+  bottom: 16px;
+  font-weight: 900;
+  left: 16px;
+  padding: 8px 12px;
+  position: absolute;
+  z-index: 2;
+}
+
+.detail-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.detail-chip-row span {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 900;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.detail-content-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 28px;
+}
+
+.panel-heading-row {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.panel-heading-row h2 {
+  font-size: clamp(30px, 4vw, 44px);
+}
+
+.panel-heading-row span {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.lesson-list {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lesson-list li {
+  align-items: center;
+  background: #f8f8f4;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 58px 1fr;
+  min-height: 54px;
+  padding: 11px 13px;
+}
+
+.lesson-list strong {
+  color: var(--red);
+  font-weight: 900;
+}
+
+.lesson-list span {
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.detail-learning-panel {
+  align-items: start;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  margin-top: 18px;
+}
+
+.detail-learning-panel p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 8px 0 0;
+}
+
+.detail-check-list {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.detail-check-list li {
+  align-items: center;
+  background: #f8f8f4;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  font-weight: 900;
+  min-height: 48px;
+  padding: 10px 12px;
+}
+
+.detail-check-list svg {
+  color: var(--teal);
+  flex: 0 0 auto;
+}
+
+.related-course-section {
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+}
+
 .detail-media {
   aspect-ratio: 16 / 9;
   border-radius: 8px;
@@ -775,6 +952,26 @@ h3 {
   grid-template-columns: minmax(0, 1fr);
 }
 
+.watch-title-row {
+  align-items: end;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 24px;
+}
+
+.watch-title-row h1 {
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 1.05;
+}
+
+.watch-title-row p {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 12px 0 0;
+}
+
 .video-shell {
   align-items: center;
   background: #111;
@@ -783,6 +980,10 @@ h3 {
   display: flex;
   justify-content: center;
   overflow: hidden;
+}
+
+.watch-page-shell > .video-shell {
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
 }
 
 .video-shell.portrait {
@@ -803,7 +1004,7 @@ h3 {
 }
 
 .boteps-video-player.portrait {
-  min-height: min(84vh, 760px);
+  min-height: min(82vh, 820px);
 }
 
 .fake-video {
@@ -832,15 +1033,15 @@ h3 {
 
 .real-video.landscape {
   aspect-ratio: 16 / 9;
-  max-height: 70vh;
+  max-height: 74vh;
   width: 100%;
 }
 
 .real-video.portrait {
   aspect-ratio: 9 / 16;
-  max-height: 84vh;
-  min-height: min(84vh, 620px);
-  width: min(100%, 640px);
+  max-height: 82vh;
+  min-height: min(82vh, 680px);
+  width: min(100%, 720px);
 }
 
 .boteps-video-controls {
@@ -919,6 +1120,55 @@ h3 {
 .video-control-button.icon-only {
   padding: 0;
   width: 44px;
+}
+
+.watch-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.watch-chapter-panel,
+.watch-learning-grid,
+.watch-deduction-panel {
+  margin-top: 24px;
+}
+
+.chapter-strip {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.chapter-pill {
+  align-items: start;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  display: grid;
+  gap: 8px;
+  min-height: 82px;
+  padding: 14px;
+  text-align: left;
+}
+
+.chapter-pill:hover {
+  border-color: rgba(201, 50, 50, 0.42);
+  box-shadow: 0 10px 22px rgba(20, 25, 35, 0.08);
+}
+
+.chapter-pill strong {
+  color: var(--blue);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.chapter-pill span {
+  font-weight: 900;
+  line-height: 1.45;
 }
 
 .progress-track {
@@ -1656,8 +1906,12 @@ th {
 
   .intro-band,
   .workflow-band,
+  .detail-hero,
+  .detail-content-grid,
+  .detail-learning-panel,
   .detail-grid,
   .watch-layout,
+  .watch-title-row,
   .dashboard-grid,
   .admin-grid,
   .subscribe-grid,
@@ -1689,6 +1943,10 @@ th {
   .section-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .watch-title-row {
+    align-items: start;
   }
 }
 
@@ -1749,5 +2007,43 @@ th {
 
   .icon-button span {
     white-space: nowrap;
+  }
+
+  .detail-hero-copy h1,
+  .watch-title-row h1 {
+    font-size: clamp(36px, 12vw, 52px);
+  }
+
+  .detail-hero {
+    gap: 20px;
+  }
+
+  .detail-hero-media {
+    min-height: 220px;
+  }
+
+  .panel-heading-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lesson-list li {
+    grid-template-columns: 50px 1fr;
+  }
+
+  .watch-action-row .icon-button {
+    flex: 1 1 100%;
+  }
+
+  .boteps-video-controls {
+    padding: 10px;
+  }
+
+  .video-control-row {
+    flex-wrap: wrap;
+  }
+
+  .video-play-button {
+    min-width: 110px;
   }
 }
