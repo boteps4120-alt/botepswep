@@ -693,6 +693,14 @@ h3 {
   grid-template-columns: 86px minmax(0, 1fr);
 }
 
+.filter-subline {
+  margin: -2px 0 8px;
+}
+
+.filter-subline .filter-label {
+  font-size: 15px;
+}
+
 .filter-line .filter-row {
   margin-bottom: 0;
 }

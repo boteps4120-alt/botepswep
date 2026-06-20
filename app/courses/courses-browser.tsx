@@ -45,6 +45,29 @@ export function CoursesBrowser({
     setSubcategory("전체");
   }
 
+  function renderSubcategoryFilters(forAccessFilter: AccessFilter) {
+    if (accessFilter !== forAccessFilter || category === "전체" || subcategories.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="filter-line filter-subline" aria-label={`${forAccessFilter === "paid" ? "유료강의" : "무료강의"} 하위 항목 필터`}>
+        <span className="filter-label">하위 항목</span>
+        <div className="filter-row">
+          {["전체", ...subcategories].map((item) => (
+            <button
+              key={`${forAccessFilter}-${item}`}
+              className={`filter-button ${item === subcategory ? "active" : ""}`}
+              onClick={() => setSubcategory(item)}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   const resultLabel = [
     accessFilter === "paid" ? "유료강의" : accessFilter === "free" ? "무료강의" : "전체 강의",
     category !== "전체" ? category : "",
@@ -90,6 +113,7 @@ export function CoursesBrowser({
             ))}
           </div>
         </div>
+        {renderSubcategoryFilters("paid")}
         <div className="filter-line" aria-label="무료강의 필터">
           <span className="filter-label">무료강의</span>
           <div className="filter-row">
@@ -104,24 +128,8 @@ export function CoursesBrowser({
             ))}
           </div>
         </div>
+        {renderSubcategoryFilters("free")}
       </div>
-
-      {subcategories.length > 0 ? (
-        <div className="filter-group">
-          <span className="filter-label">하위 항목</span>
-          <div className="filter-row" aria-label="하위 항목 필터">
-            {["전체", ...subcategories].map((item) => (
-              <button
-                key={item}
-                className={`filter-button ${item === subcategory ? "active" : ""}`}
-                onClick={() => setSubcategory(item)}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
 
       <div className="course-result-bar">
         <strong>{filteredCourses.length}개 강의</strong>
