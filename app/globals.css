@@ -1281,6 +1281,13 @@ h3 {
   grid-template-columns: repeat(3, minmax(120px, 1fr));
 }
 
+.mypage-tabs a.active {
+  background: var(--red);
+  border-color: var(--red);
+  box-shadow: 0 10px 24px rgba(3, 199, 90, 0.22);
+  color: #fff;
+}
+
 .admin-stack {
   display: grid;
   gap: 24px;
