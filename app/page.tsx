@@ -2,10 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, PlayCircle, ShieldCheck } from "lucide-react";
 import { CourseCard } from "@/components/course-card";
-import { courses } from "@/lib/data";
+import { getRuntimeCourses } from "@/lib/server-courses";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const courses = await getRuntimeCourses();
   const featured = courses[0];
+  const topCourses = [...courses].sort((a, b) => b.popularity - a.popularity);
+  const freeTopCourses = topCourses.filter((course) => !course.isPremium).slice(0, 5);
+  const paidTopCourses = topCourses.filter((course) => course.isPremium).slice(0, 5);
 
   return (
     <>
@@ -51,7 +57,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell">
+      <section className="section-shell home-course-sections">
         <div className="section-heading">
           <div>
             <p className="eyebrow">추천 강의</p>
@@ -61,10 +67,28 @@ export default function HomePage() {
             전체 강의 <ArrowRight size={17} />
           </Link>
         </div>
-        <div className="course-grid">
-          {courses.slice(0, 3).map((course) => (
-            <CourseCard key={course.slug} course={course} />
-          ))}
+        <div className="course-section-block">
+          <div className="course-section-title">
+            <p className="eyebrow">무료강의 TOP 5</p>
+            <h3>처음 방문한 회원도 바로 시작할 수 있는 강의</h3>
+          </div>
+          <div className="course-grid">
+            {freeTopCourses.map((course) => (
+              <CourseCard key={course.slug} course={course} />
+            ))}
+          </div>
+        </div>
+
+        <div className="course-section-block">
+          <div className="course-section-title">
+            <p className="eyebrow">유료강의 TOP 5</p>
+            <h3>구독 회원에게 제공되는 심화 강의</h3>
+          </div>
+          <div className="course-grid">
+            {paidTopCourses.map((course) => (
+              <CourseCard key={course.slug} course={course} />
+            ))}
+          </div>
         </div>
       </section>
 

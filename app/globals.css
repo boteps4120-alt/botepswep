@@ -325,6 +325,25 @@ h3 {
   grid-template-columns: repeat(3, 1fr);
 }
 
+.home-course-sections {
+  display: grid;
+  gap: 38px;
+}
+
+.course-section-block {
+  display: grid;
+  gap: 18px;
+}
+
+.course-section-title {
+  display: grid;
+  gap: 6px;
+}
+
+.course-section-title h3 {
+  font-size: 24px;
+}
+
 .course-card {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -513,7 +532,7 @@ h3 {
 
 .filter-label {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 900;
 }
 
