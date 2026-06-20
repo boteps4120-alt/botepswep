@@ -2,7 +2,7 @@
 
 import { type FormEvent, useActionState, useState } from "react";
 import Link from "next/link";
-import { CalendarDays, Chrome, LogIn, MailPlus } from "lucide-react";
+import { CalendarDays, Chrome, LogIn, MailPlus, UserPlus } from "lucide-react";
 import { signInWithGoogle, signInWithPassword, signUpWithPassword } from "@/app/auth/actions";
 
 const initialState = {
@@ -37,7 +37,7 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
 
     if (birthDate && !/^\d{8}$/.test(birthDate)) {
       event.preventDefault();
-      alert("생년월일은 8자리 숫자로 입력해주세요.");
+      alert("생년월일은 19950101처럼 8자리 숫자로 입력해주세요.");
       const birthDateInput = form.elements.namedItem("birthDate");
       if (birthDateInput instanceof HTMLElement) birthDateInput.focus();
       return;
@@ -64,7 +64,10 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
 
       {mode === "login" ? (
         <div className="auth-mode-panel">
-          <h2>로그인</h2>
+          <div className="auth-panel-heading">
+            <p>기존 계정으로 접속</p>
+            <h2>로그인</h2>
+          </div>
           <form action={loginAction} className="stacked-form">
             <input type="hidden" name="next" value={nextPath} />
             <input className="auth-input top" name="email" placeholder="아이디 또는 이메일" type="email" autoComplete="email" />
@@ -95,7 +98,11 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
         <div className="auth-mode-panel">
           {signupStep === "choice" ? (
             <>
-              <h2>회원가입</h2>
+              <div className="auth-panel-heading">
+                <p>새 계정 만들기</p>
+                <h2>회원가입</h2>
+              </div>
+
               <form action={signInWithGoogle}>
                 <input type="hidden" name="next" value={nextPath} />
                 <button className="icon-button subtle large full-button">
@@ -105,11 +112,11 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
               </form>
 
               <div className="auth-divider">
-                <span>또는</span>
+                <span>또는 이메일로 가입</span>
               </div>
 
               <button className="icon-button primary large full-button" onClick={() => setSignupStep("email")} type="button">
-                <MailPlus size={20} />
+                <UserPlus size={20} />
                 <span>회원가입</span>
               </button>
 
@@ -121,7 +128,11 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
             </>
           ) : (
             <>
-              <h2>회원정보 입력</h2>
+              <div className="auth-panel-heading">
+                <p>회원정보 입력</p>
+                <h2>계정 정보</h2>
+              </div>
+
               <form action={signupAction} className="stacked-form" onSubmit={handleSignupSubmit}>
                 <input type="hidden" name="next" value={nextPath} />
                 <input className="auth-input top" name="email" placeholder="아이디로 사용할 이메일" type="email" autoComplete="email" />
@@ -145,14 +156,7 @@ export function AuthForm({ nextPath = "/mypage" }: AuthFormProps) {
                   <option value="male">남성</option>
                   <option value="female">여성</option>
                 </select>
-                <input
-                  className="auth-input middle"
-                  name="phone"
-                  placeholder="전화번호"
-                  type="tel"
-                  inputMode="numeric"
-                  autoComplete="tel"
-                />
+                <input className="auth-input middle" name="phone" placeholder="핸드폰 번호" type="tel" inputMode="numeric" autoComplete="tel" />
                 <input className="auth-input bottom" name="address" placeholder="주소" autoComplete="street-address" />
 
                 {signupState.message ? <p className="form-message">{signupState.message}</p> : null}

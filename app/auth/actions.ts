@@ -84,7 +84,7 @@ export async function signUpWithPassword(_state: AuthState, formData: FormData):
   const next = getSafeNext(formData);
 
   if (!email || !password || !fullName || !birthDateInput || !gender || !phone || !address) {
-    return { message: "이름, 생년월일, 성별, 전화번호, 주소, 아이디와 비밀번호를 모두 입력해주세요." };
+    return { message: "이름, 생년월일, 성별, 핸드폰 번호, 주소, 아이디, 비밀번호를 모두 입력해주세요." };
   }
 
   if (!/^\d+$/.test(phone)) {

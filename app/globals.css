@@ -1413,42 +1413,51 @@ h3 {
 .auth-page {
   align-items: start;
   display: grid;
-  gap: 56px;
-  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 480px);
+  gap: 72px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(380px, 460px);
   margin: 0 auto;
-  max-width: 1100px;
-  padding: 72px 32px 96px;
+  max-width: 1120px;
+  min-height: calc(100vh - 108px);
+  padding: 76px 32px 104px;
 }
 
 .auth-intro {
-  padding-top: 54px;
+  padding-top: 42px;
 }
 
 .auth-intro h1 {
-  font-size: clamp(44px, 6vw, 72px);
+  font-size: clamp(46px, 6vw, 76px);
   line-height: 1.02;
-  margin: 0 0 22px;
+  margin: 0 0 24px;
+  max-width: 620px;
 }
 
 .auth-intro p {
   color: var(--muted);
-  font-size: 18px;
+  font-size: 19px;
   line-height: 1.7;
-  margin: 0 0 24px;
+  margin: 0 0 26px;
   max-width: 560px;
 }
 
 .auth-benefits {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
 .auth-benefits span {
   align-items: center;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
   display: inline-flex;
-  font-weight: 800;
-  gap: 9px;
+  font-size: 15px;
+  font-weight: 900;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 13px;
 }
 
 .auth-benefits svg {
@@ -1459,13 +1468,15 @@ h3 {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 24px 70px rgba(20, 25, 35, 0.13);
   overflow: hidden;
   padding: 0;
+  position: sticky;
+  top: 118px;
 }
 
 .auth-mode-tabs {
-  background: #f4f4ef;
+  background: #f2f2ed;
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
@@ -1476,9 +1487,9 @@ h3 {
   border-bottom: 1px solid var(--line);
   color: var(--muted);
   cursor: pointer;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 900;
-  min-height: 58px;
+  min-height: 64px;
 }
 
 .auth-mode-tabs button:first-child {
@@ -1492,13 +1503,26 @@ h3 {
 }
 
 .auth-mode-panel {
-  padding: 30px;
+  padding: 34px;
+}
+
+.auth-panel-heading {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.auth-panel-heading p {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 900;
+  margin: 0;
 }
 
 .auth-mode-panel h2 {
-  font-size: 38px;
+  font-size: 42px;
   line-height: 1.08;
-  margin: 0 0 22px;
+  margin: 0;
 }
 
 .stacked-form {
@@ -1508,10 +1532,17 @@ h3 {
 .auth-input {
   background: #fff;
   border: 1px solid #cfd4d0;
-  font-size: 17px;
-  min-height: 58px;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 800;
+  min-height: 60px;
   padding: 0 18px;
   width: 100%;
+}
+
+.auth-input::placeholder {
+  color: #7c8580;
+  font-weight: 700;
 }
 
 .auth-input:focus {
@@ -1543,7 +1574,7 @@ h3 {
   display: grid;
   gap: 12px;
   grid-template-columns: 28px 1fr;
-  min-height: 58px;
+  min-height: 60px;
   margin-top: -1px;
   padding: 0 18px;
 }
@@ -1555,8 +1586,9 @@ h3 {
 .auth-birth-field input {
   border: 0;
   color: var(--ink);
-  font-size: 17px;
-  min-height: 54px;
+  font-size: 16px;
+  font-weight: 800;
+  min-height: 56px;
   outline: 0;
   width: 100%;
 }
@@ -1577,7 +1609,7 @@ h3 {
   display: flex;
   gap: 14px;
   justify-content: center;
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .auth-links a,
@@ -1929,6 +1961,10 @@ th {
     padding-top: 0;
   }
 
+  .auth-card {
+    position: static;
+  }
+
   .feature-row,
   .course-grid,
   .metric-grid,
@@ -1997,6 +2033,23 @@ th {
 
   .auth-card {
     padding: 22px;
+  }
+
+  .auth-card {
+    padding: 0;
+  }
+
+  .auth-mode-panel {
+    padding: 24px;
+  }
+
+  .auth-benefits {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .auth-benefits span {
+    justify-content: center;
   }
 
   .admin-tabs {
