@@ -1244,6 +1244,7 @@ h3 {
 }
 
 .engagement-panel {
+  border-color: #222;
   display: grid;
   gap: 16px;
   margin-top: 24px;
@@ -1271,7 +1272,7 @@ h3 {
 .like-button {
   align-items: center;
   background: #fff;
-  border: 1px solid var(--line);
+  border: 1px solid #222;
   border-radius: 8px;
   color: var(--ink);
   cursor: pointer;
@@ -1316,7 +1317,7 @@ h3 {
 .comment-form {
   align-items: center;
   background: var(--surface-soft);
-  border: 1px solid var(--line);
+  border: 1px solid #222;
   border-radius: 8px;
   display: grid;
   gap: 10px;
@@ -1340,7 +1341,7 @@ h3 {
 .comment-form button {
   align-items: center;
   background: #fff;
-  border: 1px solid var(--line);
+  border: 1px solid #222;
   border-radius: 8px;
   box-shadow: none;
   color: var(--ink);
@@ -1364,7 +1365,7 @@ h3 {
 
 .engagement-message {
   background: rgba(3, 199, 90, 0.1);
-  border: 1px solid rgba(3, 199, 90, 0.28);
+  border: 1px solid #222;
   border-radius: 8px;
   color: var(--red-dark);
   font-weight: 900;
@@ -1379,7 +1380,7 @@ h3 {
 
 .comment-item {
   background: #fff;
-  border: 1px solid var(--line);
+  border: 1px solid #222;
   border-radius: 8px;
   padding: 14px;
 }
@@ -1444,7 +1445,7 @@ h3 {
 
 .reply-form {
   background: var(--surface-soft);
-  border: 1px solid var(--line);
+  border: 1px solid #222;
   border-radius: 8px;
   grid-template-columns: minmax(0, 1fr);
   padding: 10px;
@@ -1453,7 +1454,7 @@ h3 {
 .reply-form input,
 .comment-edit-form input {
   background: #fff;
-  border: 1px solid var(--line);
+  border: 1px solid #222;
   border-radius: 8px;
   color: var(--ink);
   font-weight: 800;
@@ -1471,7 +1472,7 @@ h3 {
 .reply-form button {
   align-items: center;
   background: #fff;
-  border: 1px solid var(--line);
+  border: 1px solid #222;
   border-radius: 8px;
   box-shadow: none;
   color: var(--ink);

@@ -96,7 +96,7 @@ export function EngagementPanel({
 
       if (result.ok) {
         setComments((items) => [
-          {
+          result.comment ?? {
             id: `local-${Date.now()}`,
             userId: currentUserId,
             parentCommentId: null,
@@ -126,7 +126,7 @@ export function EngagementPanel({
       if (result.ok) {
         setComments((items) => [
           ...items,
-          {
+          result.comment ?? {
             id: `local-reply-${Date.now()}`,
             userId: currentUserId,
             parentCommentId: parentId,

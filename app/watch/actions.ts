@@ -97,6 +97,7 @@ export async function toggleCourseLike(slug: string, shouldLike: boolean) {
 
 export async function addCourseComment(slug: string, body: string, parentCommentId?: string) {
   const trimmedBody = body.trim();
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
   if (!hasSupabaseEnv()) {
     return { ok: false, message: "Supabase 연결 후 댓글을 사용할 수 있습니다." };
@@ -108,6 +109,10 @@ export async function addCourseComment(slug: string, body: string, parentComment
 
   if (trimmedBody.length > 500) {
     return { ok: false, message: "댓글은 500자 이내로 입력해주세요." };
+  }
+
+  if (parentCommentId && !uuidPattern.test(parentCommentId)) {
+    return { ok: false, message: "답글을 등록하려면 페이지를 새로고침한 뒤 다시 시도해주세요." };
   }
 
   const supabase = await createClient();
@@ -131,13 +136,25 @@ export async function addCourseComment(slug: string, body: string, parentComment
 
   const authorName = profile?.full_name || profile?.display_name || profile?.email?.split("@")[0] || "BOTEPS 회원";
 
-  const { error } = await supabase.from("course_comments").insert({
-    course_id: courseId,
-    parent_comment_id: parentCommentId || null,
-    user_id: user.id,
-    author_name: authorName,
-    body: trimmedBody
-  });
+  const { data: insertedComment, error } = await supabase
+    .from("course_comments")
+    .insert({
+      course_id: courseId,
+      parent_comment_id: parentCommentId || null,
+      user_id: user.id,
+      author_name: authorName,
+      body: trimmedBody
+    })
+    .select("id,user_id,parent_comment_id,author_name,body,created_at,updated_at")
+    .single<{
+      id: string;
+      user_id: string | null;
+      parent_comment_id: string | null;
+      author_name: string;
+      body: string;
+      created_at: string;
+      updated_at: string;
+    }>();
 
   if (error) {
     return { ok: false, message: "댓글 저장에 실패했습니다. Supabase 테이블 설정을 확인해주세요." };
@@ -145,7 +162,21 @@ export async function addCourseComment(slug: string, body: string, parentComment
 
   revalidatePath(`/watch/${slug}`);
 
-  return { ok: true, message: "댓글이 등록되었습니다." };
+  return {
+    ok: true,
+    message: "댓글이 등록되었습니다.",
+    comment: insertedComment
+      ? {
+          id: insertedComment.id,
+          userId: insertedComment.user_id,
+          parentCommentId: insertedComment.parent_comment_id,
+          authorName: insertedComment.author_name,
+          body: insertedComment.body,
+          createdAt: insertedComment.created_at,
+          updatedAt: insertedComment.updated_at
+        }
+      : null
+  };
 }
 
 export async function updateCourseComment(slug: string, commentId: string, body: string) {
