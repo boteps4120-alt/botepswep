@@ -264,6 +264,65 @@ select {
   padding-right: 2px;
 }
 
+.site-footer {
+  align-items: center;
+  background: #000;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  min-height: 112px;
+  padding: 32px max(32px, calc((100vw - 1280px) / 2 + 32px));
+}
+
+.footer-subscribe,
+.footer-socials {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+}
+
+.footer-subscribe svg {
+  border: 3px solid var(--red);
+  color: var(--red);
+  height: 42px;
+  padding: 5px;
+  width: 50px;
+}
+
+.footer-subscribe strong,
+.footer-socials span {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.footer-subscribe-button {
+  align-items: center;
+  background: var(--red);
+  border-radius: 2px;
+  color: #000;
+  display: inline-flex;
+  font-size: 16px;
+  font-weight: 900;
+  min-height: 46px;
+  padding: 0 22px;
+}
+
+.footer-socials span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 15px;
+}
+
+.footer-socials a {
+  color: rgba(255, 255, 255, 0.72);
+  display: inline-flex;
+}
+
+.footer-socials a:hover,
+.footer-socials a:focus {
+  color: var(--red);
+}
+
 .icon-button.light {
   background: #fff;
   color: var(--ink);
@@ -2583,6 +2642,18 @@ th {
 
   .header-actions-right {
     margin-left: 0;
+  }
+
+  .site-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    min-height: auto;
+    padding: 34px 20px;
+  }
+
+  .footer-subscribe,
+  .footer-socials {
+    flex-wrap: wrap;
   }
 
   .home-hero,
