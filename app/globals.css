@@ -282,30 +282,32 @@ select {
   gap: 20px;
 }
 
-.footer-subscribe svg {
-  border: 3px solid var(--red);
+.footer-mail-link {
   color: var(--red);
+  display: inline-flex;
+}
+
+.footer-mail-link svg {
+  border: 3px solid var(--red);
   height: 42px;
   padding: 5px;
   width: 50px;
+}
+
+.footer-mail-link:hover,
+.footer-mail-link:focus {
+  color: #fff;
+}
+
+.footer-mail-link:hover svg,
+.footer-mail-link:focus svg {
+  border-color: #fff;
 }
 
 .footer-subscribe strong,
 .footer-socials span {
   font-size: 18px;
   font-weight: 800;
-}
-
-.footer-subscribe-button {
-  align-items: center;
-  background: var(--red);
-  border-radius: 2px;
-  color: #000;
-  display: inline-flex;
-  font-size: 16px;
-  font-weight: 900;
-  min-height: 46px;
-  padding: 0 22px;
 }
 
 .footer-socials span {

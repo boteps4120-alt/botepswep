@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Facebook, Instagram, Mail, Youtube } from "lucide-react";
 
 const socialLinks = [
@@ -11,11 +10,14 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="footer-subscribe">
-        <Mail size={34} aria-hidden="true" />
+        <a
+          className="footer-mail-link"
+          href="mailto:boteps4120@gmail.com?subject=BOTEPS%20문의"
+          aria-label="BOTEPS 문의 메일 보내기"
+        >
+          <Mail size={34} aria-hidden="true" />
+        </a>
         <strong>BOTEPS SNS 구독하기</strong>
-        <Link className="footer-subscribe-button" href="/subscribe">
-          구독하기
-        </Link>
       </div>
       <div className="footer-socials" aria-label="BOTEPS SNS">
         <span>BOTEPS 팔로우하기</span>
