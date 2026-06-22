@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BookOpenCheck, CheckCircle2, Clock3, PlayCircle, Search, ShieldCheck, Target } from "lucide-react";
-import { CourseCard } from "@/components/course-card";
+import { CourseRail } from "@/components/course-rail";
 import { getRuntimeCourses } from "@/lib/server-courses";
 
 export const dynamic = "force-dynamic";
@@ -105,41 +105,9 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="course-section-block course-section-new">
-          <div className="course-section-title">
-            <p className="eyebrow">신규강의</p>
-            <h3>최근 업로드된 품새 강의</h3>
-          </div>
-          <div className="course-grid home-course-grid">
-            {newCourses.map((course) => (
-              <CourseCard key={course.slug} course={course} />
-            ))}
-          </div>
-        </div>
-
-        <div className="course-section-block course-section-free">
-          <div className="course-section-title">
-            <p className="eyebrow">무료인기</p>
-            <h3>처음 방문한 회원도 바로 시작할 수 있는 강의</h3>
-          </div>
-          <div className="course-grid home-course-grid">
-            {freeTopCourses.map((course) => (
-              <CourseCard key={course.slug} course={course} />
-            ))}
-          </div>
-        </div>
-
-        <div className="course-section-block course-section-paid">
-          <div className="course-section-title">
-            <p className="eyebrow">유료인기</p>
-            <h3>구독 회원에게 제공되는 심화 강의</h3>
-          </div>
-          <div className="course-grid home-course-grid">
-            {paidTopCourses.map((course) => (
-              <CourseCard key={course.slug} course={course} />
-            ))}
-          </div>
-        </div>
+        <CourseRail eyebrow="신규강의" title="최근 업로드된 품새 강의" courses={newCourses} tone="clean" />
+        <CourseRail eyebrow="무료강의" title="처음 방문한 회원도 바로 시작할 수 있는 강의" courses={freeTopCourses} tone="soft" />
+        <CourseRail eyebrow="인기강의" title="구독 회원이 많이 찾는 심화 강의" courses={paidTopCourses} tone="line" />
       </section>
     </>
   );
