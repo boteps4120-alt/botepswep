@@ -28,9 +28,12 @@ type LikeRow = {
 
 type CommentRow = {
   id: string;
+  user_id: string | null;
+  parent_comment_id: string | null;
   author_name: string;
   body: string;
   created_at: string;
+  updated_at: string;
 };
 
 export default async function WatchPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -115,7 +118,7 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
           : Promise.resolve({ data: null }),
         supabase
           .from("course_comments")
-          .select("id,author_name,body,created_at")
+          .select("id,user_id,parent_comment_id,author_name,body,created_at,updated_at")
           .eq("course_id", courseId)
           .order("created_at", { ascending: false })
           .limit(20)
@@ -125,9 +128,12 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
       initialLikeCount = likeCountResult.count ?? 0;
       initialComments = ((commentsResult.data ?? []) as CommentRow[]).map((item) => ({
         id: item.id,
+        userId: item.user_id,
+        parentCommentId: item.parent_comment_id,
         authorName: item.author_name,
         body: item.body,
-        createdAt: item.created_at
+        createdAt: item.created_at,
+        updatedAt: item.updated_at
       }));
     }
   }
@@ -140,6 +146,7 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
       initialComments={initialComments}
       initialLiked={initialLiked}
       initialLikeCount={initialLikeCount}
+      currentUserId={user?.id ?? null}
       nextCourse={await getRuntimeNextCourse(course.slug)}
     />
   );

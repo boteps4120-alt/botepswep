@@ -89,11 +89,17 @@ create table if not exists public.course_likes (
 create table if not exists public.course_comments (
   id uuid primary key default gen_random_uuid(),
   course_id uuid not null references public.courses(id) on delete cascade,
+  parent_comment_id uuid references public.course_comments(id) on delete cascade,
   user_id uuid references auth.users(id) on delete set null,
   author_name text not null default 'BOTEPS 회원',
   body text not null check (char_length(trim(body)) between 1 and 500),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
+
+alter table public.course_comments
+  add column if not exists parent_comment_id uuid references public.course_comments(id) on delete cascade,
+  add column if not exists updated_at timestamptz not null default now();
 
 create table if not exists public.course_events (
   id uuid primary key default gen_random_uuid(),
@@ -106,6 +112,7 @@ create table if not exists public.course_events (
 create index if not exists course_events_course_id_idx on public.course_events(course_id);
 create index if not exists course_events_type_created_idx on public.course_events(event_type, created_at);
 create index if not exists course_comments_course_created_idx on public.course_comments(course_id, created_at desc);
+create index if not exists course_comments_parent_created_idx on public.course_comments(parent_comment_id, created_at asc);
 
 create or replace function public.handle_new_user()
 returns trigger
@@ -261,6 +268,11 @@ create policy "Course comments are readable by everyone" on public.course_commen
 drop policy if exists "Course comments are writable by owner" on public.course_comments;
 create policy "Course comments are writable by owner" on public.course_comments
   for insert with check (auth.uid() = user_id);
+
+drop policy if exists "Course comments are editable by owner" on public.course_comments;
+create policy "Course comments are editable by owner" on public.course_comments
+  for update using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 drop policy if exists "Course comments are removable by owner or admin" on public.course_comments;
 create policy "Course comments are removable by owner or admin" on public.course_comments

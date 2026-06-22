@@ -1,18 +1,22 @@
 "use client";
 
-import { Heart, MessageCircle, Send } from "lucide-react";
-import { useState, useTransition, type FormEvent } from "react";
-import { addCourseComment, toggleCourseLike } from "../actions";
+import { Heart, MessageCircle, Pencil, Send, Trash2 } from "lucide-react";
+import { useMemo, useState, useTransition, type FormEvent } from "react";
+import { addCourseComment, deleteCourseComment, toggleCourseLike, updateCourseComment } from "../actions";
 
 export type CourseComment = {
   id: string;
+  userId?: string | null;
+  parentCommentId?: string | null;
   authorName: string;
   body: string;
   createdAt: string;
+  updatedAt?: string;
 };
 
 type EngagementPanelProps = {
   slug: string;
+  currentUserId?: string | null;
   initialLiked?: boolean;
   initialLikeCount?: number;
   initialComments?: CourseComment[];
@@ -28,13 +32,32 @@ function formatDate(value: string) {
   }).format(date);
 }
 
-export function EngagementPanel({ slug, initialLiked = false, initialLikeCount = 0, initialComments = [] }: EngagementPanelProps) {
+export function EngagementPanel({
+  slug,
+  currentUserId = null,
+  initialLiked = false,
+  initialLikeCount = 0,
+  initialComments = []
+}: EngagementPanelProps) {
   const [liked, setLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [comments, setComments] = useState(initialComments);
   const [comment, setComment] = useState("");
+  const [replyTargetId, setReplyTargetId] = useState<string | null>(null);
+  const [replyBody, setReplyBody] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingBody, setEditingBody] = useState("");
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  const rootComments = useMemo(() => comments.filter((item) => !item.parentCommentId), [comments]);
+  const repliesByParent = useMemo(() => {
+    return comments.reduce<Record<string, CourseComment[]>>((acc, item) => {
+      if (!item.parentCommentId) return acc;
+      acc[item.parentCommentId] = [...(acc[item.parentCommentId] ?? []), item];
+      return acc;
+    }, {});
+  }, [comments]);
 
   function handleLike() {
     const nextLiked = !liked;
@@ -69,6 +92,8 @@ export function EngagementPanel({ slug, initialLiked = false, initialLikeCount =
         setComments((items) => [
           {
             id: `local-${Date.now()}`,
+            userId: currentUserId,
+            parentCommentId: null,
             authorName: "나",
             body: nextComment,
             createdAt: new Date().toISOString()
@@ -80,6 +105,143 @@ export function EngagementPanel({ slug, initialLiked = false, initialLikeCount =
     });
   }
 
+  function handleReplySubmit(event: FormEvent<HTMLFormElement>, parentId: string) {
+    event.preventDefault();
+    const nextReply = replyBody.trim();
+    if (!nextReply) {
+      setMessage("답글 내용을 입력해주세요.");
+      return;
+    }
+
+    startTransition(async () => {
+      const result = await addCourseComment(slug, nextReply, parentId);
+      setMessage(result.message);
+
+      if (result.ok) {
+        setComments((items) => [
+          ...items,
+          {
+            id: `local-reply-${Date.now()}`,
+            userId: currentUserId,
+            parentCommentId: parentId,
+            authorName: "나",
+            body: nextReply,
+            createdAt: new Date().toISOString()
+          }
+        ]);
+        setReplyBody("");
+        setReplyTargetId(null);
+      }
+    });
+  }
+
+  function startEditing(item: CourseComment) {
+    setEditingCommentId(item.id);
+    setEditingBody(item.body);
+    setReplyTargetId(null);
+  }
+
+  function handleEditSubmit(event: FormEvent<HTMLFormElement>, commentId: string) {
+    event.preventDefault();
+    const nextBody = editingBody.trim();
+    if (!nextBody) {
+      setMessage("수정할 댓글 내용을 입력해주세요.");
+      return;
+    }
+
+    startTransition(async () => {
+      const result = await updateCourseComment(slug, commentId, nextBody);
+      setMessage(result.message);
+
+      if (result.ok) {
+        setComments((items) =>
+          items.map((item) => (item.id === commentId ? { ...item, body: nextBody, updatedAt: new Date().toISOString() } : item))
+        );
+        setEditingCommentId(null);
+        setEditingBody("");
+      }
+    });
+  }
+
+  function handleDelete(commentId: string) {
+    startTransition(async () => {
+      const result = await deleteCourseComment(slug, commentId);
+      setMessage(result.message);
+
+      if (result.ok) {
+        setComments((items) => items.filter((item) => item.id !== commentId && item.parentCommentId !== commentId));
+      }
+    });
+  }
+
+  function renderComment(item: CourseComment, isReply = false) {
+    const canManage = Boolean(currentUserId && item.userId === currentUserId);
+    const isEditing = editingCommentId === item.id;
+
+    return (
+      <article className={`comment-item ${isReply ? "reply" : ""}`} key={item.id}>
+        <div className="comment-meta">
+          <strong>{item.authorName}</strong>
+          <span>
+            {formatDate(item.createdAt)}
+            {item.updatedAt && item.updatedAt !== item.createdAt ? " 수정됨" : ""}
+          </span>
+        </div>
+
+        {isEditing ? (
+          <form className="comment-edit-form" onSubmit={(event) => handleEditSubmit(event, item.id)}>
+            <input value={editingBody} onChange={(event) => setEditingBody(event.target.value)} maxLength={500} />
+            <div>
+              <button className="text-action primary" disabled={isPending} type="submit">
+                저장
+              </button>
+              <button className="text-action" type="button" onClick={() => setEditingCommentId(null)}>
+                취소
+              </button>
+            </div>
+          </form>
+        ) : (
+          <p>{item.body}</p>
+        )}
+
+        {!isEditing ? (
+          <div className="comment-actions">
+            {!isReply ? (
+              <button className="text-action" type="button" onClick={() => setReplyTargetId(replyTargetId === item.id ? null : item.id)}>
+                답글
+              </button>
+            ) : null}
+            {canManage ? (
+              <>
+                <button className="text-action" type="button" onClick={() => startEditing(item)}>
+                  <Pencil size={14} />
+                  수정
+                </button>
+                <button className="text-action danger" disabled={isPending} type="button" onClick={() => handleDelete(item.id)}>
+                  <Trash2 size={14} />
+                  삭제
+                </button>
+              </>
+            ) : null}
+          </div>
+        ) : null}
+
+        {replyTargetId === item.id ? (
+          <form className="reply-form" onSubmit={(event) => handleReplySubmit(event, item.id)}>
+            <input value={replyBody} onChange={(event) => setReplyBody(event.target.value)} placeholder="답글을 입력해주세요" maxLength={500} />
+            <button disabled={isPending} type="submit">
+              답글 등록
+            </button>
+          </form>
+        ) : null}
+
+        {!isReply && repliesByParent[item.id]?.length ? (
+          <div className="reply-list">{repliesByParent[item.id].map((reply) => renderComment(reply, true))}</div>
+        ) : null}
+      </article>
+    );
+  }
+
   return (
     <section className="player-panel engagement-panel">
       <div className="engagement-heading">
@@ -87,9 +249,10 @@ export function EngagementPanel({ slug, initialLiked = false, initialLikeCount =
           <p className="eyebrow">반응과 의견</p>
           <h2>좋아요와 댓글</h2>
         </div>
-        <button className={`icon-button like-button large ${liked ? "active" : ""}`} disabled={isPending} onClick={handleLike} type="button">
-          <Heart size={20} fill={liked ? "currentColor" : "none"} />
-          <span>좋아요 {likeCount}</span>
+        <button className={`like-button large ${liked ? "active" : ""}`} disabled={isPending} onClick={handleLike} type="button">
+          <Heart size={22} fill={liked ? "currentColor" : "none"} />
+          <span>좋아요</span>
+          <strong>{likeCount}</strong>
         </button>
       </div>
 
@@ -98,26 +261,14 @@ export function EngagementPanel({ slug, initialLiked = false, initialLikeCount =
         <input value={comment} onChange={(event) => setComment(event.target.value)} placeholder="강의에 대한 의견을 남겨주세요" maxLength={500} />
         <button disabled={isPending} type="submit">
           <Send size={18} />
-          <span>등록</span>
+          <span>댓글 등록</span>
         </button>
       </form>
 
       {message ? <p className="engagement-message">{message}</p> : null}
 
       <div className="comment-list">
-        {comments.length > 0 ? (
-          comments.map((item) => (
-            <article className="comment-item" key={item.id}>
-              <div>
-                <strong>{item.authorName}</strong>
-                <span>{formatDate(item.createdAt)}</span>
-              </div>
-              <p>{item.body}</p>
-            </article>
-          ))
-        ) : (
-          <p className="empty-state">아직 댓글이 없습니다. 첫 의견을 남겨보세요.</p>
-        )}
+        {rootComments.length > 0 ? rootComments.map((item) => renderComment(item)) : <p className="empty-state">아직 댓글이 없습니다. 첫 의견을 남겨보세요.</p>}
       </div>
     </section>
   );

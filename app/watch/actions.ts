@@ -95,7 +95,7 @@ export async function toggleCourseLike(slug: string, shouldLike: boolean) {
   return { ok: true, liked: shouldLike, message: shouldLike ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다." };
 }
 
-export async function addCourseComment(slug: string, body: string) {
+export async function addCourseComment(slug: string, body: string, parentCommentId?: string) {
   const trimmedBody = body.trim();
 
   if (!hasSupabaseEnv()) {
@@ -133,6 +133,7 @@ export async function addCourseComment(slug: string, body: string) {
 
   const { error } = await supabase.from("course_comments").insert({
     course_id: courseId,
+    parent_comment_id: parentCommentId || null,
     user_id: user.id,
     author_name: authorName,
     body: trimmedBody
@@ -145,4 +146,66 @@ export async function addCourseComment(slug: string, body: string) {
   revalidatePath(`/watch/${slug}`);
 
   return { ok: true, message: "댓글이 등록되었습니다." };
+}
+
+export async function updateCourseComment(slug: string, commentId: string, body: string) {
+  const trimmedBody = body.trim();
+
+  if (!hasSupabaseEnv()) {
+    return { ok: false, message: "Supabase 연결 후 댓글을 수정할 수 있습니다." };
+  }
+
+  if (!trimmedBody) {
+    return { ok: false, message: "수정할 댓글 내용을 입력해주세요." };
+  }
+
+  if (trimmedBody.length > 500) {
+    return { ok: false, message: "댓글은 500자 이내로 입력해주세요." };
+  }
+
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  const user = authData.user;
+
+  if (!user) {
+    return { ok: false, message: "로그인 후 댓글을 수정할 수 있습니다." };
+  }
+
+  const { error } = await supabase
+    .from("course_comments")
+    .update({ body: trimmedBody, updated_at: new Date().toISOString() })
+    .eq("id", commentId)
+    .eq("user_id", user.id);
+
+  if (error) {
+    return { ok: false, message: "댓글 수정에 실패했습니다." };
+  }
+
+  revalidatePath(`/watch/${slug}`);
+
+  return { ok: true, message: "댓글이 수정되었습니다." };
+}
+
+export async function deleteCourseComment(slug: string, commentId: string) {
+  if (!hasSupabaseEnv()) {
+    return { ok: false, message: "Supabase 연결 후 댓글을 삭제할 수 있습니다." };
+  }
+
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  const user = authData.user;
+
+  if (!user) {
+    return { ok: false, message: "로그인 후 댓글을 삭제할 수 있습니다." };
+  }
+
+  const { error } = await supabase.from("course_comments").delete().eq("id", commentId);
+
+  if (error) {
+    return { ok: false, message: "댓글 삭제에 실패했습니다." };
+  }
+
+  revalidatePath(`/watch/${slug}`);
+
+  return { ok: true, message: "댓글이 삭제되었습니다." };
 }

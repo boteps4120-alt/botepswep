@@ -10,6 +10,7 @@ import { EngagementPanel, type CourseComment } from "./engagement-panel";
 
 type WatchPlayerProps = {
   course: Course;
+  currentUserId?: string | null;
   initialBookmarked?: boolean;
   initialComments?: CourseComment[];
   initialLiked?: boolean;
@@ -19,6 +20,7 @@ type WatchPlayerProps = {
 
 export function WatchPlayer({
   course,
+  currentUserId = null,
   initialBookmarked = false,
   initialComments = [],
   initialLiked = false,
@@ -251,6 +253,7 @@ export function WatchPlayer({
         initialComments={initialComments}
         initialLiked={initialLiked}
         initialLikeCount={initialLikeCount}
+        currentUserId={currentUserId}
       />
 
       {course.chapters.length > 0 ? (
