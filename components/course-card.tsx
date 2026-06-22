@@ -16,14 +16,16 @@ export function CourseCard({ course, initialBookmarked = false }: { course: Cour
     <article className="course-card">
       <Link href={`/watch/${course.slug}`} className="course-image-link" aria-label={`${course.title} 바로 시청`}>
         <Image src={course.thumbnail} alt="" fill sizes="(max-width: 768px) 100vw, 33vw" className="course-image" />
-        <span className="course-badge">{course.category}</span>
-        <span className={`course-access-badge ${course.isPremium ? "premium" : "free"}`}>
-          {course.isPremium ? <LockKeyhole size={14} /> : <Unlock size={14} />}
-          {course.isPremium ? "구독자 전용" : "무료강의"}
-        </span>
       </Link>
 
       <div className="course-card-body">
+        <div className="course-card-tags">
+          <span className="course-badge">{course.category}</span>
+          <span className={`course-access-badge ${course.isPremium ? "premium" : "free"}`}>
+            {course.isPremium ? <LockKeyhole size={14} /> : <Unlock size={14} />}
+            {course.isPremium ? "구독자 전용" : "무료강의"}
+          </span>
+        </div>
         <span className="course-poomsae-label">{course.poomsae}</span>
         <div className="course-meta">
           <span>
@@ -38,11 +40,11 @@ export function CourseCard({ course, initialBookmarked = false }: { course: Cour
 
         <div className="card-footer">
           <div className="card-actions">
-            <BookmarkButton slug={course.slug} initialBookmarked={initialBookmarked} />
             <Link className="icon-button primary compact" href={`/watch/${course.slug}`}>
               <PlayCircle size={17} />
               <span>시청</span>
             </Link>
+            <BookmarkButton slug={course.slug} initialBookmarked={initialBookmarked} />
           </div>
         </div>
       </div>
