@@ -11,7 +11,15 @@ type BookmarkSlugRow = {
   } | null;
 };
 
-export default async function CoursesPage() {
+export default async function CoursesPage({
+  searchParams
+}: {
+  searchParams?: Promise<{
+    query?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const initialQuery = typeof params?.query === "string" ? params.query : "";
   const runtimeCourses = await getRuntimeCourses();
   let bookmarkedSlugs: string[] = [];
 
@@ -39,7 +47,7 @@ export default async function CoursesPage() {
         <p>유급자 품새, 유단자 품새, 기본동작, 서기, 품새 이론 기준으로 강의를 빠르게 고르세요.</p>
       </div>
 
-      <CoursesBrowser initialBookmarkedSlugs={bookmarkedSlugs} initialCourses={runtimeCourses} />
+      <CoursesBrowser initialBookmarkedSlugs={bookmarkedSlugs} initialCourses={runtimeCourses} initialQuery={initialQuery} />
     </section>
   );
 }

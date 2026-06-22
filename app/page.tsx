@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BookOpenCheck, CheckCircle2, Clock3, PlayCircle, ShieldCheck, Target } from "lucide-react";
+import { ArrowRight, BookOpenCheck, CheckCircle2, Clock3, PlayCircle, Search, ShieldCheck, Target } from "lucide-react";
 import { CourseCard } from "@/components/course-card";
 import { getRuntimeCourses } from "@/lib/server-courses";
 
@@ -13,6 +13,7 @@ export default async function HomePage() {
   const topCourses = [...courses].sort((a, b) => b.popularity - a.popularity);
   const freeTopCourses = topCourses.filter((course) => !course.isPremium).slice(0, 5);
   const paidTopCourses = topCourses.filter((course) => course.isPremium).slice(0, 5);
+  const quickSearches = ["옆차기", "고려", "시합 감점"];
 
   return (
     <>
@@ -26,6 +27,18 @@ export default async function HomePage() {
             <p className="hero-copy">
               도장 수업에서 바로 쓰는 품새 영상, 동작별 챕터, 지도 포인트를 한곳에서 관리하고 학습합니다.
             </p>
+            <form className="hero-search" action="/courses">
+              <Search size={22} aria-hidden="true" />
+              <input name="query" type="search" placeholder="옆차기, 고려, 시합 감점 검색" aria-label="강의 검색어" />
+              <button type="submit">검색</button>
+            </form>
+            <div className="hero-quick-searches" aria-label="추천 검색어">
+              {quickSearches.map((keyword) => (
+                <Link key={keyword} href={`/courses?query=${encodeURIComponent(keyword)}`}>
+                  {keyword}
+                </Link>
+              ))}
+            </div>
             <div className="hero-actions">
               <Link className="icon-button primary large" href={`/watch/${featured.slug}`}>
                 <PlayCircle size={20} />

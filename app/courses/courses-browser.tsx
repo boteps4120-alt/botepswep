@@ -8,12 +8,14 @@ type AccessFilter = "all" | "paid" | "free";
 
 export function CoursesBrowser({
   initialBookmarkedSlugs = [],
+  initialQuery = "",
   initialCourses
 }: {
   initialBookmarkedSlugs?: string[];
+  initialQuery?: string;
   initialCourses: Course[];
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [accessFilter, setAccessFilter] = useState<AccessFilter>("all");
   const [category, setCategory] = useState("전체");
   const [subcategory, setSubcategory] = useState("전체");

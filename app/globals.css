@@ -264,8 +264,83 @@ h3 {
 .hero-copy {
   font-size: clamp(18px, 2vw, 24px);
   line-height: 1.55;
-  margin: 0 0 30px;
+  margin: 0 0 24px;
   max-width: 620px;
+}
+
+.hero-search {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(185, 247, 208, 0.72);
+  border-radius: 8px;
+  box-shadow: 0 18px 42px rgba(0, 34, 18, 0.18);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  max-width: 640px;
+  min-height: 64px;
+  padding: 8px 8px 8px 18px;
+}
+
+.hero-search svg {
+  color: var(--red);
+}
+
+.hero-search input {
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 800;
+  min-width: 0;
+  outline: 0;
+}
+
+.hero-search input::placeholder {
+  color: #728178;
+}
+
+.hero-search button {
+  background: var(--red);
+  border: 0;
+  border-radius: 7px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 900;
+  min-height: 48px;
+  padding: 0 22px;
+}
+
+.hero-quick-searches {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 26px;
+}
+
+.hero-quick-searches::before {
+  color: rgba(255, 255, 255, 0.78);
+  content: "추천 검색어";
+  font-size: 14px;
+  font-weight: 900;
+  margin-right: 2px;
+}
+
+.hero-quick-searches a {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  padding: 8px 12px;
+}
+
+.hero-quick-searches a:hover {
+  background: rgba(185, 247, 208, 0.22);
+  border-color: rgba(185, 247, 208, 0.72);
 }
 
 .hero-actions {
@@ -2043,6 +2118,20 @@ th {
   .hero-proof-row {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .hero-search {
+    grid-template-columns: 22px minmax(0, 1fr);
+    padding: 12px 14px;
+  }
+
+  .hero-search button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .hero-quick-searches::before {
+    flex-basis: 100%;
   }
 
   .hero-proof-row span {
