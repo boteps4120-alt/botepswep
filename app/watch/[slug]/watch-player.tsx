@@ -6,14 +6,25 @@ import { BookmarkButton } from "@/components/bookmark-button";
 import type { Chapter, Course } from "@/lib/data";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { saveWatchProgress, trackCourseEvent } from "../actions";
+import { EngagementPanel, type CourseComment } from "./engagement-panel";
 
 type WatchPlayerProps = {
   course: Course;
   initialBookmarked?: boolean;
+  initialComments?: CourseComment[];
+  initialLiked?: boolean;
+  initialLikeCount?: number;
   nextCourse: Course;
 };
 
-export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: WatchPlayerProps) {
+export function WatchPlayer({
+  course,
+  initialBookmarked = false,
+  initialComments = [],
+  initialLiked = false,
+  initialLikeCount = 0,
+  nextCourse
+}: WatchPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const firstChapter = course.chapters[0] ?? { title: "강의 시작", time: "00:00", seconds: 0, cue: "영상을 재생해 학습을 시작하세요." };
   const [, startTransition] = useTransition();
@@ -234,6 +245,13 @@ export function WatchPlayer({ course, initialBookmarked = false, nextCourse }: W
           <span>다음 강의</span>
         </Link>
       </div>
+
+      <EngagementPanel
+        slug={course.slug}
+        initialComments={initialComments}
+        initialLiked={initialLiked}
+        initialLikeCount={initialLikeCount}
+      />
 
       {course.chapters.length > 0 ? (
         <section className="player-panel watch-chapter-panel">

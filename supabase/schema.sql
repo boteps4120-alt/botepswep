@@ -79,6 +79,22 @@ create table if not exists public.bookmarks (
   primary key (user_id, course_id)
 );
 
+create table if not exists public.course_likes (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  course_id uuid not null references public.courses(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, course_id)
+);
+
+create table if not exists public.course_comments (
+  id uuid primary key default gen_random_uuid(),
+  course_id uuid not null references public.courses(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete set null,
+  author_name text not null default 'BOTEPS 회원',
+  body text not null check (char_length(trim(body)) between 1 and 500),
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.course_events (
   id uuid primary key default gen_random_uuid(),
   course_id uuid not null references public.courses(id) on delete cascade,
@@ -89,6 +105,7 @@ create table if not exists public.course_events (
 
 create index if not exists course_events_course_id_idx on public.course_events(course_id);
 create index if not exists course_events_type_created_idx on public.course_events(event_type, created_at);
+create index if not exists course_comments_course_created_idx on public.course_comments(course_id, created_at desc);
 
 create or replace function public.handle_new_user()
 returns trigger
@@ -152,6 +169,8 @@ alter table public.course_chapters enable row level security;
 alter table public.subscriptions enable row level security;
 alter table public.watch_progress enable row level security;
 alter table public.bookmarks enable row level security;
+alter table public.course_likes enable row level security;
+alter table public.course_comments enable row level security;
 alter table public.course_events enable row level security;
 
 drop policy if exists "Profiles are readable by owner" on public.profiles;
@@ -222,6 +241,30 @@ create policy "Bookmarks are writable by owner" on public.bookmarks
 drop policy if exists "Bookmarks are removable by owner" on public.bookmarks;
 create policy "Bookmarks are removable by owner" on public.bookmarks
   for delete using (auth.uid() = user_id);
+
+drop policy if exists "Course likes are readable by everyone" on public.course_likes;
+create policy "Course likes are readable by everyone" on public.course_likes
+  for select using (true);
+
+drop policy if exists "Course likes are writable by owner" on public.course_likes;
+create policy "Course likes are writable by owner" on public.course_likes
+  for insert with check (auth.uid() = user_id);
+
+drop policy if exists "Course likes are removable by owner" on public.course_likes;
+create policy "Course likes are removable by owner" on public.course_likes
+  for delete using (auth.uid() = user_id);
+
+drop policy if exists "Course comments are readable by everyone" on public.course_comments;
+create policy "Course comments are readable by everyone" on public.course_comments
+  for select using (true);
+
+drop policy if exists "Course comments are writable by owner" on public.course_comments;
+create policy "Course comments are writable by owner" on public.course_comments
+  for insert with check (auth.uid() = user_id);
+
+drop policy if exists "Course comments are removable by owner or admin" on public.course_comments;
+create policy "Course comments are removable by owner or admin" on public.course_comments
+  for delete using (auth.uid() = user_id or public.is_admin());
 
 drop policy if exists "Course events are readable by admin" on public.course_events;
 create policy "Course events are readable by admin" on public.course_events

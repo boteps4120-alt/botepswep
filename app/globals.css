@@ -190,8 +190,8 @@ select {
 
 .hero-overlay {
   background:
-    linear-gradient(90deg, rgba(3, 42, 25, 0.92) 0%, rgba(5, 76, 43, 0.74) 44%, rgba(8, 112, 61, 0.2) 100%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 35, 18, 0.42));
+    linear-gradient(90deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.34) 42%, rgba(0, 0, 0, 0.04) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.24));
   inset: 0;
   position: absolute;
 }
@@ -1239,6 +1239,113 @@ h3 {
   margin-top: 16px;
 }
 
+.engagement-panel {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.engagement-heading {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.engagement-heading h2 {
+  margin: 0;
+}
+
+.like-button.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.comment-form {
+  align-items: center;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  padding: 10px;
+}
+
+.comment-form svg {
+  color: var(--green);
+}
+
+.comment-form input {
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  font-weight: 800;
+  min-height: 42px;
+  outline: 0;
+}
+
+.comment-form button {
+  align-items: center;
+  background: var(--green);
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 900;
+  gap: 6px;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+}
+
+.comment-form button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
+.engagement-message {
+  background: rgba(3, 199, 90, 0.1);
+  border: 1px solid rgba(3, 199, 90, 0.28);
+  border-radius: 8px;
+  color: var(--green-dark);
+  font-weight: 900;
+  margin: 0;
+  padding: 12px 14px;
+}
+
+.comment-list {
+  display: grid;
+  gap: 10px;
+}
+
+.comment-item {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.comment-item div {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.comment-item span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.comment-item p {
+  line-height: 1.6;
+  margin: 8px 0 0;
+}
+
 .watch-chapter-panel,
 .watch-learning-grid,
 .watch-deduction-panel {
@@ -2230,6 +2337,20 @@ th {
 
   .watch-action-row .icon-button {
     flex: 1 1 100%;
+  }
+
+  .engagement-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .comment-form {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+
+  .comment-form button {
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .boteps-video-controls {

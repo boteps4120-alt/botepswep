@@ -63,3 +63,86 @@ export async function saveWatchProgress(slug: string, progressPercent: number, l
 
   revalidatePath("/mypage");
 }
+
+export async function toggleCourseLike(slug: string, shouldLike: boolean) {
+  if (!hasSupabaseEnv()) {
+    return { ok: false, liked: false, message: "Supabase 연결 후 좋아요를 사용할 수 있습니다." };
+  }
+
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  const user = authData.user;
+
+  if (!user) {
+    return { ok: false, liked: false, message: "로그인 후 좋아요를 누를 수 있습니다." };
+  }
+
+  const courseId = await findCourseId(supabase, slug);
+  if (!courseId) {
+    return { ok: false, liked: false, message: "강의를 찾을 수 없습니다." };
+  }
+
+  const { error } = shouldLike
+    ? await supabase.from("course_likes").upsert({ user_id: user.id, course_id: courseId })
+    : await supabase.from("course_likes").delete().eq("user_id", user.id).eq("course_id", courseId);
+
+  if (error) {
+    return { ok: false, liked: !shouldLike, message: "좋아요 저장에 실패했습니다. Supabase 테이블 설정을 확인해주세요." };
+  }
+
+  revalidatePath(`/watch/${slug}`);
+
+  return { ok: true, liked: shouldLike, message: shouldLike ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다." };
+}
+
+export async function addCourseComment(slug: string, body: string) {
+  const trimmedBody = body.trim();
+
+  if (!hasSupabaseEnv()) {
+    return { ok: false, message: "Supabase 연결 후 댓글을 사용할 수 있습니다." };
+  }
+
+  if (!trimmedBody) {
+    return { ok: false, message: "댓글 내용을 입력해주세요." };
+  }
+
+  if (trimmedBody.length > 500) {
+    return { ok: false, message: "댓글은 500자 이내로 입력해주세요." };
+  }
+
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  const user = authData.user;
+
+  if (!user) {
+    return { ok: false, message: "로그인 후 댓글을 작성할 수 있습니다." };
+  }
+
+  const courseId = await findCourseId(supabase, slug);
+  if (!courseId) {
+    return { ok: false, message: "강의를 찾을 수 없습니다." };
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("display_name,full_name,email")
+    .eq("id", user.id)
+    .maybeSingle<{ display_name: string | null; full_name: string | null; email: string | null }>();
+
+  const authorName = profile?.full_name || profile?.display_name || profile?.email?.split("@")[0] || "BOTEPS 회원";
+
+  const { error } = await supabase.from("course_comments").insert({
+    course_id: courseId,
+    user_id: user.id,
+    author_name: authorName,
+    body: trimmedBody
+  });
+
+  if (error) {
+    return { ok: false, message: "댓글 저장에 실패했습니다. Supabase 테이블 설정을 확인해주세요." };
+  }
+
+  revalidatePath(`/watch/${slug}`);
+
+  return { ok: true, message: "댓글이 등록되었습니다." };
+}

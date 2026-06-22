@@ -5,6 +5,7 @@ import { getRuntimeCourse, getRuntimeNextCourse } from "@/lib/server-courses";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { trackCourseEvent } from "../actions";
+import type { CourseComment } from "./engagement-panel";
 import { WatchPlayer } from "./watch-player";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,21 @@ type ProfileRow = {
 
 type BookmarkRow = {
   course_id: string;
+};
+
+type CourseIdRow = {
+  id: string;
+};
+
+type LikeRow = {
+  user_id: string;
+};
+
+type CommentRow = {
+  id: string;
+  author_name: string;
+  body: string;
+  created_at: string;
 };
 
 export default async function WatchPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -77,5 +93,54 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
 
   await trackCourseEvent(course.slug, "course_view");
 
-  return <WatchPlayer key={course.slug} course={course} initialBookmarked={Boolean(bookmark)} nextCourse={await getRuntimeNextCourse(course.slug)} />;
+  let initialLiked = false;
+  let initialLikeCount = 0;
+  let initialComments: CourseComment[] = [];
+
+  if (supabase) {
+    const decodedSlug = decodeURIComponent(course.slug);
+    const { data: courseRow } = await supabase
+      .from("courses")
+      .select("id")
+      .eq("slug", decodedSlug)
+      .maybeSingle<CourseIdRow>();
+
+    const courseId = courseRow?.id;
+
+    if (courseId) {
+      const [likeCountResult, likeResult, commentsResult] = await Promise.all([
+        supabase.from("course_likes").select("*", { count: "exact", head: true }).eq("course_id", courseId),
+        user
+          ? supabase.from("course_likes").select("user_id").eq("course_id", courseId).eq("user_id", user.id).maybeSingle<LikeRow>()
+          : Promise.resolve({ data: null }),
+        supabase
+          .from("course_comments")
+          .select("id,author_name,body,created_at")
+          .eq("course_id", courseId)
+          .order("created_at", { ascending: false })
+          .limit(20)
+      ]);
+
+      initialLiked = Boolean(likeResult.data);
+      initialLikeCount = likeCountResult.count ?? 0;
+      initialComments = ((commentsResult.data ?? []) as CommentRow[]).map((item) => ({
+        id: item.id,
+        authorName: item.author_name,
+        body: item.body,
+        createdAt: item.created_at
+      }));
+    }
+  }
+
+  return (
+    <WatchPlayer
+      key={course.slug}
+      course={course}
+      initialBookmarked={Boolean(bookmark)}
+      initialComments={initialComments}
+      initialLiked={initialLiked}
+      initialLikeCount={initialLikeCount}
+      nextCourse={await getRuntimeNextCourse(course.slug)}
+    />
+  );
 }
