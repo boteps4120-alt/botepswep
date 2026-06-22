@@ -147,6 +147,7 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
       initialLiked={initialLiked}
       initialLikeCount={initialLikeCount}
       currentUserId={user?.id ?? null}
+      isAdmin={isAdmin}
       nextCourse={await getRuntimeNextCourse(course.slug)}
     />
   );

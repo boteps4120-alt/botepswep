@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { CheckCircle2, Maximize2, Pause, Play, RotateCcw, RotateCw, SkipBack, SkipForward } from "lucide-react";
-import { BookmarkButton } from "@/components/bookmark-button";
 import type { Chapter, Course } from "@/lib/data";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { saveWatchProgress, trackCourseEvent } from "../actions";
@@ -15,6 +14,7 @@ type WatchPlayerProps = {
   initialComments?: CourseComment[];
   initialLiked?: boolean;
   initialLikeCount?: number;
+  isAdmin?: boolean;
   nextCourse: Course;
 };
 
@@ -25,6 +25,7 @@ export function WatchPlayer({
   initialComments = [],
   initialLiked = false,
   initialLikeCount = 0,
+  isAdmin = false,
   nextCourse
 }: WatchPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -160,7 +161,6 @@ export function WatchPlayer({
           <h1>{course.title}</h1>
           <p>{course.poomsae} 강의를 보면서 지도 포인트와 동작별 흐름을 확인합니다.</p>
         </div>
-        <BookmarkButton slug={course.slug} initialBookmarked={initialBookmarked} size="large" />
       </div>
 
       <div className={`video-shell ${isPortrait ? "portrait" : "landscape"}`}>
@@ -254,6 +254,8 @@ export function WatchPlayer({
         initialLiked={initialLiked}
         initialLikeCount={initialLikeCount}
         currentUserId={currentUserId}
+        initialBookmarked={initialBookmarked}
+        isAdmin={isAdmin}
       />
 
       {course.chapters.length > 0 ? (

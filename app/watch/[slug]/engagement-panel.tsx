@@ -2,6 +2,7 @@
 
 import { Heart, MessageCircle, Pencil, Send, Trash2 } from "lucide-react";
 import { useMemo, useState, useTransition, type FormEvent } from "react";
+import { BookmarkButton } from "@/components/bookmark-button";
 import { addCourseComment, deleteCourseComment, toggleCourseLike, updateCourseComment } from "../actions";
 
 export type CourseComment = {
@@ -17,9 +18,11 @@ export type CourseComment = {
 type EngagementPanelProps = {
   slug: string;
   currentUserId?: string | null;
+  initialBookmarked?: boolean;
   initialLiked?: boolean;
   initialLikeCount?: number;
   initialComments?: CourseComment[];
+  isAdmin?: boolean;
 };
 
 function formatDate(value: string) {
@@ -35,9 +38,11 @@ function formatDate(value: string) {
 export function EngagementPanel({
   slug,
   currentUserId = null,
+  initialBookmarked = false,
   initialLiked = false,
   initialLikeCount = 0,
-  initialComments = []
+  initialComments = [],
+  isAdmin = false
 }: EngagementPanelProps) {
   const [liked, setLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
@@ -175,7 +180,8 @@ export function EngagementPanel({
   }
 
   function renderComment(item: CourseComment, isReply = false) {
-    const canManage = Boolean(currentUserId && item.userId === currentUserId);
+    const canEdit = Boolean(currentUserId && item.userId === currentUserId);
+    const canDelete = canEdit || isAdmin;
     const isEditing = editingCommentId === item.id;
 
     return (
@@ -208,20 +214,22 @@ export function EngagementPanel({
           <div className="comment-actions">
             {!isReply ? (
               <button className="text-action" type="button" onClick={() => setReplyTargetId(replyTargetId === item.id ? null : item.id)}>
-                답글
+                답글 쓰기
               </button>
             ) : null}
-            {canManage ? (
+            {canEdit ? (
               <>
                 <button className="text-action" type="button" onClick={() => startEditing(item)}>
                   <Pencil size={14} />
                   수정
                 </button>
-                <button className="text-action danger" disabled={isPending} type="button" onClick={() => handleDelete(item.id)}>
-                  <Trash2 size={14} />
-                  삭제
-                </button>
               </>
+            ) : null}
+            {canDelete ? (
+              <button className="text-action danger" disabled={isPending} type="button" onClick={() => handleDelete(item.id)}>
+                <Trash2 size={14} />
+                삭제
+              </button>
             ) : null}
           </div>
         ) : null}
@@ -249,11 +257,14 @@ export function EngagementPanel({
           <p className="eyebrow">반응과 의견</p>
           <h2>좋아요와 댓글</h2>
         </div>
-        <button className={`like-button large ${liked ? "active" : ""}`} disabled={isPending} onClick={handleLike} type="button">
-          <Heart size={22} fill={liked ? "currentColor" : "none"} />
-          <span>좋아요</span>
-          <strong>{likeCount}</strong>
-        </button>
+        <div className="engagement-actions">
+          <BookmarkButton slug={slug} initialBookmarked={initialBookmarked} size="large" />
+          <button className={`like-button large ${liked ? "active" : ""}`} disabled={isPending} onClick={handleLike} type="button">
+            <Heart size={22} fill={liked ? "currentColor" : "none"} />
+            <span>좋아요</span>
+            <strong>{likeCount}</strong>
+          </button>
+        </div>
       </div>
 
       <form className="comment-form" onSubmit={handleSubmit}>

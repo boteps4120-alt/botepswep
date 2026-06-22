@@ -1256,6 +1256,14 @@ h3 {
   margin: 0;
 }
 
+.engagement-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 .like-button {
   align-items: center;
   background: #fff;
@@ -1284,18 +1292,18 @@ h3 {
 }
 
 .like-button.active {
-  background: var(--red);
+  background: #fff6f6;
   border-color: var(--red);
-  color: #fff;
+  color: var(--red);
 }
 
 .like-button.active svg,
 .like-button.active strong {
-  color: #fff;
+  color: var(--red);
 }
 
 .like-button.active strong {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(210, 47, 47, 0.12);
 }
 
 .comment-form {
@@ -2466,6 +2474,15 @@ th {
   .engagement-heading {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .engagement-actions {
+    justify-content: stretch;
+  }
+
+  .engagement-actions .favorite-button,
+  .engagement-actions .like-button {
+    flex: 1 1 100%;
   }
 
   .comment-form {
