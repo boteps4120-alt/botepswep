@@ -238,6 +238,7 @@ export function EngagementPanel({
           <form className="reply-form" onSubmit={(event) => handleReplySubmit(event, item.id)}>
             <input value={replyBody} onChange={(event) => setReplyBody(event.target.value)} placeholder="답글을 입력해주세요" maxLength={500} />
             <button disabled={isPending} type="submit">
+              <Send size={16} />
               답글 등록
             </button>
           </form>
@@ -254,8 +255,7 @@ export function EngagementPanel({
     <section className="player-panel engagement-panel">
       <div className="engagement-heading">
         <div>
-          <p className="eyebrow">반응과 의견</p>
-          <h2>좋아요와 댓글</h2>
+          <h2>댓글</h2>
         </div>
         <div className="engagement-actions">
           <BookmarkButton slug={slug} initialBookmarked={initialBookmarked} size="large" />
