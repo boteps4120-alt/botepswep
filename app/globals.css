@@ -418,19 +418,38 @@ h3 {
 
 .home-course-sections {
   display: grid;
-  gap: 44px;
-  padding-top: 46px;
+  gap: 0;
+  max-width: none;
+  padding: 72px 0 0;
 }
 
 .refined-heading {
   border-bottom: 1px solid var(--line);
-  margin-bottom: 0;
-  padding-bottom: 24px;
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 0 32px 28px;
+  width: 100%;
 }
 
 .course-section-block {
   display: grid;
   gap: 18px;
+  padding: 46px max(32px, calc((100vw - 1180px) / 2 + 32px));
+}
+
+.course-section-new {
+  background: #fff;
+}
+
+.course-section-free {
+  background: #f1fff7;
+  border-bottom: 1px solid #d7f1e2;
+  border-top: 1px solid #d7f1e2;
+}
+
+.course-section-paid {
+  background: #fff;
+  box-shadow: inset 0 4px 0 var(--red);
 }
 
 .course-section-title {
@@ -2038,6 +2057,20 @@ th {
   .page-shell {
     padding-left: 20px;
     padding-right: 20px;
+  }
+
+  .home-course-sections {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .home-course-sections .refined-heading {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .course-section-block {
+    padding: 38px 20px;
   }
 
   .toolbar {

@@ -92,7 +92,7 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="course-section-block">
+        <div className="course-section-block course-section-new">
           <div className="course-section-title">
             <p className="eyebrow">신규강의</p>
             <h3>최근 업로드된 품새 강의</h3>
@@ -104,7 +104,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="course-section-block">
+        <div className="course-section-block course-section-free">
           <div className="course-section-title">
             <p className="eyebrow">무료인기</p>
             <h3>처음 방문한 회원도 바로 시작할 수 있는 강의</h3>
@@ -116,7 +116,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="course-section-block">
+        <div className="course-section-block course-section-paid">
           <div className="course-section-title">
             <p className="eyebrow">유료인기</p>
             <h3>구독 회원에게 제공되는 심화 강의</h3>
