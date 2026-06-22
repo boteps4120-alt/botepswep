@@ -12,6 +12,16 @@ const baseNavItems = [
 ];
 
 const courseCategories = ["전체", "유급자 품새", "유단자 품새", "기본동작", "서기", "품새 이론"];
+const mypageMenuItems = [
+  { href: "/mypage?tab=profile", label: "회원정보" },
+  { href: "/mypage?tab=history", label: "강의 내역" },
+  { href: "/mypage?tab=payments", label: "결제 내역" }
+];
+const adminMenuItems = [
+  { href: "/admin?tab=members", label: "회원관리" },
+  { href: "/admin?tab=create", label: "강의등록" },
+  { href: "/admin?tab=courses", label: "강의목록" }
+];
 
 function courseHref(access: "paid" | "free", category: string) {
   const params = new URLSearchParams({ access });
@@ -33,6 +43,85 @@ export async function SiteHeader() {
   const isAdmin = profile?.role === "admin";
   const navItems = isAdmin ? [...baseNavItems, { href: "/admin", label: "관리자" }] : baseNavItems;
 
+  function renderDropdownMenu(item: { href: string; label: string }) {
+    if (item.href === "/courses") {
+      return (
+        <div className="nav-dropdown" key={item.href}>
+          <Link className="nav-dropdown-trigger" href={item.href}>
+            <span>{item.label}</span>
+            <ChevronDown size={15} />
+          </Link>
+          <div className="nav-dropdown-panel" aria-label="강의 카테고리">
+            <div className="nav-dropdown-column">
+              <strong>유료강의</strong>
+              {courseCategories.map((category) => (
+                <Link key={`paid-${category}`} href={courseHref("paid", category)}>
+                  {category}
+                </Link>
+              ))}
+            </div>
+            <div className="nav-dropdown-column">
+              <strong>무료강의</strong>
+              {courseCategories.map((category) => (
+                <Link key={`free-${category}`} href={courseHref("free", category)}>
+                  {category}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (item.href === "/mypage") {
+      return (
+        <div className="nav-dropdown" key={item.href}>
+          <Link className="nav-dropdown-trigger" href={item.href}>
+            <span>{item.label}</span>
+            <ChevronDown size={15} />
+          </Link>
+          <div className="nav-dropdown-panel compact" aria-label="마이페이지 메뉴">
+            <div className="nav-dropdown-column">
+              <strong>마이페이지</strong>
+              {mypageMenuItems.map((menuItem) => (
+                <Link key={menuItem.href} href={menuItem.href}>
+                  {menuItem.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (item.href === "/admin") {
+      return (
+        <div className="nav-dropdown" key={item.href}>
+          <Link className="nav-dropdown-trigger" href={item.href}>
+            <span>{item.label}</span>
+            <ChevronDown size={15} />
+          </Link>
+          <div className="nav-dropdown-panel compact" aria-label="관리자 메뉴">
+            <div className="nav-dropdown-column">
+              <strong>관리자</strong>
+              {adminMenuItems.map((menuItem) => (
+                <Link key={menuItem.href} href={menuItem.href}>
+                  {menuItem.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <Link key={item.href} href={item.href}>
+        {item.label}
+      </Link>
+    );
+  }
+
   return (
     <header className="site-header">
       <Link className="brand" href="/" aria-label="BOTEPS 홈">
@@ -40,38 +129,7 @@ export async function SiteHeader() {
         <span className="brand-word">BOTEPS</span>
       </Link>
       <nav className="nav-links" aria-label="주요 메뉴">
-        {navItems.map((item) => (
-          item.href === "/courses" ? (
-            <div className="nav-dropdown" key={item.href}>
-              <Link className="nav-dropdown-trigger" href={item.href}>
-                <span>{item.label}</span>
-                <ChevronDown size={15} />
-              </Link>
-              <div className="nav-dropdown-panel" aria-label="강의 카테고리">
-                <div className="nav-dropdown-column">
-                  <strong>유료강의</strong>
-                  {courseCategories.map((category) => (
-                    <Link key={`paid-${category}`} href={courseHref("paid", category)}>
-                      {category}
-                    </Link>
-                  ))}
-                </div>
-                <div className="nav-dropdown-column">
-                  <strong>무료강의</strong>
-                  {courseCategories.map((category) => (
-                    <Link key={`free-${category}`} href={courseHref("free", category)}>
-                      {category}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          )
-        ))}
+        {navItems.map((item) => renderDropdownMenu(item))}
       </nav>
       <div className="header-actions">
         <Link className="icon-button ghost" href="/courses" title="강의 검색">

@@ -131,6 +131,12 @@ select {
   z-index: 70;
 }
 
+.nav-dropdown-panel.compact {
+  gap: 0;
+  grid-template-columns: minmax(180px, 1fr);
+  min-width: 260px;
+}
+
 .nav-dropdown:hover .nav-dropdown-panel,
 .nav-dropdown:focus-within .nav-dropdown-panel {
   opacity: 1;
@@ -2485,6 +2491,10 @@ th {
     min-width: min(360px, calc(100vw - 40px));
     padding: 24px;
     transform: translateY(10px);
+  }
+
+  .nav-dropdown-panel.compact {
+    min-width: min(280px, calc(100vw - 40px));
   }
 
   .nav-dropdown:hover .nav-dropdown-panel,
