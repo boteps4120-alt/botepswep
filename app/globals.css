@@ -74,15 +74,91 @@ select {
 }
 
 .nav-links {
+  align-items: center;
   display: flex;
   gap: 18px;
   margin-left: auto;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-dropdown-trigger {
   color: #363636;
   font-size: 15px;
   font-weight: 700;
+}
+
+.nav-dropdown {
+  align-items: center;
+  display: flex;
+  min-height: 72px;
+  position: relative;
+}
+
+.nav-dropdown-trigger {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+}
+
+.nav-dropdown-trigger svg {
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown:hover .nav-dropdown-trigger svg,
+.nav-dropdown:focus-within .nav-dropdown-trigger svg {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-panel {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.74)),
+    url("/images/hero-dojang.jpg") center / cover;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  display: grid;
+  gap: 58px;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  left: 50%;
+  min-width: min(720px, calc(100vw - 48px));
+  opacity: 0;
+  padding: 34px 38px 38px;
+  pointer-events: none;
+  position: absolute;
+  top: 100%;
+  transform: translateX(-50%) translateY(10px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 70;
+}
+
+.nav-dropdown:hover .nav-dropdown-panel,
+.nav-dropdown:focus-within .nav-dropdown-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.nav-dropdown-column {
+  display: grid;
+  gap: 12px;
+}
+
+.nav-dropdown-column strong {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.nav-dropdown-column a {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.nav-dropdown-column a:hover,
+.nav-dropdown-column a:focus {
+  color: #03c75a;
 }
 
 .header-actions {
@@ -2396,6 +2472,28 @@ th {
   .nav-links {
     flex-wrap: wrap;
     margin-left: 0;
+  }
+
+  .nav-dropdown {
+    min-height: auto;
+  }
+
+  .nav-dropdown-panel {
+    gap: 24px;
+    grid-template-columns: 1fr;
+    left: 0;
+    min-width: min(360px, calc(100vw - 40px));
+    padding: 24px;
+    transform: translateY(10px);
+  }
+
+  .nav-dropdown:hover .nav-dropdown-panel,
+  .nav-dropdown:focus-within .nav-dropdown-panel {
+    transform: translateY(0);
+  }
+
+  .nav-dropdown-column a {
+    font-size: 16px;
   }
 
   .header-actions {

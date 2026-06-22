@@ -7,18 +7,24 @@ import { courseCategoryTree, getSubcategories, type Course } from "@/lib/data";
 type AccessFilter = "all" | "paid" | "free";
 
 export function CoursesBrowser({
+  initialAccessFilter = "all",
   initialBookmarkedSlugs = [],
+  initialCategory = "전체",
   initialQuery = "",
+  initialSubcategory = "전체",
   initialCourses
 }: {
+  initialAccessFilter?: AccessFilter;
   initialBookmarkedSlugs?: string[];
+  initialCategory?: string;
   initialQuery?: string;
+  initialSubcategory?: string;
   initialCourses: Course[];
 }) {
   const [query, setQuery] = useState(initialQuery);
-  const [accessFilter, setAccessFilter] = useState<AccessFilter>("all");
-  const [category, setCategory] = useState("전체");
-  const [subcategory, setSubcategory] = useState("전체");
+  const [accessFilter, setAccessFilter] = useState<AccessFilter>(initialAccessFilter);
+  const [category, setCategory] = useState(initialCategory);
+  const [subcategory, setSubcategory] = useState(initialSubcategory);
   const [sort, setSort] = useState("popular");
 
   const subcategories = useMemo(() => getSubcategories(category), [category]);

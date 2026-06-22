@@ -16,10 +16,16 @@ export default async function CoursesPage({
 }: {
   searchParams?: Promise<{
     query?: string;
+    access?: string;
+    category?: string;
+    subcategory?: string;
   }>;
 }) {
   const params = await searchParams;
   const initialQuery = typeof params?.query === "string" ? params.query : "";
+  const initialAccessFilter = params?.access === "paid" || params?.access === "free" ? params.access : "all";
+  const initialCategory = typeof params?.category === "string" ? params.category : "전체";
+  const initialSubcategory = typeof params?.subcategory === "string" ? params.subcategory : "전체";
   const runtimeCourses = await getRuntimeCourses();
   let bookmarkedSlugs: string[] = [];
 
@@ -47,7 +53,14 @@ export default async function CoursesPage({
         <p>유급자 품새, 유단자 품새, 기본동작, 서기, 품새 이론 기준으로 강의를 빠르게 고르세요.</p>
       </div>
 
-      <CoursesBrowser initialBookmarkedSlugs={bookmarkedSlugs} initialCourses={runtimeCourses} initialQuery={initialQuery} />
+      <CoursesBrowser
+        initialAccessFilter={initialAccessFilter}
+        initialBookmarkedSlugs={bookmarkedSlugs}
+        initialCategory={initialCategory}
+        initialCourses={runtimeCourses}
+        initialQuery={initialQuery}
+        initialSubcategory={initialSubcategory}
+      />
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { LogIn, LogOut, Search, ShieldCheck, UserRound } from "lucide-react";
+import { ChevronDown, LogIn, LogOut, Search, ShieldCheck, UserRound } from "lucide-react";
 import { signOut } from "@/app/auth/actions";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
@@ -10,6 +10,14 @@ const baseNavItems = [
   { href: "/courses", label: "강의" },
   { href: "/mypage", label: "마이페이지" }
 ];
+
+const courseCategories = ["전체", "유급자 품새", "유단자 품새", "기본동작", "서기", "품새 이론"];
+
+function courseHref(access: "paid" | "free", category: string) {
+  const params = new URLSearchParams({ access });
+  if (category !== "전체") params.set("category", category);
+  return `/courses?${params.toString()}`;
+}
 
 type ProfileRow = {
   role: string;
@@ -33,9 +41,36 @@ export async function SiteHeader() {
       </Link>
       <nav className="nav-links" aria-label="주요 메뉴">
         {navItems.map((item) => (
-          <Link key={item.href} href={item.href}>
-            {item.label}
-          </Link>
+          item.href === "/courses" ? (
+            <div className="nav-dropdown" key={item.href}>
+              <Link className="nav-dropdown-trigger" href={item.href}>
+                <span>{item.label}</span>
+                <ChevronDown size={15} />
+              </Link>
+              <div className="nav-dropdown-panel" aria-label="강의 카테고리">
+                <div className="nav-dropdown-column">
+                  <strong>유료강의</strong>
+                  {courseCategories.map((category) => (
+                    <Link key={`paid-${category}`} href={courseHref("paid", category)}>
+                      {category}
+                    </Link>
+                  ))}
+                </div>
+                <div className="nav-dropdown-column">
+                  <strong>무료강의</strong>
+                  {courseCategories.map((category) => (
+                    <Link key={`free-${category}`} href={courseHref("free", category)}>
+                      {category}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Link key={item.href} href={item.href}>
+              {item.label}
+            </Link>
+          )
         ))}
       </nav>
       <div className="header-actions">
