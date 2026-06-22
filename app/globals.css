@@ -1280,7 +1280,7 @@ h3 {
 }
 
 .like-button svg {
-  color: var(--red);
+  color: var(--ink);
 }
 
 .like-button strong {
@@ -1292,14 +1292,17 @@ h3 {
 }
 
 .like-button.active {
-  background: #fff6f6;
-  border-color: var(--red);
-  color: var(--red);
+  background: #fff;
+  border-color: #d22f2f;
+  color: var(--ink);
 }
 
-.like-button.active svg,
+.like-button.active svg {
+  color: #d22f2f;
+}
+
 .like-button.active strong {
-  color: var(--red);
+  color: #d22f2f;
 }
 
 .like-button.active strong {
@@ -1318,7 +1321,7 @@ h3 {
 }
 
 .comment-form svg {
-  color: var(--red);
+  color: var(--muted);
 }
 
 .comment-form input {
@@ -1332,11 +1335,11 @@ h3 {
 
 .comment-form button {
   align-items: center;
-  background: var(--red);
-  border: 0;
+  background: #fff;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(210, 47, 47, 0.22);
-  color: #fff;
+  box-shadow: none;
+  color: var(--ink);
   cursor: pointer;
   display: inline-flex;
   font-weight: 900;
@@ -1344,6 +1347,10 @@ h3 {
   justify-content: center;
   min-height: 42px;
   padding: 0 16px;
+}
+
+.comment-form button svg {
+  color: var(--ink);
 }
 
 .comment-form button:disabled {
@@ -1421,7 +1428,7 @@ h3 {
 }
 
 .text-action.danger {
-  color: var(--red);
+  color: #d22f2f;
 }
 
 .reply-form,
@@ -1459,11 +1466,11 @@ h3 {
 
 .reply-form button {
   align-items: center;
-  background: var(--red);
-  border: 1px solid var(--red);
+  background: #fff;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 10px 24px rgba(3, 199, 90, 0.22);
-  color: #fff;
+  box-shadow: none;
+  color: var(--ink);
   cursor: pointer;
   display: inline-flex;
   font-weight: 900;
@@ -1474,7 +1481,79 @@ h3 {
   width: max-content;
 }
 
+.reply-form button svg {
+  color: var(--ink);
+}
+
 .reply-form button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.comment-modal-backdrop {
+  align-items: center;
+  background: rgba(17, 24, 22, 0.52);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 100;
+}
+
+.comment-modal {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18);
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+  padding: 24px;
+  width: min(100%, 420px);
+}
+
+.comment-modal h3 {
+  font-size: 28px;
+  letter-spacing: 0;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.comment-modal p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.comment-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.modal-button {
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 900;
+  min-height: 44px;
+  padding: 0 18px;
+}
+
+.modal-button.subtle {
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.modal-button.danger {
+  background: #d22f2f;
+  border: 1px solid #d22f2f;
+  color: #fff;
+}
+
+.modal-button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
@@ -2498,6 +2577,14 @@ th {
   .engagement-actions .favorite-button,
   .engagement-actions .like-button {
     flex: 1 1 100%;
+  }
+
+  .comment-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-button {
+    width: 100%;
   }
 
   .comment-form {

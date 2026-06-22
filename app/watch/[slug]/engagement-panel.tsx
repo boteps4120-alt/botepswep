@@ -52,6 +52,7 @@ export function EngagementPanel({
   const [replyBody, setReplyBody] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingBody, setEditingBody] = useState("");
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -168,10 +169,11 @@ export function EngagementPanel({
     });
   }
 
-  function handleDelete(commentId: string) {
-    if (!window.confirm("댓글을 삭제하시겠습니까?")) {
-      return;
-    }
+  function handleDelete() {
+    if (!deleteTargetId) return;
+
+    const commentId = deleteTargetId;
+    setDeleteTargetId(null);
 
     startTransition(async () => {
       const result = await deleteCourseComment(slug, commentId);
@@ -230,7 +232,7 @@ export function EngagementPanel({
               </>
             ) : null}
             {canDelete ? (
-              <button className="text-action danger" disabled={isPending} type="button" onClick={() => handleDelete(item.id)}>
+              <button className="text-action danger" disabled={isPending} type="button" onClick={() => setDeleteTargetId(item.id)}>
                 <Trash2 size={14} />
                 삭제
               </button>
@@ -264,7 +266,7 @@ export function EngagementPanel({
         <div className="engagement-actions">
           <BookmarkButton slug={slug} initialBookmarked={initialBookmarked} size="large" />
           <button className={`like-button large ${liked ? "active" : ""}`} disabled={isPending} onClick={handleLike} type="button">
-            <Heart size={22} fill={liked ? "currentColor" : "none"} />
+            <Heart size={22} fill={liked ? "#d22f2f" : "none"} />
             <span>좋아요</span>
             <strong>{likeCount}</strong>
           </button>
@@ -285,6 +287,29 @@ export function EngagementPanel({
       <div className="comment-list">
         {rootComments.length > 0 ? rootComments.map((item) => renderComment(item)) : <p className="empty-state">아직 댓글이 없습니다. 첫 의견을 남겨보세요.</p>}
       </div>
+
+      {deleteTargetId ? (
+        <div className="comment-modal-backdrop" role="presentation" onClick={() => setDeleteTargetId(null)}>
+          <div
+            aria-labelledby="delete-comment-title"
+            aria-modal="true"
+            className="comment-modal"
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+          >
+            <h3 id="delete-comment-title">댓글을 삭제할까요?</h3>
+            <p>삭제한 댓글과 답글은 되돌릴 수 없습니다.</p>
+            <div className="comment-modal-actions">
+              <button className="modal-button subtle" type="button" onClick={() => setDeleteTargetId(null)}>
+                취소
+              </button>
+              <button className="modal-button danger" disabled={isPending} type="button" onClick={handleDelete}>
+                삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
