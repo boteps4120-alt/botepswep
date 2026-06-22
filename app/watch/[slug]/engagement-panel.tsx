@@ -169,6 +169,10 @@ export function EngagementPanel({
   }
 
   function handleDelete(commentId: string) {
+    if (!window.confirm("댓글을 삭제하시겠습니까?")) {
+      return;
+    }
+
     startTransition(async () => {
       const result = await deleteCourseComment(slug, commentId);
       setMessage(result.message);
@@ -214,7 +218,7 @@ export function EngagementPanel({
           <div className="comment-actions">
             {!isReply ? (
               <button className="text-action" type="button" onClick={() => setReplyTargetId(replyTargetId === item.id ? null : item.id)}>
-                답글 쓰기
+                답글
               </button>
             ) : null}
             {canEdit ? (

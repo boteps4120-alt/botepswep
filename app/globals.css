@@ -1318,7 +1318,7 @@ h3 {
 }
 
 .comment-form svg {
-  color: var(--green);
+  color: var(--red);
 }
 
 .comment-form input {
@@ -1355,7 +1355,7 @@ h3 {
   background: rgba(3, 199, 90, 0.1);
   border: 1px solid rgba(3, 199, 90, 0.28);
   border-radius: 8px;
-  color: var(--green-dark);
+  color: var(--red-dark);
   font-weight: 900;
   margin: 0;
   padding: 12px 14px;
@@ -1417,7 +1417,7 @@ h3 {
 }
 
 .text-action.primary {
-  color: var(--green);
+  color: var(--red);
 }
 
 .text-action.danger {
@@ -1453,15 +1453,16 @@ h3 {
 
 .reply-form input:focus,
 .comment-edit-form input:focus {
-  border-color: var(--green);
+  border-color: var(--red);
   box-shadow: 0 0 0 3px rgba(3, 199, 90, 0.12);
 }
 
 .reply-form button {
   align-items: center;
-  background: var(--green);
-  border: 0;
+  background: var(--red);
+  border: 1px solid var(--red);
   border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(3, 199, 90, 0.22);
   color: #fff;
   cursor: pointer;
   display: inline-flex;
@@ -1471,6 +1472,11 @@ h3 {
   min-height: 42px;
   padding: 0 16px;
   width: max-content;
+}
+
+.reply-form button:disabled {
+  cursor: wait;
+  opacity: 0.72;
 }
 
 .comment-edit-form div,
