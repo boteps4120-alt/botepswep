@@ -1,9 +1,9 @@
 "use client";
 
-import { Heart, MessageCircle, Pencil, Send, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, Pencil, Send, ThumbsUp, Trash2 } from "lucide-react";
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { BookmarkButton } from "@/components/bookmark-button";
-import { addCourseComment, deleteCourseComment, toggleCourseLike, updateCourseComment } from "../actions";
+import { addCourseComment, deleteCourseComment, toggleCommentLike, toggleCourseLike, updateCourseComment } from "../actions";
 
 export type CourseComment = {
   id: string;
@@ -13,6 +13,8 @@ export type CourseComment = {
   body: string;
   createdAt: string;
   updatedAt?: string;
+  likeCount?: number;
+  likedByMe?: boolean;
 };
 
 type EngagementPanelProps = {
@@ -102,7 +104,9 @@ export function EngagementPanel({
             parentCommentId: null,
             authorName: "나",
             body: nextComment,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            likeCount: 0,
+            likedByMe: false
           },
           ...items
         ]);
@@ -132,7 +136,9 @@ export function EngagementPanel({
             parentCommentId: parentId,
             authorName: "나",
             body: nextReply,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            likeCount: 0,
+            likedByMe: false
           }
         ]);
         setReplyBody("");
@@ -185,6 +191,43 @@ export function EngagementPanel({
     });
   }
 
+  function handleCommentLike(commentId: string) {
+    const target = comments.find((item) => item.id === commentId);
+    if (!target) return;
+
+    const nextLiked = !target.likedByMe;
+    setComments((items) =>
+      items.map((item) =>
+        item.id === commentId
+          ? {
+              ...item,
+              likedByMe: nextLiked,
+              likeCount: Math.max(0, (item.likeCount ?? 0) + (nextLiked ? 1 : -1))
+            }
+          : item
+      )
+    );
+
+    startTransition(async () => {
+      const result = await toggleCommentLike(slug, commentId, nextLiked);
+      setMessage(result.message);
+
+      if (!result.ok) {
+        setComments((items) =>
+          items.map((item) =>
+            item.id === commentId
+              ? {
+                  ...item,
+                  likedByMe: !nextLiked,
+                  likeCount: Math.max(0, (item.likeCount ?? 0) + (nextLiked ? -1 : 1))
+                }
+              : item
+          )
+        );
+      }
+    });
+  }
+
   function renderComment(item: CourseComment, isReply = false) {
     const canEdit = Boolean(currentUserId && item.userId === currentUserId);
     const canDelete = canEdit || isAdmin;
@@ -223,6 +266,16 @@ export function EngagementPanel({
                 답글
               </button>
             ) : null}
+            <button
+              aria-pressed={Boolean(item.likedByMe)}
+              className={`comment-like-button ${item.likedByMe ? "active" : ""}`}
+              disabled={isPending}
+              onClick={() => handleCommentLike(item.id)}
+              type="button"
+            >
+              <ThumbsUp size={16} />
+              <span>{item.likeCount ?? 0}</span>
+            </button>
             {canEdit ? (
               <>
                 <button className="text-action" type="button" onClick={() => startEditing(item)}>

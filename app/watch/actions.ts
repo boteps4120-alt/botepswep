@@ -95,6 +95,38 @@ export async function toggleCourseLike(slug: string, shouldLike: boolean) {
   return { ok: true, liked: shouldLike, message: shouldLike ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다." };
 }
 
+export async function toggleCommentLike(slug: string, commentId: string, shouldLike: boolean) {
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+  if (!hasSupabaseEnv()) {
+    return { ok: false, liked: false, message: "Supabase 연결 후 댓글 좋아요를 사용할 수 있습니다." };
+  }
+
+  if (!uuidPattern.test(commentId)) {
+    return { ok: false, liked: false, message: "댓글을 새로고침한 뒤 다시 시도해주세요." };
+  }
+
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  const user = authData.user;
+
+  if (!user) {
+    return { ok: false, liked: false, message: "로그인 후 댓글에 좋아요를 누를 수 있습니다." };
+  }
+
+  const { error } = shouldLike
+    ? await supabase.from("course_comment_likes").upsert({ user_id: user.id, comment_id: commentId })
+    : await supabase.from("course_comment_likes").delete().eq("user_id", user.id).eq("comment_id", commentId);
+
+  if (error) {
+    return { ok: false, liked: !shouldLike, message: "댓글 좋아요 저장에 실패했습니다. Supabase 테이블 설정을 확인해주세요." };
+  }
+
+  revalidatePath(`/watch/${slug}`);
+
+  return { ok: true, liked: shouldLike, message: shouldLike ? "댓글에 좋아요를 눌렀습니다." : "댓글 좋아요를 취소했습니다." };
+}
+
 export async function addCourseComment(slug: string, body: string, parentCommentId?: string) {
   const trimmedBody = body.trim();
   const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -173,7 +205,9 @@ export async function addCourseComment(slug: string, body: string, parentComment
           authorName: insertedComment.author_name,
           body: insertedComment.body,
           createdAt: insertedComment.created_at,
-          updatedAt: insertedComment.updated_at
+          updatedAt: insertedComment.updated_at,
+          likeCount: 0,
+          likedByMe: false
         }
       : null
   };

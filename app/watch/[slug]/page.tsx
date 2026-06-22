@@ -36,6 +36,11 @@ type CommentRow = {
   updated_at: string;
 };
 
+type CommentLikeRow = {
+  comment_id: string;
+  user_id: string;
+};
+
 export default async function WatchPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const course = await getRuntimeCourse(slug);
@@ -126,14 +131,32 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
 
       initialLiked = Boolean(likeResult.data);
       initialLikeCount = likeCountResult.count ?? 0;
-      initialComments = ((commentsResult.data ?? []) as CommentRow[]).map((item) => ({
+      const comments = (commentsResult.data ?? []) as CommentRow[];
+      const commentIds = comments.map((item) => item.id);
+      const commentLikeRows =
+        commentIds.length > 0
+          ? (
+              await supabase.from("course_comment_likes").select("comment_id,user_id").in("comment_id", commentIds)
+            ).data ?? []
+          : [];
+      const commentLikeCounts = (commentLikeRows as CommentLikeRow[]).reduce<Record<string, number>>((acc, item) => {
+        acc[item.comment_id] = (acc[item.comment_id] ?? 0) + 1;
+        return acc;
+      }, {});
+      const myCommentLikes = new Set(
+        user ? (commentLikeRows as CommentLikeRow[]).filter((item) => item.user_id === user.id).map((item) => item.comment_id) : []
+      );
+
+      initialComments = comments.map((item) => ({
         id: item.id,
         userId: item.user_id,
         parentCommentId: item.parent_comment_id,
         authorName: item.author_name,
         body: item.body,
         createdAt: item.created_at,
-        updatedAt: item.updated_at
+        updatedAt: item.updated_at,
+        likeCount: commentLikeCounts[item.id] ?? 0,
+        likedByMe: myCommentLikes.has(item.id)
       }));
     }
   }
