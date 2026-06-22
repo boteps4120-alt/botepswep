@@ -17,10 +17,12 @@ const adminMenuItems = [
   { href: "/admin?tab=courses", label: "강의목록" }
 ];
 
-function courseHref(access: "paid" | "free", category: string) {
-  const params = new URLSearchParams({ access });
+function courseHref(access: "all" | "paid" | "free", category: string) {
+  const params = new URLSearchParams();
+  if (access !== "all") params.set("access", access);
   if (category !== "전체") params.set("category", category);
-  return `/courses?${params.toString()}`;
+  const query = params.toString();
+  return query ? `/courses?${query}` : "/courses";
 }
 
 type ProfileRow = {
@@ -43,6 +45,14 @@ export async function SiteHeader() {
         <ChevronDown size={15} />
       </Link>
       <div className="nav-dropdown-panel" aria-label="강의 카테고리">
+        <div className="nav-dropdown-column">
+          <strong>전체</strong>
+          {courseCategories.map((category) => (
+            <Link key={`all-${category}`} href={courseHref("all", category)}>
+              {category}
+            </Link>
+          ))}
+        </div>
         <div className="nav-dropdown-column">
           <strong>유료강의</strong>
           {courseCategories.map((category) => (

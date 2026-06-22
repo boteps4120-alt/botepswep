@@ -120,10 +120,10 @@ select {
   border-radius: 0 0 2px 2px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   display: grid;
-  gap: 58px;
-  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 52px;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
   left: 50%;
-  min-width: min(720px, calc(100vw - 48px));
+  min-width: min(860px, calc(100vw - 48px));
   opacity: 0;
   padding: 34px 38px 38px;
   pointer-events: none;
