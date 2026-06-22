@@ -13,6 +13,7 @@ type BookmarkButtonProps = {
 
 export function BookmarkButton({ slug, initialBookmarked = false, label = "찜하기", size = "compact" }: BookmarkButtonProps) {
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
+  const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
 
   function handleClick() {
@@ -25,20 +26,42 @@ export function BookmarkButton({ slug, initialBookmarked = false, label = "찜�
         setBookmarked(result.bookmarked);
       }
 
-      alert(result.message);
+      setMessage(result.message);
     });
   }
 
   return (
-    <button
-      aria-pressed={bookmarked}
-      className={`icon-button favorite-button ${size} ${bookmarked ? "active" : ""}`}
-      disabled={isPending}
-      onClick={handleClick}
-      type="button"
-    >
-      <Bookmark size={size === "large" ? 20 : 17} fill={bookmarked ? "currentColor" : "none"} />
-      <span>{bookmarked ? "찜함" : label}</span>
-    </button>
+    <>
+      <button
+        aria-pressed={bookmarked}
+        className={`icon-button favorite-button ${size} ${bookmarked ? "active" : ""}`}
+        disabled={isPending}
+        onClick={handleClick}
+        type="button"
+      >
+        <Bookmark size={size === "large" ? 20 : 17} fill={bookmarked ? "#d22f2f" : "none"} />
+        <span>{bookmarked ? "찜함" : label}</span>
+      </button>
+
+      {message ? (
+        <div className="comment-modal-backdrop" role="presentation" onClick={() => setMessage("")}>
+          <div
+            aria-labelledby="bookmark-message-title"
+            aria-modal="true"
+            className="comment-modal"
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+          >
+            <h3 id="bookmark-message-title">찜하기</h3>
+            <p>{message}</p>
+            <div className="comment-modal-actions">
+              <button className="modal-button danger" type="button" onClick={() => setMessage("")}>
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }
