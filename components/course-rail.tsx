@@ -44,7 +44,7 @@ export function CourseRail({ eyebrow, title, courses, tone = "clean" }: CourseRa
     <section className={`course-rail-section course-rail-${tone}`}>
       <div className="course-rail-heading">
         <div>
-          <p className="eyebrow">{eyebrow}</p>
+          {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
           <h3>{title}</h3>
         </div>
         <div className="rail-controls" aria-label={`${title} 이동`}>

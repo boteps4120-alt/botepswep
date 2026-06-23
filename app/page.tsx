@@ -105,9 +105,9 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <CourseRail eyebrow="신규강의" title="최근 업로드된 품새 강의" courses={newCourses} tone="clean" />
-        <CourseRail eyebrow="무료강의" title="처음 방문한 회원도 바로 시작할 수 있는 강의" courses={freeTopCourses} tone="soft" />
-        <CourseRail eyebrow="인기강의" title="구독 회원이 많이 찾는 심화 강의" courses={paidTopCourses} tone="line" />
+        <CourseRail eyebrow="" title="신규 강의" courses={newCourses} tone="clean" />
+        <CourseRail eyebrow="" title="무료 강의" courses={freeTopCourses} tone="soft" />
+        <CourseRail eyebrow="" title="인기 강의" courses={paidTopCourses} tone="line" />
       </section>
     </>
   );
