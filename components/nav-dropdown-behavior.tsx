@@ -35,17 +35,25 @@ export function NavDropdownBehavior() {
       target?.classList.remove("nav-dropdown-closed");
     }
 
+    function handlePointerMove(event: PointerEvent) {
+      if (!document.body.classList.contains("nav-dropdowns-suppressed")) return;
+
+      const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
+      if (!hoveredElement?.closest(".nav-dropdown")) {
+        clearDropdownLocks();
+      }
+    }
+
     const dropdowns = Array.from(document.querySelectorAll(".nav-dropdown"));
-    const header = document.querySelector(".site-header");
 
     document.addEventListener("click", handleClick);
+    document.addEventListener("pointermove", handlePointerMove);
     dropdowns.forEach((dropdown) => dropdown.addEventListener("mouseleave", handleMouseLeave as EventListener));
-    header?.addEventListener("mouseleave", clearDropdownLocks);
 
     return () => {
       document.removeEventListener("click", handleClick);
+      document.removeEventListener("pointermove", handlePointerMove);
       dropdowns.forEach((dropdown) => dropdown.removeEventListener("mouseleave", handleMouseLeave as EventListener));
-      header?.removeEventListener("mouseleave", clearDropdownLocks);
     };
   }, []);
 
