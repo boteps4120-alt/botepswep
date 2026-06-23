@@ -2248,6 +2248,28 @@ h3 {
   color: var(--red);
 }
 
+.admin-tabs a:hover,
+.admin-tabs a:focus-visible,
+.mypage-tabs a:hover,
+.mypage-tabs a:focus-visible,
+.page-shell .admin-tabs a:hover,
+.page-shell .admin-tabs a:focus-visible,
+.page-shell .mypage-tabs a:hover,
+.page-shell .mypage-tabs a:focus-visible {
+  background: #fff !important;
+  border-color: var(--red) !important;
+  color: var(--red) !important;
+}
+
+.admin-tabs a.active:hover,
+.admin-tabs a.active:focus-visible,
+.mypage-tabs a.active:hover,
+.mypage-tabs a.active:focus-visible {
+  background: #111 !important;
+  border-color: #111 !important;
+  color: var(--red) !important;
+}
+
 .admin-stack {
   display: grid;
   gap: 24px;
