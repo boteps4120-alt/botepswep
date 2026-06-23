@@ -1018,8 +1018,21 @@ h3 {
 }
 
 .course-access-badge.premium {
-  background: #000;
-  color: var(--red);
+  background: #eaf7d5;
+  color: #2f6b00;
+}
+
+.course-card .course-access-badge.premium {
+  background: #eaf7d5;
+  color: #2f6b00;
+}
+
+.course-access-badge.premium svg {
+  color: #76b900;
+}
+
+.course-card .course-access-badge.premium svg {
+  color: #76b900;
 }
 
 .course-card-body {

@@ -5,6 +5,14 @@ import type { Course } from "@/lib/data";
 
 export function CourseCard({ course, initialBookmarked = false }: { course: Course; initialBookmarked?: boolean }) {
   void initialBookmarked;
+  const premiumBadgeStyle = course.isPremium
+    ? {
+        backgroundColor: "#eaf7d5",
+        border: "1px solid #c9eca2",
+        color: "#2f6b00"
+      }
+    : undefined;
+  const premiumIconStyle = course.isPremium ? { color: "#76b900" } : undefined;
 
   return (
     <article className="course-card">
@@ -14,8 +22,8 @@ export function CourseCard({ course, initialBookmarked = false }: { course: Cour
 
       <div className="course-card-body">
         <div className="course-card-tags">
-          <span className={`course-access-badge ${course.isPremium ? "premium" : "free"}`}>
-            {course.isPremium ? <LockKeyhole size={14} /> : <Unlock size={14} />}
+          <span className={`course-access-badge ${course.isPremium ? "premium" : "free"}`} style={premiumBadgeStyle}>
+            {course.isPremium ? <LockKeyhole size={14} style={premiumIconStyle} /> : <Unlock size={14} />}
             {course.isPremium ? "구독자 전용" : "무료강의"}
           </span>
         </div>
