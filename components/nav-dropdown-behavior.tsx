@@ -4,11 +4,19 @@ import { useEffect } from "react";
 
 export function NavDropdownBehavior() {
   useEffect(() => {
+    function clearDropdownLocks() {
+      document.body.classList.remove("nav-dropdowns-suppressed");
+      document.querySelectorAll(".nav-dropdown.nav-dropdown-closed").forEach((item) => {
+        item.classList.remove("nav-dropdown-closed");
+      });
+    }
+
     function closeDropdown(dropdown: Element | null) {
       document.querySelectorAll(".nav-dropdown.nav-dropdown-closed").forEach((item) => {
         if (item !== dropdown) item.classList.remove("nav-dropdown-closed");
       });
 
+      document.body.classList.add("nav-dropdowns-suppressed");
       dropdown?.classList.add("nav-dropdown-closed");
     }
 
@@ -28,13 +36,16 @@ export function NavDropdownBehavior() {
     }
 
     const dropdowns = Array.from(document.querySelectorAll(".nav-dropdown"));
+    const header = document.querySelector(".site-header");
 
     document.addEventListener("click", handleClick);
     dropdowns.forEach((dropdown) => dropdown.addEventListener("mouseleave", handleMouseLeave as EventListener));
+    header?.addEventListener("mouseleave", clearDropdownLocks);
 
     return () => {
       document.removeEventListener("click", handleClick);
       dropdowns.forEach((dropdown) => dropdown.removeEventListener("mouseleave", handleMouseLeave as EventListener));
+      header?.removeEventListener("mouseleave", clearDropdownLocks);
     };
   }, []);
 

@@ -189,7 +189,19 @@ button:disabled:focus-visible {
   transform: translateX(-50%) translateY(10px);
 }
 
+body.nav-dropdowns-suppressed .nav-dropdown .nav-dropdown-panel,
+body.nav-dropdowns-suppressed .nav-dropdown:hover .nav-dropdown-panel,
+body.nav-dropdowns-suppressed .nav-dropdown:focus-within .nav-dropdown-panel {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(10px);
+}
+
 .nav-dropdown.nav-dropdown-closed > .nav-dropdown-trigger svg {
+  transform: rotate(0deg);
+}
+
+body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
   transform: rotate(0deg);
 }
 
