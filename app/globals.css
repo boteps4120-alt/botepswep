@@ -880,6 +880,17 @@ h3 {
   width: 100%;
 }
 
+.home-course-sections .home-course-kicker {
+  font-size: 18px;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.home-course-sections .home-course-heading {
+  font-size: clamp(30px, 3.4vw, 43px);
+  line-height: 1.12;
+}
+
 .course-rail-section {
   display: grid;
   gap: 22px;

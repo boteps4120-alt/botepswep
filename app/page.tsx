@@ -97,8 +97,8 @@ export default async function HomePage() {
       <section className="section-shell home-course-sections">
         <div className="section-heading refined-heading">
           <div>
-            <p className="eyebrow">BOTEPS 강의</p>
-            <h2>신규강의부터 인기강의까지 한 번에</h2>
+            <p className="eyebrow home-course-kicker">BOTEPS 강의</p>
+            <h2 className="home-course-heading">신규강의부터 인기강의까지 한 번에</h2>
           </div>
           <Link className="text-link" href="/courses">
             전체 강의 <ArrowRight size={17} />
