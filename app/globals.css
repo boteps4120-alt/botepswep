@@ -376,7 +376,13 @@ select {
   position: absolute;
 }
 
+.hero-image-slider {
+  background: linear-gradient(90deg, #050505 0%, #151515 42%, #f7f7f5 100%);
+}
+
 .hero-slide {
+  object-fit: contain;
+  object-position: right center;
   opacity: 0;
   transition: opacity 0.7s ease;
 }
