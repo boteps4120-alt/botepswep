@@ -36,6 +36,17 @@ select {
   font: inherit;
 }
 
+select {
+  transition: color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+select:hover,
+select:focus-visible,
+summary:hover,
+summary:focus-visible {
+  color: var(--red);
+}
+
 button {
   transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
@@ -88,6 +99,11 @@ button:disabled:focus-visible {
   font-size: 28px;
   font-weight: 900;
   line-height: 1;
+}
+
+.brand:hover .brand-word,
+.brand:focus-visible .brand-word {
+  color: var(--red);
 }
 
 .nav-links {
@@ -220,7 +236,17 @@ button:disabled:focus-visible {
 .icon-button:hover,
 .chapter-button:hover,
 .filter-button:hover {
+  color: var(--red);
   transform: translateY(-1px);
+}
+
+.icon-button:hover svg,
+.icon-button:focus-visible svg,
+.chapter-button:hover svg,
+.chapter-button:focus-visible svg,
+.filter-button:hover svg,
+.filter-button:focus-visible svg {
+  color: currentColor;
 }
 
 .icon-button.primary {
@@ -251,9 +277,24 @@ button:disabled:focus-visible {
   color: var(--ink);
 }
 
+.icon-button.subtle:hover,
+.icon-button.subtle:focus-visible,
+.filter-button:hover,
+.filter-button:focus-visible {
+  background: #fff;
+  border-color: var(--red);
+  color: var(--red);
+}
+
 .icon-button.ghost {
   border-color: var(--line);
   color: var(--ink);
+}
+
+.icon-button.ghost:hover,
+.icon-button.ghost:focus-visible {
+  border-color: var(--red);
+  color: var(--red);
 }
 
 .header-text-link,
@@ -282,6 +323,32 @@ button:disabled:focus-visible {
   font-weight: 700;
   outline: 0;
   padding-right: 2px;
+}
+
+.nav-links a:hover,
+.nav-links a:focus-visible,
+.nav-dropdown-trigger:hover,
+.nav-dropdown-trigger:focus-visible,
+.header-text-link:hover,
+.header-text-link:focus-visible,
+.nav-search-link:hover,
+.nav-search-link:focus-visible,
+.language-select:hover,
+.language-select:focus-within,
+.language-select:hover select,
+.language-select:focus-within select {
+  color: var(--red);
+}
+
+.nav-dropdown-trigger:hover svg,
+.nav-dropdown-trigger:focus-visible svg,
+.header-text-link:hover svg,
+.header-text-link:focus-visible svg,
+.nav-search-link:hover svg,
+.nav-search-link:focus-visible svg,
+.language-select:hover svg,
+.language-select:focus-within svg {
+  color: var(--red);
 }
 
 .site-footer {
@@ -924,6 +991,13 @@ h3 {
 
 .course-card h3 a {
   color: inherit;
+}
+
+.course-card h3 a:hover,
+.course-card h3 a:focus-visible,
+.course-image-link:hover + .course-card-body h3 a,
+.course-image-link:focus-visible + .course-card-body h3 a {
+  color: var(--red);
 }
 
 .course-card h3 {
@@ -1615,6 +1689,22 @@ h3 {
   color: var(--ink);
 }
 
+.like-button:hover,
+.like-button:focus-visible {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.like-button:hover svg,
+.like-button:focus-visible svg {
+  color: currentColor;
+}
+
+.like-button:hover strong,
+.like-button:focus-visible strong {
+  color: currentColor;
+}
+
 .like-button strong {
   background: var(--surface-soft);
   border-radius: 999px;
@@ -1683,6 +1773,25 @@ h3 {
 
 .comment-form button svg {
   color: var(--ink);
+}
+
+.comment-form button:hover,
+.comment-form button:focus-visible,
+.reply-form button:hover,
+.reply-form button:focus-visible,
+.modal-button:hover,
+.modal-button:focus-visible {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.comment-form button:hover svg,
+.comment-form button:focus-visible svg,
+.reply-form button:hover svg,
+.reply-form button:focus-visible svg,
+.modal-button:hover svg,
+.modal-button:focus-visible svg {
+  color: currentColor;
 }
 
 .comment-form button:disabled {
@@ -1763,6 +1872,11 @@ h3 {
   color: #d22f2f;
 }
 
+.text-action:hover svg,
+.text-action:focus-visible svg {
+  color: currentColor;
+}
+
 .comment-like-button {
   align-items: center;
   background: #fff;
@@ -1779,6 +1893,17 @@ h3 {
 
 .comment-like-button svg {
   color: var(--ink);
+}
+
+.comment-like-button:hover,
+.comment-like-button:focus-visible {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.comment-like-button:hover svg,
+.comment-like-button:focus-visible svg {
+  color: currentColor;
 }
 
 .comment-like-button.active {
@@ -2071,10 +2196,22 @@ h3 {
   padding: 0 18px;
 }
 
+.admin-tabs a:hover,
+.admin-tabs a:focus-visible {
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(14, 78, 45, 0.08);
+  color: var(--red);
+}
+
 .admin-tabs a.active {
   background: #fff;
   box-shadow: 0 8px 22px rgba(14, 78, 45, 0.08);
   color: var(--ink);
+}
+
+.admin-tabs a.active:hover,
+.admin-tabs a.active:focus-visible {
+  color: var(--red);
 }
 
 .mypage-tabs {
@@ -2086,6 +2223,13 @@ h3 {
   border-color: var(--red);
   box-shadow: 0 10px 24px rgba(3, 199, 90, 0.22);
   color: #fff;
+}
+
+.mypage-tabs a.active:hover,
+.mypage-tabs a.active:focus-visible {
+  background: #111;
+  border-color: #111;
+  color: var(--red);
 }
 
 .admin-stack {
@@ -2306,6 +2450,12 @@ h3 {
   min-height: 64px;
 }
 
+.auth-mode-tabs button:hover,
+.auth-mode-tabs button:focus-visible {
+  background: #fff;
+  color: var(--red);
+}
+
 .auth-mode-tabs button:first-child {
   border-right: 1px solid var(--line);
 }
@@ -2314,6 +2464,11 @@ h3 {
   background: #fff;
   border-bottom-color: #fff;
   color: var(--ink);
+}
+
+.auth-mode-tabs button.active:hover,
+.auth-mode-tabs button.active:focus-visible {
+  color: var(--red);
 }
 
 .auth-mode-panel {
@@ -2434,6 +2589,19 @@ h3 {
   cursor: pointer;
   font-size: 14px;
   font-weight: 900;
+}
+
+.auth-links a:hover,
+.auth-links a:focus-visible,
+.auth-links button:hover,
+.auth-links button:focus-visible,
+.text-link:hover,
+.text-link:focus-visible,
+.text-action:hover,
+.text-action:focus-visible,
+.course-manage-details summary:hover,
+.course-manage-details summary:focus-visible {
+  color: var(--red);
 }
 
 .auth-links a:not(:last-child)::after,
