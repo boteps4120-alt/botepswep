@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 
 const heroSlides = [
   {
-    src: "/images/taekwondo-hero.png",
-    label: "품새 지도"
+    src: "/images/hero-sidekick-character.png",
+    label: "옆차기"
   },
   {
-    src: "/images/sidekick-hero.jpg",
-    label: "옆차기 지도"
+    src: "/images/hero-punch-character.png",
+    label: "지르기"
   }
 ];
 
