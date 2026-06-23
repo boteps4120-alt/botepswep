@@ -27,12 +27,30 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+  transition: color 0.18s ease;
 }
 
 button,
 input,
 select {
   font: inherit;
+}
+
+button {
+  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+a:hover,
+a:focus-visible,
+button:hover,
+button:focus-visible {
+  color: var(--red);
+}
+
+button:disabled,
+button:disabled:hover,
+button:disabled:focus-visible {
+  color: inherit;
 }
 
 .site-header {
@@ -197,7 +215,6 @@ select {
   justify-content: center;
   min-height: 40px;
   padding: 0 14px;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .icon-button:hover,
@@ -212,7 +229,9 @@ select {
 }
 
 .icon-button.primary:hover {
-  background: var(--red-dark);
+  background: #111;
+  border-color: #111;
+  color: var(--red);
 }
 
 .icon-button.danger {
@@ -222,6 +241,7 @@ select {
 
 .icon-button.danger:hover {
   background: #000;
+  color: var(--red);
 }
 
 .icon-button.subtle,
@@ -539,6 +559,23 @@ h3 {
   font-weight: 900;
   min-height: 48px;
   padding: 0 22px;
+}
+
+.hero-search button:hover,
+.hero-search button:focus-visible,
+.rail-controls button:hover,
+.rail-controls button:focus-visible,
+.filter-button.active:hover,
+.filter-button.active:focus-visible,
+.video-play-button:hover,
+.video-play-button:focus-visible,
+.mypage-tabs a.active:hover,
+.mypage-tabs a.active:focus-visible,
+.modal-button.danger:hover,
+.modal-button.danger:focus-visible {
+  background: #111;
+  border-color: #111;
+  color: var(--red);
 }
 
 .hero-quick-searches {
