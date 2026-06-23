@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown, Globe2, LogIn, LogOut, ShieldCheck } from "lucide-react";
 import { signOut } from "@/app/auth/actions";
+import { NavDropdownBehavior } from "@/components/nav-dropdown-behavior";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
@@ -113,6 +114,7 @@ export async function SiteHeader() {
 
   return (
     <header className="site-header">
+      <NavDropdownBehavior />
       <Link className="brand" href="/" aria-label="BOTEPS 홈">
         <Image src="/images/boteps-logo.png" alt="BOTEPS" width={172} height={86} priority className="brand-logo" />
         <span className="brand-word">BOTEPS</span>

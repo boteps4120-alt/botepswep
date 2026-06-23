@@ -181,6 +181,18 @@ button:disabled:focus-visible {
   transform: translateX(-50%) translateY(0);
 }
 
+.nav-dropdown.nav-dropdown-closed .nav-dropdown-panel,
+.nav-dropdown.nav-dropdown-closed:hover .nav-dropdown-panel,
+.nav-dropdown.nav-dropdown-closed:focus-within .nav-dropdown-panel {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(10px);
+}
+
+.nav-dropdown.nav-dropdown-closed > .nav-dropdown-trigger svg {
+  transform: rotate(0deg);
+}
+
 .nav-dropdown-column {
   display: grid;
   gap: 12px;
