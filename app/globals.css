@@ -340,6 +340,22 @@ button:disabled:focus-visible {
   color: var(--red);
 }
 
+.site-header .nav-links-primary .header-text-link:hover,
+.site-header .nav-links-primary .header-text-link:focus-visible,
+.site-header .nav-dropdown:hover > .nav-dropdown-trigger,
+.site-header .nav-dropdown:focus-within > .nav-dropdown-trigger,
+.site-header .header-actions .nav-dropdown:hover > .nav-dropdown-trigger,
+.site-header .header-actions .nav-dropdown:focus-within > .nav-dropdown-trigger {
+  color: var(--red) !important;
+}
+
+.site-header .nav-dropdown:hover > .nav-dropdown-trigger span,
+.site-header .nav-dropdown:focus-within > .nav-dropdown-trigger span,
+.site-header .nav-links-primary .header-text-link:hover span,
+.site-header .nav-links-primary .header-text-link:focus-visible span {
+  color: var(--red) !important;
+}
+
 .nav-dropdown-trigger:hover svg,
 .nav-dropdown-trigger:focus-visible svg,
 .header-text-link:hover svg,
