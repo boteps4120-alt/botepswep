@@ -370,6 +370,56 @@ select {
   object-fit: cover;
 }
 
+.hero-image-slider,
+.hero-slide {
+  inset: 0;
+  position: absolute;
+}
+
+.hero-slide {
+  opacity: 0;
+}
+
+.hero-slide-primary {
+  animation: heroSlidePrimary 12s infinite;
+}
+
+.hero-slide-secondary {
+  animation: heroSlideSecondary 12s infinite;
+}
+
+@keyframes heroSlidePrimary {
+  0%,
+  42% {
+    opacity: 1;
+  }
+
+  50%,
+  92% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes heroSlideSecondary {
+  0%,
+  42% {
+    opacity: 0;
+  }
+
+  50%,
+  92% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 .hero-overlay {
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.64) 42%, rgba(0, 0, 0, 0.12) 100%),

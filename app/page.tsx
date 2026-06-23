@@ -18,7 +18,23 @@ export default async function HomePage() {
   return (
     <>
       <section className="hero-section home-hero">
-        <Image src="/images/taekwondo-hero.png" alt="태권도 사범이 품새 동작을 지도하는 모습" fill priority className="hero-image" />
+        <div className="hero-image-slider" aria-hidden="true">
+          <Image
+            src="/images/taekwondo-hero.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="hero-image hero-slide hero-slide-primary"
+          />
+          <Image
+            src="/images/sidekick-hero.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="hero-image hero-slide hero-slide-secondary"
+          />
+        </div>
         <div className="hero-overlay" />
         <div className="home-hero-inner home-hero-single">
           <div className="hero-content home-hero-content">
