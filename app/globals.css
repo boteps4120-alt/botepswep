@@ -796,7 +796,7 @@ h3 {
   overscroll-behavior-x: contain;
   padding: 4px 0 18px;
   scroll-snap-type: x mandatory;
-  scrollbar-color: #111 #d8d8d4;
+  scrollbar-color: #bff230 #d8d8d4;
   scrollbar-width: thin;
   user-select: none;
 }
@@ -810,7 +810,7 @@ h3 {
 }
 
 .course-rail::-webkit-scrollbar-thumb {
-  background: #111;
+  background: #bff230;
 }
 
 .course-rail.dragging {
