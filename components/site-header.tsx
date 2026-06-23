@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Globe2, LogIn, LogOut, Search, ShieldCheck } from "lucide-react";
+import { ChevronDown, Globe2, LogIn, LogOut, ShieldCheck } from "lucide-react";
 import { signOut } from "@/app/auth/actions";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
@@ -118,16 +118,12 @@ export async function SiteHeader() {
         <span className="brand-word">BOTEPS</span>
       </Link>
       <nav className="nav-links nav-links-primary" aria-label="강의 메뉴">
-        {courseMenu}
-        <Link className="nav-search-link" href="/courses" title="강의 검색">
-          <Search size={18} />
-          <span>검색</span>
-        </Link>
-      </nav>
-      <div className="header-actions header-actions-right">
         <Link className="header-text-link" href="/">
           홈
         </Link>
+        {courseMenu}
+      </nav>
+      <div className="header-actions header-actions-right">
         {mypageMenu}
         {isAdmin ? adminMenu : null}
         <label className="language-select">
