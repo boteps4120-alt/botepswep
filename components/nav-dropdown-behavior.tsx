@@ -38,8 +38,19 @@ export function NavDropdownBehavior() {
     function handlePointerMove(event: PointerEvent) {
       if (!document.body.classList.contains("nav-dropdowns-suppressed")) return;
 
-      const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
-      if (!hoveredElement?.closest(".nav-dropdown")) {
+      const pointerIsInsideDropdownSurface = Array.from(
+        document.querySelectorAll(".nav-dropdown-trigger, .nav-dropdown-panel")
+      ).some((element) => {
+        const rect = element.getBoundingClientRect();
+        return (
+          event.clientX >= rect.left &&
+          event.clientX <= rect.right &&
+          event.clientY >= rect.top &&
+          event.clientY <= rect.bottom
+        );
+      });
+
+      if (!pointerIsInsideDropdownSurface) {
         clearDropdownLocks();
       }
     }
