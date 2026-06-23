@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BookOpenCheck, CheckCircle2, Clock3, PlayCircle, Search, ShieldCheck, Target } from "lucide-react";
 import { CourseRail } from "@/components/course-rail";
+import { HomeHeroSlider } from "@/components/home-hero-slider";
 import { getRuntimeCourses } from "@/lib/server-courses";
 
 export const dynamic = "force-dynamic";
@@ -18,23 +18,7 @@ export default async function HomePage() {
   return (
     <>
       <section className="hero-section home-hero">
-        <div className="hero-image-slider" aria-hidden="true">
-          <Image
-            src="/images/taekwondo-hero.png"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="hero-image hero-slide hero-slide-primary"
-          />
-          <Image
-            src="/images/sidekick-hero.jpg"
-            alt=""
-            fill
-            sizes="100vw"
-            className="hero-image hero-slide hero-slide-secondary"
-          />
-        </div>
+        <HomeHeroSlider />
         <div className="hero-overlay" />
         <div className="home-hero-inner home-hero-single">
           <div className="hero-content home-hero-content">
