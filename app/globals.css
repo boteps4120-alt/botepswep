@@ -382,7 +382,7 @@ select {
 
 .hero-slide {
   object-fit: contain;
-  object-position: right center;
+  object-position: center center;
   opacity: 0;
   transition: opacity 0.7s ease;
 }
