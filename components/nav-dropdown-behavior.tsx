@@ -26,6 +26,10 @@ export function NavDropdownBehavior() {
       const dropdown = target?.closest(".nav-dropdown");
 
       if (dropdownLink && dropdown) {
+        if (dropdownLink instanceof HTMLElement) {
+          dropdownLink.blur();
+        }
+
         closeDropdown(dropdown);
       }
     }
