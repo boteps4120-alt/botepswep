@@ -2268,9 +2268,10 @@ h3 {
 }
 
 .admin-tabs a.active {
-  background: #fff;
-  box-shadow: 0 8px 22px rgba(14, 78, 45, 0.08);
-  color: var(--ink);
+  background: var(--red);
+  border-color: var(--red);
+  box-shadow: 0 10px 24px rgba(3, 199, 90, 0.22);
+  color: #fff;
 }
 
 .admin-tabs a.active:hover,
