@@ -109,6 +109,10 @@ export default async function MyPage({
     redirect("/login?next=/mypage");
   }
 
+  if (activeTab === "support") {
+    redirect("/support");
+  }
+
   const [{ data: subscription }, { data: profile }, { data: watchProgress }, { data: bookmarks }] =
     supabase && user
       ? await Promise.all([
@@ -159,7 +163,7 @@ export default async function MyPage({
 
       <nav className="admin-tabs mypage-tabs" aria-label="마이페이지 메뉴">
         {mypageTabs.map((tab) => (
-          <Link className={activeTab === tab.key ? "active" : ""} href={`/mypage?tab=${tab.key}`} key={tab.key}>
+          <Link className={activeTab === tab.key ? "active" : ""} href={tab.key === "support" ? "/support" : `/mypage?tab=${tab.key}`} key={tab.key}>
             {tab.label}
           </Link>
         ))}

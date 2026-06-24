@@ -159,6 +159,21 @@ export default async function SupportPage({
       {params?.notice === "invalid" ? <div className="notice-banner error">제목과 문의 내용을 다시 확인해주세요.</div> : null}
       {params?.notice === "closed" ? <div className="notice-banner error">종료된 문의에는 메시지를 추가할 수 없습니다.</div> : null}
 
+      {params?.notice === "created" ? (
+        <div className="support-modal-backdrop" role="presentation">
+          <div className="support-modal" role="dialog" aria-modal="true" aria-labelledby="support-created-title">
+            <span className="support-modal-icon">
+              <MessageCircle size={24} />
+            </span>
+            <h2 id="support-created-title">문의가 접수되었습니다</h2>
+            <p>답변은 이 화면에서 바로 확인할 수 있습니다.</p>
+            <Link className="icon-button primary" href={selectedThreadId ? `/support?thread=${selectedThreadId}` : "/support"}>
+              확인
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
       <div className="support-compose-card">
         <div>
           <span className="support-card-icon">
