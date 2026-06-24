@@ -128,11 +128,11 @@ export async function SiteHeader() {
         {courseMenu}
       </nav>
       <div className="header-actions header-actions-right">
+        {mypageMenu}
         <Link className="header-text-link header-support-link" href="/support">
           <MessageCircle size={17} />
           <span>문의</span>
         </Link>
-        {mypageMenu}
         {isAdmin ? adminMenu : null}
         <label className="language-select">
           <Globe2 size={17} />
