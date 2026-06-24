@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Fragment } from "react";
 import { redirect } from "next/navigation";
-import { FolderPlus, ShieldCheck, UserRoundCheck, UsersRound } from "lucide-react";
+import { FolderPlus, MessageCircle, Send, ShieldCheck, UserRoundCheck, UsersRound } from "lucide-react";
+import { sendSupportMessage, updateSupportThreadStatus } from "@/app/support/actions";
 import { courseCategoryTree } from "@/lib/data";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
@@ -9,7 +10,7 @@ import { createCourse, deleteCourse, updateCourse, updateProfileRole, updateSubs
 
 export const dynamic = "force-dynamic";
 
-type AdminTab = "members" | "create" | "courses";
+type AdminTab = "members" | "create" | "courses" | "support";
 
 type ProfileRow = {
   id: string;
@@ -62,6 +63,34 @@ type WatchProgressMetricRow = {
   completed_at: string | null;
 };
 
+type SupportProfileRow = {
+  full_name: string | null;
+  display_name: string | null;
+  email: string | null;
+  role?: string | null;
+};
+
+type SupportThreadRow = {
+  id: string;
+  user_id: string;
+  subject: string;
+  category: string;
+  status: string;
+  last_message_at: string;
+  created_at: string;
+  profiles: SupportProfileRow | SupportProfileRow[] | null;
+};
+
+type SupportMessageRow = {
+  id: string;
+  thread_id: string;
+  user_id: string | null;
+  sender_role: string;
+  body: string;
+  created_at: string;
+  profiles: SupportProfileRow | SupportProfileRow[] | null;
+};
+
 type CourseStats = {
   views: number;
   playStarts: number;
@@ -76,7 +105,8 @@ const statuses = ["inactive", "active", "past_due", "canceled", "expired"];
 const adminTabs: { key: AdminTab; label: string }[] = [
   { key: "members", label: "회원관리" },
   { key: "create", label: "강의등록" },
-  { key: "courses", label: "강의목록" }
+  { key: "courses", label: "강의목록" },
+  { key: "support", label: "1:1 문의" }
 ];
 
 function statusLabel(status?: string) {
@@ -125,18 +155,81 @@ function genderLabel(gender?: string | null) {
       return "남성";
     case "female":
       return "여성";
-    case "other":
-      return "기타";
-    case "prefer_not_to_say":
-      return "응답하지 않음";
     default:
       return "-";
   }
 }
 
 function getTab(value?: string): AdminTab {
-  if (value === "create" || value === "courses") return value;
+  if (value === "create" || value === "courses" || value === "support") return value;
   return "members";
+}
+
+function supportCategoryLabel(value?: string | null) {
+  switch (value) {
+    case "lecture":
+      return "강의 이용";
+    case "video":
+      return "영상 재생";
+    case "payment":
+      return "결제/구독";
+    case "account":
+      return "계정/로그인";
+    case "suggestion":
+      return "강의 요청";
+    case "other":
+    default:
+      return "기타";
+  }
+}
+
+function supportStatusLabel(status?: string | null) {
+  switch (status) {
+    case "answered":
+      return "답변 완료";
+    case "closed":
+      return "종료";
+    case "waiting":
+    default:
+      return "답변 대기";
+  }
+}
+
+function supportStatusClass(status?: string | null) {
+  switch (status) {
+    case "answered":
+      return "support-status answered";
+    case "closed":
+      return "support-status closed";
+    case "waiting":
+    default:
+      return "support-status waiting";
+  }
+}
+
+function supportProfile(profile?: SupportProfileRow | SupportProfileRow[] | null) {
+  return Array.isArray(profile) ? profile[0] : profile;
+}
+
+function supportProfileName(profile?: SupportProfileRow | SupportProfileRow[] | null) {
+  const row = supportProfile(profile);
+  return row?.full_name ?? row?.display_name ?? row?.email ?? "회원";
+}
+
+function supportMessageAuthor(message: SupportMessageRow) {
+  if (message.sender_role === "admin") return "BOTEPS 관리자";
+  return supportProfileName(message.profiles);
+}
+
+function formatDateTime(date?: string | null) {
+  if (!date) return "-";
+
+  return new Intl.DateTimeFormat("ko-KR", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date(date));
 }
 
 function emptyCourseStats(): CourseStats {
@@ -196,7 +289,7 @@ function buildCourseStats(
 export default async function AdminPage({
   searchParams
 }: {
-  searchParams?: Promise<{ tab?: string; notice?: string }>;
+  searchParams?: Promise<{ tab?: string; notice?: string; support?: string }>;
 }) {
   const params = await searchParams;
   const activeTab = getTab(params?.tab);
@@ -275,6 +368,45 @@ export default async function AdminPage({
   }
 
   const courseStatsById = buildCourseStats(courseRows, eventRows, bookmarkMetricRows, watchProgressMetricRows);
+  let supportThreads: SupportThreadRow[] = [];
+  let supportMessages: SupportMessageRow[] = [];
+  let supportLoadError = false;
+
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("support_threads")
+      .select("id,user_id,subject,category,status,last_message_at,created_at,profiles(full_name,display_name,email)")
+      .order("last_message_at", { ascending: false });
+
+    if (error) {
+      console.error("Failed to load support threads", error);
+      supportLoadError = true;
+    } else {
+      supportThreads = (data ?? []) as unknown as SupportThreadRow[];
+    }
+  }
+
+  const selectedSupportId =
+    params?.support && supportThreads.some((thread) => thread.id === params.support) ? params.support : supportThreads[0]?.id;
+  const selectedSupportThread = supportThreads.find((thread) => thread.id === selectedSupportId) ?? null;
+
+  if (supabase && selectedSupportId && !supportLoadError) {
+    const { data, error } = await supabase
+      .from("support_messages")
+      .select("id,thread_id,user_id,sender_role,body,created_at,profiles(full_name,display_name,email,role)")
+      .eq("thread_id", selectedSupportId)
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Failed to load support messages", error);
+      supportLoadError = true;
+    } else {
+      supportMessages = (data ?? []) as unknown as SupportMessageRow[];
+    }
+  }
+
+  const waitingSupportCount = supportThreads.filter((thread) => thread.status === "waiting").length;
+  const answeredSupportCount = supportThreads.filter((thread) => thread.status === "answered").length;
 
   return (
     <section className="page-shell">
@@ -630,6 +762,124 @@ export default async function AdminPage({
               </tbody>
             </table>
           )}
+        </div>
+      ) : null}
+
+      {activeTab === "support" ? (
+        <div className="admin-stack">
+          {supportLoadError ? (
+            <div className="notice-banner error">문의 테이블이 아직 준비되지 않았습니다. Supabase SQL Editor에서 최신 schema.sql을 실행해주세요.</div>
+          ) : null}
+          {notice === "message-sent" ? <div className="notice-banner success">답변을 전송했습니다.</div> : null}
+          {notice === "status-updated" ? <div className="notice-banner success">문의 상태가 저장되었습니다.</div> : null}
+          {notice === "message-error" || notice === "status-error" ? (
+            <div className="notice-banner error">문의 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</div>
+          ) : null}
+
+          <div className="metric-grid">
+            <div className="metric-card">
+              <MessageCircle size={24} color="#76b900" />
+              <span className="stat-label">전체 문의</span>
+              <strong>{supportThreads.length}</strong>
+            </div>
+            <div className="metric-card">
+              <MessageCircle size={24} color="#76b900" />
+              <span className="stat-label">답변 대기</span>
+              <strong>{waitingSupportCount}</strong>
+            </div>
+            <div className="metric-card">
+              <ShieldCheck size={24} color="#76b900" />
+              <span className="stat-label">답변 완료</span>
+              <strong>{answeredSupportCount}</strong>
+            </div>
+          </div>
+
+          <div className="support-console admin-support-console">
+            <aside className="support-thread-list" aria-label="문의 목록">
+              <div className="support-panel-heading">
+                <h2>문의 목록</h2>
+                <span>{supportThreads.length}건</span>
+              </div>
+              {supportThreads.length > 0 ? (
+                <div className="support-thread-stack">
+                  {supportThreads.map((thread) => (
+                    <Link
+                      className={`support-thread-card ${thread.id === selectedSupportId ? "active" : ""}`}
+                      href={`/admin?tab=support&support=${thread.id}`}
+                      key={thread.id}
+                    >
+                      <span className={supportStatusClass(thread.status)}>{supportStatusLabel(thread.status)}</span>
+                      <strong>{thread.subject}</strong>
+                      <small>
+                        {supportProfileName(thread.profiles)} · {supportCategoryLabel(thread.category)}
+                      </small>
+                      <small>{formatDateTime(thread.last_message_at)}</small>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-state">아직 문의 내역이 없습니다.</div>
+              )}
+            </aside>
+
+            <section className="support-chat-panel">
+              {selectedSupportThread ? (
+                <>
+                  <div className="support-chat-header">
+                    <div>
+                      <span className={supportStatusClass(selectedSupportThread.status)}>{supportStatusLabel(selectedSupportThread.status)}</span>
+                      <h2>{selectedSupportThread.subject}</h2>
+                      <p>
+                        {supportProfileName(selectedSupportThread.profiles)} · {supportCategoryLabel(selectedSupportThread.category)} ·{" "}
+                        {formatDateTime(selectedSupportThread.created_at)}
+                      </p>
+                    </div>
+                    <form action={updateSupportThreadStatus} className="inline-form support-status-form">
+                      <input type="hidden" name="threadId" value={selectedSupportThread.id} />
+                      <select className="select-input compact-select" name="status" defaultValue={selectedSupportThread.status}>
+                        <option value="waiting">답변 대기</option>
+                        <option value="answered">답변 완료</option>
+                        <option value="closed">종료</option>
+                      </select>
+                      <button className="icon-button subtle compact">상태 저장</button>
+                    </form>
+                  </div>
+
+                  <div className="support-message-list">
+                    {supportMessages.map((message) => (
+                      <div className={`support-message ${message.sender_role === "admin" ? "admin" : "user"}`} key={message.id}>
+                        <div className="support-message-meta">
+                          <strong>{supportMessageAuthor(message)}</strong>
+                          <span>{formatDateTime(message.created_at)}</span>
+                        </div>
+                        <p>{message.body}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {selectedSupportThread.status === "closed" ? (
+                    <div className="support-closed-note">종료된 문의입니다. 상태를 답변 대기 또는 답변 완료로 바꾸면 다시 답변할 수 있습니다.</div>
+                  ) : (
+                    <form action={sendSupportMessage} className="support-reply-form">
+                      <input type="hidden" name="source" value="admin" />
+                      <input type="hidden" name="threadId" value={selectedSupportThread.id} />
+                      <textarea className="form-input textarea-input" name="body" placeholder="관리자 답변을 입력하세요." rows={3} maxLength={1000} required />
+                      <button className="icon-button primary">
+                        <Send size={18} />
+                        <span>답변 보내기</span>
+                      </button>
+                    </form>
+                  )}
+                </>
+              ) : (
+                <div className="support-empty-chat">
+                  <MessageCircle size={44} />
+                  <h2>문의가 도착하면 여기에 표시됩니다</h2>
+                  <p>사용자가 1:1 문의를 남기면 목록에서 선택해 바로 답변할 수 있습니다.</p>
+                </div>
+              )}
+            </section>
+          </div>
         </div>
       ) : null}
     </section>

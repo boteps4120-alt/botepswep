@@ -2244,7 +2244,7 @@ h3 {
   border-radius: 8px;
   display: inline-grid;
   gap: 4px;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
   margin-bottom: 24px;
   padding: 5px;
 }
@@ -2279,7 +2279,7 @@ h3 {
 }
 
 .mypage-tabs {
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
 }
 
 .mypage-tabs a.active {
@@ -2950,6 +2950,274 @@ th {
   justify-content: center;
 }
 
+.header-support-link {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.support-page {
+  display: grid;
+  gap: 24px;
+}
+
+.support-title {
+  max-width: 920px;
+}
+
+.support-compose-card,
+.support-console,
+.mypage-support-card {
+  background: #fff;
+  border: 1px solid #d8ded0;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.06);
+}
+
+.support-compose-card {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 0.82fr 1.18fr;
+  padding: 28px;
+}
+
+.support-compose-card h2,
+.support-chat-header h2,
+.support-panel-heading h2,
+.mypage-support-card h2 {
+  margin: 0;
+}
+
+.support-compose-card p,
+.support-chat-header p,
+.mypage-support-card p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 10px 0 0;
+}
+
+.support-card-icon {
+  align-items: center;
+  background: #eaf7d5;
+  color: var(--red);
+  display: inline-flex;
+  height: 48px;
+  justify-content: center;
+  margin-bottom: 16px;
+  width: 48px;
+}
+
+.support-compose-form {
+  display: grid;
+  gap: 14px;
+}
+
+.support-compose-row {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 220px 1fr;
+}
+
+.support-submit-button {
+  justify-self: end;
+}
+
+.support-console {
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  min-height: 660px;
+}
+
+.support-thread-list {
+  background: #f8faf5;
+  border-right: 1px solid #d8ded0;
+  display: grid;
+  gap: 16px;
+  grid-template-rows: auto 1fr;
+  padding: 22px;
+}
+
+.support-panel-heading,
+.support-chat-header {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.support-panel-heading span {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.support-thread-stack {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.support-thread-card {
+  background: #fff;
+  border: 1px solid #d8ded0;
+  color: var(--ink);
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+
+.support-thread-card:hover,
+.support-thread-card:focus-visible,
+.support-thread-card.active {
+  border-color: var(--red);
+  box-shadow: inset 4px 0 0 var(--red);
+  color: var(--ink);
+}
+
+.support-thread-card strong {
+  line-height: 1.35;
+}
+
+.support-thread-card small {
+  color: var(--muted);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.support-status {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 900;
+  justify-self: start;
+  line-height: 1;
+  padding: 7px 10px;
+}
+
+.support-status.waiting {
+  background: #fff4df;
+  color: #986100;
+}
+
+.support-status.answered {
+  background: #eaf7d5;
+  color: #3f8500;
+}
+
+.support-status.closed {
+  background: #ededed;
+  color: #5b5b5b;
+}
+
+.support-chat-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-width: 0;
+  padding: 24px;
+}
+
+.support-chat-header {
+  border-bottom: 1px solid #d8ded0;
+  padding-bottom: 18px;
+}
+
+.support-message-list {
+  align-content: start;
+  display: grid;
+  gap: 14px;
+  max-height: 460px;
+  overflow-y: auto;
+  padding: 22px 0;
+}
+
+.support-message {
+  border: 1px solid #d8ded0;
+  display: grid;
+  gap: 10px;
+  max-width: min(720px, 92%);
+  padding: 16px;
+}
+
+.support-message.user {
+  background: #fff;
+  justify-self: start;
+}
+
+.support-message.admin {
+  background: #0f140d;
+  border-color: #0f140d;
+  color: #fff;
+  justify-self: end;
+}
+
+.support-message-meta {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.support-message-meta span {
+  color: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  opacity: 0.72;
+}
+
+.support-message p {
+  line-height: 1.65;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.support-reply-form {
+  border-top: 1px solid #d8ded0;
+  display: grid;
+  gap: 12px;
+  padding-top: 18px;
+}
+
+.support-reply-form button {
+  justify-self: end;
+}
+
+.support-closed-note,
+.support-empty-chat {
+  background: #f8faf5;
+  border: 1px solid #d8ded0;
+  color: var(--muted);
+  font-weight: 900;
+  padding: 18px;
+}
+
+.support-empty-chat {
+  align-self: center;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  margin: 0 auto;
+  max-width: 420px;
+  text-align: center;
+}
+
+.support-empty-chat svg {
+  color: var(--red);
+}
+
+.admin-support-console {
+  min-height: 700px;
+}
+
+.support-status-form {
+  justify-content: end;
+}
+
+.mypage-support-card {
+  align-items: center;
+  display: grid;
+  gap: 22px;
+  grid-template-columns: auto 1fr auto;
+  padding: 30px;
+}
+
 .integration-list {
   display: grid;
   gap: 10px;
@@ -3064,7 +3332,10 @@ th {
   .subscribe-grid,
   .auth-grid,
   .contact-layout,
-  .auth-page {
+  .auth-page,
+  .support-compose-card,
+  .support-console,
+  .mypage-support-card {
     grid-template-columns: 1fr;
   }
 
@@ -3087,8 +3358,22 @@ th {
   .course-edit-form,
   .course-manage-grid,
   .profile-edit-form,
-  .profile-info-grid {
+  .profile-info-grid,
+  .support-compose-row {
     grid-template-columns: 1fr;
+  }
+
+  .support-thread-list {
+    border-bottom: 1px solid #d8ded0;
+    border-right: 0;
+  }
+
+  .support-message-list {
+    max-height: none;
+  }
+
+  .mypage-support-card {
+    align-items: start;
   }
 
   .section-heading {

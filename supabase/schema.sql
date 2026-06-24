@@ -116,11 +116,34 @@ create table if not exists public.course_events (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.support_threads (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  subject text not null check (char_length(trim(subject)) between 1 and 80),
+  category text not null default 'other' check (category in ('lecture', 'payment', 'account', 'video', 'suggestion', 'other')),
+  status text not null default 'waiting' check (status in ('waiting', 'answered', 'closed')),
+  last_message_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.support_messages (
+  id uuid primary key default gen_random_uuid(),
+  thread_id uuid not null references public.support_threads(id) on delete cascade,
+  user_id uuid references public.profiles(id) on delete set null,
+  sender_role text not null check (sender_role in ('user', 'admin')),
+  body text not null check (char_length(trim(body)) between 1 and 1000),
+  created_at timestamptz not null default now()
+);
+
 create index if not exists course_events_course_id_idx on public.course_events(course_id);
 create index if not exists course_events_type_created_idx on public.course_events(event_type, created_at);
 create index if not exists course_comments_course_created_idx on public.course_comments(course_id, created_at desc);
 create index if not exists course_comments_parent_created_idx on public.course_comments(parent_comment_id, created_at asc);
 create index if not exists course_comment_likes_comment_idx on public.course_comment_likes(comment_id);
+create index if not exists support_threads_user_updated_idx on public.support_threads(user_id, last_message_at desc);
+create index if not exists support_threads_status_updated_idx on public.support_threads(status, last_message_at desc);
+create index if not exists support_messages_thread_created_idx on public.support_messages(thread_id, created_at asc);
 
 create or replace function public.handle_new_user()
 returns trigger
@@ -188,6 +211,8 @@ alter table public.course_likes enable row level security;
 alter table public.course_comments enable row level security;
 alter table public.course_comment_likes enable row level security;
 alter table public.course_events enable row level security;
+alter table public.support_threads enable row level security;
+alter table public.support_messages enable row level security;
 
 drop policy if exists "Profiles are readable by owner" on public.profiles;
 drop policy if exists "Profiles are readable by owner or admin" on public.profiles;
@@ -306,3 +331,49 @@ create policy "Course events are readable by admin" on public.course_events
 drop policy if exists "Course events are writable by visitors" on public.course_events;
 create policy "Course events are writable by visitors" on public.course_events
   for insert with check (user_id is null or auth.uid() = user_id);
+
+drop policy if exists "Support threads are readable by owner or admin" on public.support_threads;
+create policy "Support threads are readable by owner or admin" on public.support_threads
+  for select using (auth.uid() = user_id or public.is_admin());
+
+drop policy if exists "Support threads are writable by owner" on public.support_threads;
+create policy "Support threads are writable by owner" on public.support_threads
+  for insert with check (auth.uid() = user_id);
+
+drop policy if exists "Support threads are updatable by owner or admin" on public.support_threads;
+create policy "Support threads are updatable by owner or admin" on public.support_threads
+  for update using (auth.uid() = user_id or public.is_admin())
+  with check (auth.uid() = user_id or public.is_admin());
+
+drop policy if exists "Support messages are readable by thread owner or admin" on public.support_messages;
+create policy "Support messages are readable by thread owner or admin" on public.support_messages
+  for select using (
+    public.is_admin()
+    or exists (
+      select 1
+      from public.support_threads
+      where support_threads.id = support_messages.thread_id
+        and support_threads.user_id = auth.uid()
+    )
+  );
+
+drop policy if exists "Support messages are writable by thread owner or admin" on public.support_messages;
+create policy "Support messages are writable by thread owner or admin" on public.support_messages
+  for insert with check (
+    (
+      sender_role = 'user'
+      and auth.uid() = user_id
+      and exists (
+        select 1
+        from public.support_threads
+        where support_threads.id = support_messages.thread_id
+          and support_threads.user_id = auth.uid()
+      )
+    )
+    or
+    (
+      sender_role = 'admin'
+      and auth.uid() = user_id
+      and public.is_admin()
+    )
+  );

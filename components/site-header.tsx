@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Globe2, LogIn, LogOut, ShieldCheck } from "lucide-react";
+import { ChevronDown, Globe2, LogIn, LogOut, MessageCircle, ShieldCheck } from "lucide-react";
 import { signOut } from "@/app/auth/actions";
 import { NavDropdownBehavior } from "@/components/nav-dropdown-behavior";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
@@ -10,12 +10,14 @@ const courseCategories = ["전체", "유급자 품새", "유단자 품새", "기
 const mypageMenuItems = [
   { href: "/mypage?tab=profile", label: "회원정보" },
   { href: "/mypage?tab=history", label: "강의 내역" },
-  { href: "/mypage?tab=payments", label: "결제 내역" }
+  { href: "/mypage?tab=payments", label: "결제 내역" },
+  { href: "/support", label: "1:1 문의" }
 ];
 const adminMenuItems = [
   { href: "/admin?tab=members", label: "회원관리" },
   { href: "/admin?tab=create", label: "강의등록" },
-  { href: "/admin?tab=courses", label: "강의목록" }
+  { href: "/admin?tab=courses", label: "강의목록" },
+  { href: "/admin?tab=support", label: "1:1 문의" }
 ];
 
 function courseHref(access: "all" | "paid" | "free", category: string) {
@@ -126,6 +128,10 @@ export async function SiteHeader() {
         {courseMenu}
       </nav>
       <div className="header-actions header-actions-right">
+        <Link className="header-text-link header-support-link" href="/support">
+          <MessageCircle size={17} />
+          <span>문의</span>
+        </Link>
         {mypageMenu}
         {isAdmin ? adminMenu : null}
         <label className="language-select">
