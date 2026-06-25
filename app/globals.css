@@ -1050,6 +1050,7 @@ h3 {
   display: flex;
   flex: 1;
   flex-direction: column;
+  gap: 14px;
   padding: 18px;
 }
 
@@ -1068,6 +1069,32 @@ h3 {
   font-size: 19px;
   line-height: 1.32;
   margin: 0;
+}
+
+.course-watch-button {
+  align-items: center;
+  background: #76b900;
+  border: 1px solid #76b900;
+  border-radius: 2px;
+  color: #050505;
+  display: inline-flex;
+  font-size: 15px;
+  font-weight: 900;
+  gap: 8px;
+  justify-content: center;
+  margin-top: auto;
+  min-height: 42px;
+  padding: 10px 14px;
+  text-decoration: none;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  width: 100%;
+}
+
+.course-watch-button:hover,
+.course-watch-button:focus-visible {
+  background: #050505;
+  border-color: #050505;
+  color: #76b900;
 }
 
 .course-card p {

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LockKeyhole, Unlock } from "lucide-react";
+import { LockKeyhole, PlayCircle, Unlock } from "lucide-react";
 import type { Course } from "@/lib/data";
 
 export function CourseCard({ course, initialBookmarked = false }: { course: Course; initialBookmarked?: boolean }) {
@@ -31,6 +31,11 @@ export function CourseCard({ course, initialBookmarked = false }: { course: Cour
         <h3>
           <Link href={`/watch/${course.slug}`}>{course.title}</Link>
         </h3>
+
+        <Link href={`/watch/${course.slug}`} className="course-watch-button" aria-label={`${course.title} 시청하기`}>
+          <PlayCircle size={17} />
+          <span>시청하기</span>
+        </Link>
       </div>
     </article>
   );
