@@ -2319,6 +2319,23 @@ h3 {
   color: var(--red) !important;
 }
 
+.page-shell .admin-tabs a.active,
+.page-shell .mypage-tabs a.active {
+  background: var(--red) !important;
+  border-color: var(--red) !important;
+  box-shadow: 0 10px 24px rgba(3, 199, 90, 0.22);
+  color: #fff !important;
+}
+
+.page-shell .admin-tabs a.active:hover,
+.page-shell .admin-tabs a.active:focus-visible,
+.page-shell .mypage-tabs a.active:hover,
+.page-shell .mypage-tabs a.active:focus-visible {
+  background: #111 !important;
+  border-color: #111 !important;
+  color: var(--red) !important;
+}
+
 .admin-stack {
   display: grid;
   gap: 24px;
