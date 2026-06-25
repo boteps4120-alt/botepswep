@@ -2336,6 +2336,20 @@ h3 {
   color: var(--red) !important;
 }
 
+.page-shell .manager-tabs a.active {
+  background: var(--red) !important;
+  border-color: var(--red) !important;
+  box-shadow: 0 10px 24px rgba(3, 199, 90, 0.22) !important;
+  color: #fff !important;
+}
+
+.page-shell .manager-tabs a.active:hover,
+.page-shell .manager-tabs a.active:focus-visible {
+  background: #111 !important;
+  border-color: #111 !important;
+  color: var(--red) !important;
+}
+
 .admin-stack {
   display: grid;
   gap: 24px;

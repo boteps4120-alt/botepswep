@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bookmark, CreditCard, MessageCircle, Settings, UserRound } from "lucide-react";
+import { Bookmark, CreditCard, Settings, UserRound } from "lucide-react";
 import { currentUser, payments } from "@/lib/data";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
@@ -272,22 +272,6 @@ export default async function MyPage({
         </div>
       ) : null}
 
-      {activeTab === "support" ? (
-        <section className="mypage-support-card">
-          <span className="support-card-icon">
-            <MessageCircle size={24} />
-          </span>
-          <div>
-            <p className="eyebrow">1:1 문의</p>
-            <h2>문의와 답변을 한 화면에서 확인하세요</h2>
-            <p>강의 시청, 계정, 구독 관련 문의를 남기면 관리자가 답변합니다.</p>
-          </div>
-          <Link className="icon-button primary large" href="/support">
-            <MessageCircle size={20} />
-            <span>문의 페이지 열기</span>
-          </Link>
-        </section>
-      ) : null}
     </section>
   );
 }

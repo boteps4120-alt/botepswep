@@ -416,7 +416,7 @@ export default async function AdminPage({
         <p>회원, 강의 등록, 강의 목록을 나누어 관리합니다.</p>
       </div>
 
-      <nav className="admin-tabs" aria-label="관리자 메뉴">
+      <nav className="admin-tabs mypage-tabs manager-tabs" aria-label="관리자 메뉴">
         {adminTabs.map((tab) => (
           <Link className={activeTab === tab.key ? "active" : ""} href={`/admin?tab=${tab.key}`} key={tab.key}>
             {tab.label}
