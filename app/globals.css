@@ -580,12 +580,13 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
 
 .home-hero-single {
   align-items: center;
-  grid-template-columns: minmax(0, 820px);
+  grid-template-columns: minmax(0, min(560px, 42vw));
 }
 
 .home-hero-content {
-  max-width: 760px;
+  max-width: 560px;
   padding: 0;
+  width: 100%;
 }
 
 .eyebrow {
@@ -651,7 +652,7 @@ h3 {
   display: grid;
   gap: 12px;
   grid-template-columns: 26px minmax(0, 1fr) auto;
-  max-width: 760px;
+  max-width: 100%;
   min-height: 64px;
   padding: 8px 8px 8px 18px;
   width: 100%;
