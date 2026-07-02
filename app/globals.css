@@ -120,7 +120,7 @@ button:disabled:focus-visible {
 .nav-links a,
 .nav-dropdown-trigger {
   color: #1a1a1a;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -326,7 +326,7 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
   align-items: center;
   color: #1a1a1a;
   display: inline-flex;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   gap: 6px;
 }
@@ -344,9 +344,16 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
   border: 0;
   color: #1a1a1a;
   cursor: pointer;
+  font-size: 18px;
   font-weight: 700;
   outline: 0;
   padding-right: 2px;
+}
+
+.site-header .icon-button {
+  font-size: 20px;
+  min-height: 48px;
+  padding: 0 20px;
 }
 
 .nav-links a:hover,
