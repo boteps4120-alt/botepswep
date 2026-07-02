@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BookOpenCheck, CheckCircle2, Clock3, PlayCircle, Search, ShieldCheck, Target } from "lucide-react";
 import { CourseRail } from "@/components/course-rail";
@@ -22,11 +23,9 @@ export default async function HomePage() {
         <div className="hero-overlay" />
         <div className="home-hero-inner home-hero-single">
           <div className="hero-content home-hero-content">
-            <p className="eyebrow">태권도장 관장·사범을 위한 품새 강의 플랫폼</p>
-            <h1>BOTEPS</h1>
-            <p className="hero-copy">
-              도장 수업에서 바로 쓰는 품새 영상, 동작별 챕터, 지도 포인트를 한곳에서 관리하고 학습합니다.
-            </p>
+            <div className="hero-brand-mark" aria-label="BOTEPS">
+              <Image src="/images/boteps-logo.png" alt="BOTEPS" width={520} height={520} priority />
+            </div>
             <form className="hero-search" action="/courses">
               <Search size={22} aria-hidden="true" />
               <input name="query" type="search" placeholder="옆차기, 고려, 시합 감점 검색" aria-label="강의 검색어" />

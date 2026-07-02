@@ -599,6 +599,17 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
   color: var(--red);
 }
 
+.hero-brand-mark {
+  margin: 0 0 28px;
+  width: min(360px, 74vw);
+}
+
+.hero-brand-mark img {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
 h1,
 h2,
 h3,
