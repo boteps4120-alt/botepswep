@@ -93,7 +93,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section-shell home-course-sections">
+      <section id="course-rails" className="section-shell home-course-sections">
         <div className="section-heading refined-heading">
           <div>
             <p className="eyebrow home-course-kicker">BOTEPS 강의</p>
@@ -104,9 +104,27 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <CourseRail eyebrow="" title="신규 강의" courses={newCourses} tone="clean" />
-        <CourseRail eyebrow="" title="무료 강의" courses={freeTopCourses} tone="soft" />
-        <CourseRail eyebrow="" title="인기 강의" courses={paidTopCourses} tone="line" />
+        <CourseRail
+          eyebrow="NEW"
+          title="신규 강의"
+          description="새롭게 공개된 품새 강의를 가장 먼저 만나보세요."
+          courses={newCourses}
+          tone="clean"
+        />
+        <CourseRail
+          eyebrow="FREE"
+          title="무료 강의"
+          description="처음 방문한 회원도 부담 없이 바로 시작할 수 있습니다."
+          courses={freeTopCourses}
+          tone="soft"
+        />
+        <CourseRail
+          eyebrow="POPULAR"
+          title="인기 강의"
+          description="회원들이 많이 찾는 품새 강의를 모았습니다."
+          courses={paidTopCourses}
+          tone="line"
+        />
       </section>
     </>
   );
