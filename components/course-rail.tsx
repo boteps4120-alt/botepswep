@@ -20,7 +20,7 @@ export function CourseRail({ eyebrow, title, courses, tone = "clean" }: CourseRa
   function scrollByCard(direction: "prev" | "next") {
     const rail = railRef.current;
     if (!rail) return;
-    rail.scrollBy({ left: direction === "next" ? 380 : -380, behavior: "smooth" });
+    rail.scrollBy({ left: direction === "next" ? 452 : -452, behavior: "smooth" });
   }
 
   function startDrag(clientX: number) {
