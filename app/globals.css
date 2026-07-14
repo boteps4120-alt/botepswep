@@ -67,11 +67,11 @@ button:disabled:focus-visible {
 .site-header {
   align-items: center;
   background: #fff;
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1px solid #e5e5e5;
   display: flex;
-  gap: 28px;
+  gap: 0;
   min-height: 64px;
-  padding: 0 max(24px, calc((100vw - 1440px) / 2 + 24px));
+  padding: 0 max(28px, calc((100vw - 1320px) / 2 + 28px));
   position: sticky;
   top: 0;
   z-index: 50;
@@ -89,15 +89,15 @@ button:disabled:focus-visible {
 
 .brand-logo {
   display: block;
-  height: 44px;
+  height: 40px;
   object-fit: contain;
   width: auto;
 }
 
 .brand-word {
   color: var(--ink);
-  font-size: 28px;
-  font-weight: 900;
+  font-size: 25px;
+  font-weight: 800;
   line-height: 1;
 }
 
@@ -110,18 +110,18 @@ button:disabled:focus-visible {
   align-items: center;
   display: flex;
   gap: 26px;
-  margin-left: auto;
 }
 
 .nav-links-primary {
-  margin-left: 8px;
+  margin-left: 36px;
 }
 
 .nav-links a,
 .nav-dropdown-trigger {
   color: #1a1a1a;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
 }
 
 .nav-dropdown {
@@ -134,7 +134,8 @@ button:disabled:focus-visible {
 .nav-dropdown-trigger {
   align-items: center;
   display: inline-flex;
-  gap: 4px;
+  gap: 5px;
+  min-height: 44px;
 }
 
 .nav-dropdown-trigger svg {
@@ -147,19 +148,17 @@ button:disabled:focus-visible {
 }
 
 .nav-dropdown-panel {
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.78)),
-    url("/images/hero-dojang.jpg") center / cover;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0 0 2px 2px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  background: #fff;
+  border: 1px solid #dedede;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
   display: grid;
-  gap: 52px;
+  gap: 0;
   grid-template-columns: repeat(3, minmax(160px, 1fr));
   left: 50%;
-  min-width: min(860px, calc(100vw - 48px));
+  min-width: min(880px, calc(100vw - 56px));
   opacity: 0;
-  padding: 34px 38px 38px;
+  padding: 30px 0 32px;
   pointer-events: none;
   position: absolute;
   top: 100%;
@@ -171,7 +170,8 @@ button:disabled:focus-visible {
 .nav-dropdown-panel.compact {
   gap: 0;
   grid-template-columns: minmax(180px, 1fr);
-  min-width: 260px;
+  min-width: 272px;
+  padding: 26px 0 28px;
 }
 
 .nav-dropdown:hover .nav-dropdown-panel,
@@ -207,31 +207,40 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
 
 .nav-dropdown-column {
   display: grid;
-  gap: 12px;
+  gap: 5px;
+  padding: 0 34px;
+}
+
+.nav-dropdown-column + .nav-dropdown-column {
+  border-left: 1px solid #e6e6e6;
 }
 
 .nav-dropdown-column strong {
-  color: #fff;
-  font-size: 22px;
-  font-weight: 900;
+  color: #111;
+  font-size: 18px;
+  font-weight: 700;
   letter-spacing: 0;
+  margin-bottom: 9px;
 }
 
 .nav-dropdown-column a {
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 18px;
-  font-weight: 800;
+  align-items: center;
+  color: #4b4b4b;
+  display: flex;
+  font-size: 16px;
+  font-weight: 500;
+  min-height: 34px;
 }
 
 .nav-dropdown-column a:hover,
-.nav-dropdown-column a:focus {
+.nav-dropdown-column a:focus-visible {
   color: var(--red);
 }
 
 .header-actions {
   align-items: center;
   display: flex;
-  gap: 18px;
+  gap: 20px;
 }
 
 .header-actions-right {
@@ -326,9 +335,10 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
   align-items: center;
   color: #1a1a1a;
   display: inline-flex;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   gap: 6px;
+  min-height: 44px;
 }
 
 .language-select {
@@ -336,6 +346,7 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
   color: #1a1a1a;
   display: inline-flex;
   gap: 4px;
+  min-height: 44px;
 }
 
 .language-select select {
@@ -344,16 +355,39 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
   border: 0;
   color: #1a1a1a;
   cursor: pointer;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   outline: 0;
   padding-right: 2px;
 }
 
 .site-header .icon-button {
-  font-size: 20px;
-  min-height: 48px;
-  padding: 0 20px;
+  border-color: #bdbdbd;
+  font-size: 16px;
+  font-weight: 700;
+  min-height: 42px;
+  padding: 0 17px;
+  transform: none;
+}
+
+.site-header .icon-button.subtle {
+  background: #fff;
+}
+
+.site-header .icon-button.primary {
+  border-color: var(--red);
+}
+
+.site-header .icon-button.primary:hover,
+.site-header .icon-button.primary:focus-visible {
+  background: var(--red-dark);
+  border-color: var(--red-dark);
+  color: #000;
+}
+
+.site-header .icon-button:hover,
+.site-header .icon-button:focus-visible {
+  transform: none;
 }
 
 .nav-links a:hover,
