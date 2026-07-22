@@ -15,9 +15,12 @@ type CourseRailProps = {
 
 export function CourseRail({ eyebrow, title, description, courses, tone = "clean" }: CourseRailProps) {
   const railRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isProgressDragging, setIsProgressDragging] = useState(false);
   const [progress, setProgress] = useState({ left: 0, width: 100 });
   const dragStart = useRef({ x: 0, scrollLeft: 0 });
+  const progressDragActive = useRef(false);
 
   const updateProgress = useCallback(() => {
     const rail = railRef.current;
@@ -75,6 +78,47 @@ export function CourseRail({ eyebrow, title, description, courses, tone = "clean
     setIsDragging(false);
   }
 
+  function scrollToProgress(clientX: number) {
+    const rail = railRef.current;
+    const track = progressRef.current;
+    if (!rail || !track) return;
+
+    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+    if (!maxScroll) return;
+
+    const rect = track.getBoundingClientRect();
+    const thumbWidth = rect.width * (progress.width / 100);
+    const movableWidth = Math.max(1, rect.width - thumbWidth);
+    const thumbLeft = Math.min(
+      movableWidth,
+      Math.max(0, clientX - rect.left - thumbWidth / 2)
+    );
+
+    rail.scrollLeft = (thumbLeft / movableWidth) * maxScroll;
+  }
+
+  function handleProgressKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    const rail = railRef.current;
+    if (!rail) return;
+
+    const maxScroll = Math.max(0, rail.scrollWidth - rail.clientWidth);
+    const step = Math.max(80, rail.clientWidth * 0.2);
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      rail.scrollBy({ left: -step, behavior: "smooth" });
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      rail.scrollBy({ left: step, behavior: "smooth" });
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      rail.scrollTo({ left: 0, behavior: "smooth" });
+    } else if (event.key === "End") {
+      event.preventDefault();
+      rail.scrollTo({ left: maxScroll, behavior: "smooth" });
+    }
+  }
+
   return (
     <section className={`course-rail-section course-rail-${tone}`}>
       <div className="course-rail-heading">
@@ -108,7 +152,37 @@ export function CourseRail({ eyebrow, title, description, courses, tone = "clean
           <CourseCard key={course.slug} course={course} />
         ))}
       </div>
-      <div className="course-rail-progress" aria-hidden="true">
+      <div
+        ref={progressRef}
+        className={`course-rail-progress ${isProgressDragging ? "dragging" : ""}`}
+        role="slider"
+        tabIndex={0}
+        aria-label={`${title} 강의 목록 위치`}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(progress.left + progress.width / 2)}
+        onKeyDown={handleProgressKeyDown}
+        onPointerDown={(event) => {
+          event.currentTarget.setPointerCapture(event.pointerId);
+          progressDragActive.current = true;
+          setIsProgressDragging(true);
+          scrollToProgress(event.clientX);
+        }}
+        onPointerMove={(event) => {
+          if (progressDragActive.current) scrollToProgress(event.clientX);
+        }}
+        onPointerUp={(event) => {
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          }
+          progressDragActive.current = false;
+          setIsProgressDragging(false);
+        }}
+        onPointerCancel={() => {
+          progressDragActive.current = false;
+          setIsProgressDragging(false);
+        }}
+      >
         <span style={{ left: `${progress.left}%`, width: `${progress.width}%` }} />
       </div>
     </section>
