@@ -191,6 +191,7 @@ export async function createCourse(formData: FormData) {
   revalidatePath("/courses");
   revalidatePath(`/courses/${slug}`);
   revalidatePath(`/watch/${slug}`);
+  redirect("/admin?tab=create&notice=course-created");
 }
 
 export async function updateCourse(formData: FormData) {
@@ -260,6 +261,7 @@ export async function updateCourse(formData: FormData) {
     revalidatePath(`/courses/${oldSlug}`);
     revalidatePath(`/watch/${oldSlug}`);
   }
+  redirect("/admin?tab=courses&notice=course-updated");
 }
 
 export async function deleteCourse(formData: FormData) {
@@ -284,4 +286,5 @@ export async function deleteCourse(formData: FormData) {
     revalidatePath(`/courses/${oldSlug}`);
     revalidatePath(`/watch/${oldSlug}`);
   }
+  redirect("/admin?tab=courses&notice=course-deleted");
 }

@@ -6,6 +6,7 @@ import { sendSupportMessage, updateSupportThreadStatus } from "@/app/support/act
 import { AdminCourseClassificationFields } from "@/components/admin-course-classification-fields";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
+import { AdminActionNotice } from "./admin-action-notice";
 import { createCourse, deleteCourse, updateCourse, updateProfileRole, updateSubscriptionStatus } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -423,6 +424,8 @@ export default async function AdminPage({
           </Link>
         ))}
       </nav>
+
+      <AdminActionNotice notice={notice} />
 
       {activeTab === "members" ? (
         <div className="admin-stack">

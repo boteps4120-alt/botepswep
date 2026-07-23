@@ -2511,6 +2511,68 @@ h3 {
   gap: 24px;
 }
 
+.admin-success-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 45%);
+}
+
+.admin-success-modal {
+  width: min(100%, 380px);
+  padding: 32px 28px 26px;
+  border: 1px solid #d7ded7;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgb(0 0 0 / 22%);
+  text-align: center;
+}
+
+.admin-success-mark {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  place-items: center;
+  border-radius: 50%;
+  background: #76b900;
+  color: #fff;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.admin-success-modal h2 {
+  margin: 0;
+  color: #161616;
+  font-size: 24px;
+}
+
+.admin-success-modal p {
+  margin: 10px 0 24px;
+  color: #4b5660;
+  font-size: 16px;
+}
+
+.admin-success-button {
+  min-width: 100px;
+  padding: 11px 20px;
+  border: 0;
+  border-radius: 4px;
+  background: #76b900;
+  color: #111;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.admin-success-button:hover,
+.admin-success-button:focus-visible {
+  background: #bff230;
+}
+
 .profile-info-grid {
   display: grid;
   gap: 12px;
