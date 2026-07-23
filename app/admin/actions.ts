@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { extractGumletAssetId } from "@/lib/gumlet";
+import { extractGumletAssetId, normalizeCourseThumbnailUrl } from "@/lib/gumlet";
 import { createClient } from "@/lib/supabase/server";
 
 const subscriptionStatuses = new Set(["inactive", "active", "past_due", "canceled", "expired"]);
@@ -131,7 +131,7 @@ export async function createCourse(formData: FormData) {
   const gumletVideoId = normalizeGumletVideoValue(clean(formData.get("gumletVideoId")));
   const videoOrientation = category === "쇼츠" ? "portrait" : clean(formData.get("videoOrientation")) || "landscape";
   const description = clean(formData.get("description"));
-  const thumbnailUrl = clean(formData.get("thumbnailUrl")) || "/images/taekwondo-hero.png";
+  const thumbnailUrl = normalizeCourseThumbnailUrl(clean(formData.get("thumbnailUrl")), gumletVideoId);
   const isPremium = clean(formData.get("isPremium")) === "true";
   const slug = slugify(title);
 
@@ -205,7 +205,7 @@ export async function updateCourse(formData: FormData) {
   const gumletVideoId = normalizeGumletVideoValue(clean(formData.get("gumletVideoId")));
   const videoOrientation = category === "쇼츠" ? "portrait" : clean(formData.get("videoOrientation")) || "landscape";
   const description = clean(formData.get("description"));
-  const thumbnailUrl = clean(formData.get("thumbnailUrl")) || "/images/taekwondo-hero.png";
+  const thumbnailUrl = normalizeCourseThumbnailUrl(clean(formData.get("thumbnailUrl")), gumletVideoId);
   const isPremium = clean(formData.get("isPremium")) === "true";
 
   if (!courseId || !title || !category || !poomsae) {

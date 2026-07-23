@@ -1,5 +1,5 @@
 import { courses as fallbackCourses, type Chapter, type Course, type Difficulty } from "@/lib/data";
-import { getGumletEmbedUrl, getGumletHlsUrl } from "@/lib/gumlet";
+import { getGumletEmbedUrl, getGumletHlsUrl, normalizeCourseThumbnailUrl } from "@/lib/gumlet";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
@@ -85,7 +85,7 @@ export function mapDbCourse(row: DbCourseRow): Course {
     publishedAt: row.published_at ?? row.created_at,
     description: row.description ?? "관리자가 등록한 BOTEPS 강의입니다.",
     audience: "BOTEPS 회원",
-    thumbnail: row.thumbnail_url || "/images/taekwondo-hero.png",
+    thumbnail: normalizeCourseThumbnailUrl(row.thumbnail_url, row.gumlet_video_id),
     videoUrl: hlsUrl,
     embedUrl,
     videoOrientation: row.video_orientation === "portrait" ? "portrait" : "landscape",

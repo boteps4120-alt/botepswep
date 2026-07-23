@@ -571,7 +571,8 @@ export default async function AdminPage({
             </datalist>
             <label className="field-label">
               썸네일 URL
-              <input className="form-input" name="thumbnailUrl" placeholder="비우면 기본 이미지 사용" />
+              <input className="form-input" name="thumbnailUrl" placeholder="비우면 Gumlet 영상에서 자동 생성" />
+              <span className="small-muted">Gumlet 썸네일 URL, 공유 URL 또는 영상 Asset ID를 입력할 수 있습니다.</span>
             </label>
             <label className="field-label form-span">
               강의 설명
@@ -699,6 +700,7 @@ export default async function AdminPage({
                               <label className="field-label">
                                 썸네일 URL
                                 <input className="form-input" name="thumbnailUrl" defaultValue={course.thumbnail_url ?? ""} />
+                                <span className="small-muted">비우면 현재 영상 Asset ID로 썸네일을 자동 생성합니다.</span>
                               </label>
                               <label className="field-label form-span">
                                 강의 설명
