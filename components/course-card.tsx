@@ -5,6 +5,7 @@ import type { Course } from "@/lib/data";
 
 export function CourseCard({ course, initialBookmarked = false }: { course: Course; initialBookmarked?: boolean }) {
   void initialBookmarked;
+  const isPortrait = course.category === "쇼츠" || course.videoOrientation === "portrait";
   const premiumBadgeStyle = course.isPremium
     ? {
         backgroundColor: "#eaf7d5",
@@ -15,9 +16,15 @@ export function CourseCard({ course, initialBookmarked = false }: { course: Cour
   const premiumIconStyle = course.isPremium ? { color: "#76b900" } : undefined;
 
   return (
-    <article className="course-card">
+    <article className={`course-card ${isPortrait ? "course-card-portrait" : "course-card-landscape"}`}>
       <Link href={`/watch/${course.slug}`} className="course-image-link" aria-label={`${course.title} 바로 시청`}>
-        <Image src={course.thumbnail} alt="" fill sizes="(max-width: 768px) 100vw, 33vw" className="course-image" />
+        <Image
+          src={course.thumbnail}
+          alt=""
+          fill
+          sizes={isPortrait ? "(max-width: 768px) 78vw, 380px" : "(max-width: 768px) 100vw, 380px"}
+          className="course-image"
+        />
       </Link>
 
       <div className="course-card-body">

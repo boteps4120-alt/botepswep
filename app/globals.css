@@ -1111,7 +1111,7 @@ h3 {
   box-shadow: 0 5px 16px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  min-height: 400px;
+  min-height: 0;
   overflow: hidden;
   position: relative;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
@@ -1125,8 +1125,17 @@ h3 {
 
 .course-image-link {
   aspect-ratio: 16 / 9;
+  background: #f4f4f4;
   display: block;
   position: relative;
+}
+
+.course-card-portrait .course-image-link {
+  aspect-ratio: 9 / 16;
+}
+
+.course-card-portrait .course-image {
+  object-fit: contain;
 }
 
 .course-card-tags {
@@ -1134,7 +1143,7 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 0;
 }
 
 .course-access-badge {
@@ -1179,8 +1188,8 @@ h3 {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 16px;
-  padding: 24px 22px 22px;
+  gap: 12px;
+  padding: 18px 20px 20px;
 }
 
 .course-card h3 a {
@@ -1211,9 +1220,9 @@ h3 {
   font-weight: 900;
   gap: 8px;
   justify-content: center;
-  margin-top: auto;
-  min-height: 46px;
-  padding: 11px 16px;
+  margin-top: 4px;
+  min-height: 44px;
+  padding: 9px 16px;
   text-decoration: none;
   transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
   width: 100%;
