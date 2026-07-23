@@ -47,7 +47,7 @@ export async function SiteHeader() {
         <span>강의</span>
         <ChevronDown size={15} />
       </Link>
-      <div className="nav-dropdown-panel" aria-label="강의 카테고리">
+      <div className="nav-dropdown-panel course-menu-panel" aria-label="강의 카테고리">
         <div className="nav-dropdown-column">
           <strong>전체</strong>
           {courseCategories.map((category) => (
@@ -71,6 +71,10 @@ export async function SiteHeader() {
               {category}
             </Link>
           ))}
+        </div>
+        <div className="nav-dropdown-column">
+          <strong>쇼츠</strong>
+          <Link href={courseHref("all", "쇼츠")}>전체 쇼츠</Link>
         </div>
       </div>
     </div>

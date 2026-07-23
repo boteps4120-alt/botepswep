@@ -126,10 +126,10 @@ export async function createCourse(formData: FormData) {
   const supabase = await requireAdmin();
   const title = clean(formData.get("title"));
   const category = clean(formData.get("category"));
-  const poomsae = clean(formData.get("poomsae"));
+  const poomsae = category === "쇼츠" ? "쇼츠" : clean(formData.get("poomsae"));
   const instructor = clean(formData.get("instructor"));
   const gumletVideoId = normalizeGumletVideoValue(clean(formData.get("gumletVideoId")));
-  const videoOrientation = clean(formData.get("videoOrientation")) || "landscape";
+  const videoOrientation = category === "쇼츠" ? "portrait" : clean(formData.get("videoOrientation")) || "landscape";
   const description = clean(formData.get("description"));
   const thumbnailUrl = clean(formData.get("thumbnailUrl")) || "/images/taekwondo-hero.png";
   const isPremium = clean(formData.get("isPremium")) === "true";
@@ -199,10 +199,10 @@ export async function updateCourse(formData: FormData) {
   const oldSlug = clean(formData.get("oldSlug"));
   const title = clean(formData.get("title"));
   const category = clean(formData.get("category"));
-  const poomsae = clean(formData.get("poomsae"));
+  const poomsae = category === "쇼츠" ? "쇼츠" : clean(formData.get("poomsae"));
   const instructor = clean(formData.get("instructor"));
   const gumletVideoId = normalizeGumletVideoValue(clean(formData.get("gumletVideoId")));
-  const videoOrientation = clean(formData.get("videoOrientation")) || "landscape";
+  const videoOrientation = category === "쇼츠" ? "portrait" : clean(formData.get("videoOrientation")) || "landscape";
   const description = clean(formData.get("description"));
   const thumbnailUrl = clean(formData.get("thumbnailUrl")) || "/images/taekwondo-hero.png";
   const isPremium = clean(formData.get("isPremium")) === "true";

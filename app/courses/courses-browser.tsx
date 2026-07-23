@@ -26,6 +26,7 @@ export function CoursesBrowser({
   const [category, setCategory] = useState(initialCategory);
   const [subcategory, setSubcategory] = useState(initialSubcategory);
   const [sort, setSort] = useState("popular");
+  const standardCategories = useMemo(() => courseCategoryTree.filter((item) => item.name !== "쇼츠"), []);
 
   const subcategories = useMemo(() => getSubcategories(category), [category]);
 
@@ -110,7 +111,7 @@ export function CoursesBrowser({
         <div className="filter-line" aria-label="유료강의 필터">
           <span className="filter-label">유료강의</span>
           <div className="filter-row">
-            {["전체", ...courseCategoryTree.map((item) => item.name)].map((item) => (
+            {["전체", ...standardCategories.map((item) => item.name)].map((item) => (
               <button
                 key={`paid-${item}`}
                 className={`filter-button ${accessFilter === "paid" && item === category ? "active" : ""}`}
@@ -125,7 +126,7 @@ export function CoursesBrowser({
         <div className="filter-line" aria-label="무료강의 필터">
           <span className="filter-label">무료강의</span>
           <div className="filter-row">
-            {["전체", ...courseCategoryTree.map((item) => item.name)].map((item) => (
+            {["전체", ...standardCategories.map((item) => item.name)].map((item) => (
               <button
                 key={`free-${item}`}
                 className={`filter-button ${accessFilter === "free" && item === category ? "active" : ""}`}
@@ -137,6 +138,17 @@ export function CoursesBrowser({
           </div>
         </div>
         {renderSubcategoryFilters("free")}
+        <div className="filter-line" aria-label="쇼츠 필터">
+          <span className="filter-label">쇼츠</span>
+          <div className="filter-row">
+            <button
+              className={`filter-button ${accessFilter === "all" && category === "쇼츠" ? "active" : ""}`}
+              onClick={() => selectCategory("all", "쇼츠")}
+            >
+              전체
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="course-result-bar">

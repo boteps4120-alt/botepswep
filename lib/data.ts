@@ -57,6 +57,10 @@ export const courseCategoryTree: CourseCategory[] = [
   {
     name: "품새 이론",
     items: ["품새 이론 1", "품새 이론 2", "품새 이론 3"]
+  },
+  {
+    name: "쇼츠",
+    items: ["쇼츠"]
   }
 ];
 

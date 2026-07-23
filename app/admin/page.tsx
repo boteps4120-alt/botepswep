@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { redirect } from "next/navigation";
 import { FolderPlus, MessageCircle, Send, ShieldCheck, UserRoundCheck, UsersRound } from "lucide-react";
 import { sendSupportMessage, updateSupportThreadStatus } from "@/app/support/actions";
-import { courseCategoryTree } from "@/lib/data";
+import { AdminCourseClassificationFields } from "@/components/admin-course-classification-fields";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { createCourse, deleteCourse, updateCourse, updateProfileRole, updateSubscriptionStatus } from "./actions";
@@ -545,33 +545,10 @@ export default async function AdminPage({
               강의 제목
               <input className="form-input" name="title" placeholder="예: 몸통막기 기본 지도법" required />
             </label>
-            <label className="field-label">
-              대분류
-              <select className="select-input" name="category" defaultValue="유단자 품새">
-                {courseCategoryTree.map((category) => (
-                  <option key={category.name}>{category.name}</option>
-                ))}
-              </select>
-            </label>
-            <label className="field-label">
-              하위 항목
-              <input className="form-input" name="poomsae" list="course-subcategory-options" placeholder="예: 고려, 몸통막기, 앞굽이" required />
-            </label>
-            <datalist id="course-subcategory-options">
-              {courseCategoryTree.flatMap((category) =>
-                category.items.map((item) => <option key={`${category.name}-${item}`} value={item} />)
-              )}
-            </datalist>
+            <AdminCourseClassificationFields />
             <label className="field-label">
               Gumlet Asset ID 또는 영상 URL
               <input className="form-input" name="gumletVideoId" placeholder="예: 6a3452e3a43952886a2e3bbb" required />
-            </label>
-            <label className="field-label">
-              영상 비율
-              <select className="select-input" name="videoOrientation" defaultValue="landscape">
-                <option value="landscape">가로 영상</option>
-                <option value="portrait">세로 영상</option>
-              </select>
             </label>
             <label className="field-label">
               공개 권한
@@ -696,28 +673,14 @@ export default async function AdminPage({
                                 강의 제목
                                 <input className="form-input" name="title" defaultValue={course.title} required />
                               </label>
-                              <label className="field-label">
-                                대분류
-                                <select className="select-input" name="category" defaultValue={course.category}>
-                                  {courseCategoryTree.map((category) => (
-                                    <option key={category.name}>{category.name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                              <label className="field-label">
-                                하위 항목
-                                <input className="form-input" name="poomsae" list="course-subcategory-options" defaultValue={course.poomsae ?? ""} required />
-                              </label>
+                              <AdminCourseClassificationFields
+                                initialCategory={course.category}
+                                initialPoomsae={course.poomsae ?? ""}
+                                initialOrientation={(course.video_orientation ?? "landscape") as "landscape" | "portrait"}
+                              />
                               <label className="field-label">
                                 Gumlet Asset ID 또는 영상 URL
                                 <input className="form-input" name="gumletVideoId" defaultValue={course.gumlet_video_id ?? ""} required />
-                              </label>
-                              <label className="field-label">
-                                영상 비율
-                                <select className="select-input" name="videoOrientation" defaultValue={course.video_orientation ?? "landscape"}>
-                                  <option value="landscape">가로 영상</option>
-                                  <option value="portrait">세로 영상</option>
-                                </select>
                               </label>
                               <label className="field-label">
                                 공개 권한
