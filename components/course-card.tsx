@@ -20,7 +20,7 @@ export function CourseCard({
           src={course.thumbnail}
           alt={`${course.title} 썸네일`}
           fill
-          sizes={isPortrait ? "(max-width: 768px) 62vw, 214px" : "(max-width: 768px) 88vw, 371px"}
+          sizes={isPortrait ? "(max-width: 768px) 82vw, 321px" : "(max-width: 768px) 92vw, 556px"}
           className="course-image"
         />
       </Link>

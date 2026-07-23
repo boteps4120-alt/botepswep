@@ -924,7 +924,7 @@ h3 {
 .course-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 371px));
+  grid-template-columns: repeat(auto-fill, minmax(420px, 556px));
 }
 
 .course-grid .course-card-landscape {
@@ -932,7 +932,7 @@ h3 {
 }
 
 .course-grid:has(> .course-card-portrait):not(:has(> .course-card-landscape)) {
-  grid-template-columns: repeat(auto-fill, 216px);
+  grid-template-columns: repeat(auto-fill, 321px);
 }
 
 .home-course-sections {
@@ -1147,8 +1147,8 @@ h3 {
 }
 
 .course-card-landscape {
-  min-height: 309px;
-  width: min(370.89px, calc(100vw - 40px));
+  min-height: 464px;
+  width: min(556px, calc(100vw - 40px));
 }
 
 .course-card-landscape .course-image-link {
@@ -1161,8 +1161,8 @@ h3 {
 }
 
 .course-card-portrait {
-  min-height: 399.67px;
-  width: min(214px, calc(100vw - 40px));
+  min-height: 600px;
+  width: min(321px, calc(100vw - 40px));
 }
 
 .course-card-portrait .course-image-link {
@@ -1204,7 +1204,7 @@ h3 {
 }
 
 .course-premium-label {
-  color: #606060;
+  color: #76b900;
   font-size: 13px;
   font-weight: 600;
   line-height: 1.4;
