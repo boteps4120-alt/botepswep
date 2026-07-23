@@ -923,8 +923,16 @@ h3 {
 
 .course-grid {
   display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 371px));
+}
+
+.course-grid .course-card-landscape {
+  width: 100%;
+}
+
+.course-grid:has(> .course-card-portrait):not(:has(> .course-card-landscape)) {
+  grid-template-columns: repeat(auto-fill, 216px);
 }
 
 .home-course-sections {
@@ -1036,8 +1044,8 @@ h3 {
 .course-rail {
   cursor: grab;
   display: grid;
-  gap: 28px;
-  grid-auto-columns: minmax(280px, 320px);
+  gap: 16px;
+  grid-auto-columns: max-content;
   grid-auto-flow: column;
   grid-column: 2;
   grid-row: 1;
@@ -1107,7 +1115,7 @@ h3 {
 .course-card {
   background: var(--surface);
   border: 1px solid #dedede;
-  border-radius: 0;
+  border-radius: 10px;
   box-shadow: 0 5px 16px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -1126,11 +1134,37 @@ h3 {
 .course-image-link {
   background: #f4f4f4;
   display: block;
-  height: 230px;
+  overflow: hidden;
   position: relative;
+  width: 100%;
 }
 
 .course-card .course-image {
+  object-position: center;
+}
+
+.course-card-landscape {
+  width: min(371px, calc(100vw - 40px));
+}
+
+.course-card-landscape .course-image-link {
+  aspect-ratio: 16 / 9;
+}
+
+.course-card-landscape .course-image {
+  object-fit: cover;
+}
+
+.course-card-portrait {
+  width: min(216px, calc(100vw - 40px));
+}
+
+.course-card-portrait .course-image-link {
+  aspect-ratio: 2 / 3;
+  background: #111;
+}
+
+.course-card-portrait .course-image {
   object-fit: contain;
 }
 

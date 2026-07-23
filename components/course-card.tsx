@@ -22,7 +22,7 @@ export function CourseCard({ course, initialBookmarked = false }: { course: Cour
           src={course.thumbnail}
           alt=""
           fill
-          sizes={isPortrait ? "(max-width: 768px) 78vw, 380px" : "(max-width: 768px) 100vw, 380px"}
+          sizes={isPortrait ? "(max-width: 768px) 62vw, 216px" : "(max-width: 768px) 88vw, 371px"}
           className="course-image"
         />
       </Link>
