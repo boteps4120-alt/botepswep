@@ -72,9 +72,9 @@ export async function SiteHeader() {
             </Link>
           ))}
         </div>
-        <div className="nav-dropdown-column">
+        <div className="nav-dropdown-column shorts-column">
           <strong>쇼츠</strong>
-          <Link href={courseHref("all", "쇼츠")}>전체 쇼츠</Link>
+          <Link href={courseHref("all", "쇼츠")}>전체</Link>
         </div>
       </div>
     </div>

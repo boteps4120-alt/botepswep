@@ -216,6 +216,10 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
   padding: 0 34px;
 }
 
+.nav-dropdown-column.shorts-column {
+  align-content: start;
+}
+
 .nav-dropdown-column + .nav-dropdown-column {
   border-left: 1px solid #e6e6e6;
 }
