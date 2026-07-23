@@ -924,7 +924,7 @@ h3 {
 .course-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(420px, 556px));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .course-grid .course-card-landscape {
@@ -932,7 +932,55 @@ h3 {
 }
 
 .course-grid:has(> .course-card-portrait):not(:has(> .course-card-landscape)) {
-  grid-template-columns: repeat(auto-fill, 321px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.course-grid .course-card-portrait {
+  width: 100%;
+}
+
+.course-pagination {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 42px 0 8px;
+}
+
+.course-pagination-button {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d8d8d8;
+  border-radius: 2px;
+  color: #161616;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 800;
+  height: 38px;
+  justify-content: center;
+  min-width: 38px;
+  padding: 0 10px;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.course-pagination-button:hover:not(:disabled),
+.course-pagination-button:focus-visible {
+  border-color: #76b900;
+  color: #76b900;
+  outline: none;
+}
+
+.course-pagination-button.active {
+  background: #76b900;
+  border-color: #76b900;
+  color: #ffffff;
+}
+
+.course-pagination-button:disabled {
+  color: #aaaaaa;
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .home-course-sections {

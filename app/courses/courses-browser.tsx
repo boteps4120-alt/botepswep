@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CourseCard } from "@/components/course-card";
 import { courseCategoryTree, getSubcategories, type Course } from "@/lib/data";
 
@@ -26,6 +26,8 @@ export function CoursesBrowser({
   const [category, setCategory] = useState(initialCategory);
   const [subcategory, setSubcategory] = useState(initialSubcategory);
   const [sort, setSort] = useState("popular");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 6;
   const standardCategories = useMemo(() => courseCategoryTree.filter((item) => item.name !== "쇼츠"), []);
 
   const subcategories = useMemo(() => getSubcategories(category), [category]);
@@ -48,9 +50,21 @@ export function CoursesBrowser({
     });
   }, [accessFilter, category, initialCourses, query, sort, subcategory]);
 
+  const pageCount = Math.max(1, Math.ceil(filteredCourses.length / pageSize));
+
+  useEffect(() => {
+    setCurrentPage((page) => Math.min(page, pageCount));
+  }, [pageCount]);
+
+  const visibleCourses = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredCourses.slice(start, start + pageSize);
+  }, [currentPage, filteredCourses]);
+
   function selectCategory(nextAccessFilter: AccessFilter, nextCategory: string) {
     setAccessFilter(nextAccessFilter);
     setCategory(nextCategory);
+    setCurrentPage(1);
     setSubcategory("전체");
   }
 
@@ -67,7 +81,10 @@ export function CoursesBrowser({
             <button
               key={`${forAccessFilter}-${item}`}
               className={`filter-button ${item === subcategory ? "active" : ""}`}
-              onClick={() => setSubcategory(item)}
+              onClick={() => {
+                setSubcategory(item);
+                setCurrentPage(1);
+              }}
             >
               {item}
             </button>
@@ -91,11 +108,22 @@ export function CoursesBrowser({
         <input
           className="search-input"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setCurrentPage(1);
+          }}
           placeholder="예: 고려, 8장, 아래막기, 앞굽이"
           aria-label="강의 검색"
         />
-        <select className="select-input" value={sort} onChange={(event) => setSort(event.target.value)} aria-label="정렬">
+        <select
+          className="select-input"
+          value={sort}
+          onChange={(event) => {
+            setSort(event.target.value);
+            setCurrentPage(1);
+          }}
+          aria-label="정렬"
+        >
           <option value="popular">인기순</option>
           <option value="new">최신순</option>
           <option value="difficulty">난이도순</option>
@@ -157,10 +185,42 @@ export function CoursesBrowser({
       </div>
 
       <div className="course-grid">
-        {filteredCourses.map((course) => (
+        {visibleCourses.map((course) => (
           <CourseCard key={course.slug} course={course} initialBookmarked={initialBookmarkedSlugs.includes(course.slug)} />
         ))}
       </div>
+
+      <nav className="course-pagination" aria-label="강의 페이지 이동">
+        <button
+          type="button"
+          className="course-pagination-button course-pagination-arrow"
+          onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+          disabled={currentPage === 1}
+          aria-label="이전 페이지"
+        >
+          이전
+        </button>
+        {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
+          <button
+            key={page}
+            type="button"
+            className={`course-pagination-button ${page === currentPage ? "active" : ""}`}
+            onClick={() => setCurrentPage(page)}
+            aria-current={page === currentPage ? "page" : undefined}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          type="button"
+          className="course-pagination-button course-pagination-arrow"
+          onClick={() => setCurrentPage((page) => Math.min(pageCount, page + 1))}
+          disabled={currentPage === pageCount}
+          aria-label="다음 페이지"
+        >
+          다음
+        </button>
+      </nav>
     </>
   );
 }
