@@ -1195,8 +1195,8 @@ h3 {
 }
 
 .course-card-landscape {
-  min-height: 464px;
-  width: min(556px, calc(100vw - 40px));
+  min-height: 418px;
+  width: min(500px, calc(100vw - 40px));
 }
 
 .course-card-landscape .course-image-link {
@@ -1209,8 +1209,8 @@ h3 {
 }
 
 .course-card-portrait {
-  min-height: 600px;
-  width: min(321px, calc(100vw - 40px));
+  min-height: 540px;
+  width: min(289px, calc(100vw - 40px));
 }
 
 .course-card-portrait .course-image-link {
