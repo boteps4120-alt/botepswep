@@ -27,7 +27,7 @@ export function CoursesBrowser({
   const [subcategory, setSubcategory] = useState(initialSubcategory);
   const [sort, setSort] = useState("popular");
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 6;
+  const pageSize = 9;
   const standardCategories = useMemo(() => courseCategoryTree.filter((item) => item.name !== "쇼츠"), []);
 
   const subcategories = useMemo(() => getSubcategories(category), [category]);

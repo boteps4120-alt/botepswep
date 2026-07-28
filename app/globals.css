@@ -924,19 +924,24 @@ h3 {
 .course-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 500px));
+  justify-content: start;
 }
 
-.course-grid .course-card-landscape {
-  width: 100%;
+.courses-page-shell {
+  max-width: 1600px;
 }
 
 .course-grid:has(> .course-card-portrait):not(:has(> .course-card-landscape)) {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 289px));
+}
+
+.course-grid .course-card-landscape {
+  width: min(500px, 100%);
 }
 
 .course-grid .course-card-portrait {
-  width: 100%;
+  width: min(289px, 100%);
 }
 
 .course-pagination {
@@ -1232,6 +1237,16 @@ h3 {
 
 .course-card h3 a {
   color: inherit;
+}
+
+@media (max-width: 1540px) and (min-width: 981px) {
+  .courses-page-shell .course-grid {
+    grid-template-columns: repeat(2, minmax(0, 500px));
+  }
+
+  .courses-page-shell .course-grid:has(> .course-card-portrait):not(:has(> .course-card-landscape)) {
+    grid-template-columns: repeat(2, minmax(0, 289px));
+  }
 }
 
 .course-card h3 a:hover,
@@ -3703,6 +3718,11 @@ th {
   .profile-info-grid,
   .support-compose-row {
     grid-template-columns: 1fr;
+  }
+
+  .course-grid .course-card-landscape,
+  .course-grid .course-card-portrait {
+    width: 100%;
   }
 
   .support-thread-list {

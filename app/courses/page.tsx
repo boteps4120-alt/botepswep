@@ -46,7 +46,7 @@ export default async function CoursesPage({
   }
 
   return (
-    <section className="page-shell">
+    <section className="page-shell courses-page-shell">
       <div className="page-title">
         <p className="eyebrow">강의 검색</p>
         <h1>품새 수업에 바로 연결되는 강의</h1>
