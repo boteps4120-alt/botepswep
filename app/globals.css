@@ -1361,6 +1361,10 @@ h3 {
   padding: 54px 32px 84px;
 }
 
+.page-shell.courses-page-shell {
+  max-width: 1600px;
+}
+
 .watch-page-shell {
   max-width: 1360px;
 }
