@@ -14,7 +14,6 @@ export default async function HomePage() {
   const topCourses = [...courses].sort((a, b) => b.popularity - a.popularity);
   const freeTopCourses = topCourses.filter((course) => !course.isPremium).slice(0, 5);
   const paidTopCourses = topCourses.filter((course) => course.isPremium).slice(0, 5);
-  const quickSearches = ["옆차기", "고려", "시합 감점"];
   const educationAxes = [
     {
       code: "THEORY",
@@ -58,13 +57,6 @@ export default async function HomePage() {
               <input name="query" type="search" placeholder="옆차기, 고려, 시합 감점 검색" aria-label="강의 검색어" />
               <button type="submit">검색</button>
             </form>
-            <div className="hero-quick-searches" aria-label="추천 검색어">
-              {quickSearches.map((keyword) => (
-                <Link key={keyword} href={`/courses?query=${encodeURIComponent(keyword)}`}>
-                  {keyword}
-                </Link>
-              ))}
-            </div>
             <div className="hero-actions">
               <Link className="icon-button primary large" href={`/watch/${featured.slug}`}>
                 <PlayCircle size={20} />
