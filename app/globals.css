@@ -195,7 +195,7 @@ button:disabled:focus-visible {
 
 .curriculum-menu-group > small {
   color: #777;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
   margin-bottom: 4px;
 }
@@ -208,13 +208,14 @@ button:disabled:focus-visible {
 .curriculum-menu-group a span {
   color: var(--red);
   flex: 0 0 82px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .curriculum-menu-group a b {
   color: inherit;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 650;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -253,6 +254,7 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
 }
 
 .nav-dropdown-column {
+  align-content: start;
   display: grid;
   gap: 5px;
   padding: 0 34px;
@@ -268,7 +270,7 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
 
 .nav-dropdown-column strong {
   color: #111;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: 0;
   margin-bottom: 9px;
@@ -278,7 +280,7 @@ body.nav-dropdowns-suppressed .nav-dropdown > .nav-dropdown-trigger svg {
   align-items: center;
   color: #4b4b4b;
   display: flex;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 500;
   min-height: 34px;
 }
