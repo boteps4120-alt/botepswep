@@ -12,6 +12,13 @@ export type CourseCategory = {
   items: string[];
 };
 
+export type CurriculumProgram = {
+  code: string;
+  title: string;
+  englishTitle: string;
+  items: string[];
+};
+
 export type Course = {
   slug: string;
   title: string;
@@ -37,37 +44,90 @@ export type Course = {
   deductions: string[];
 };
 
-export const courseCategoryTree: CourseCategory[] = [
+export const curriculumPrograms: CurriculumProgram[] = [
   {
-    name: "유급자 품새",
+    code: "COURSE 01",
+    title: "태권도 품새론 입문",
+    englishTitle: "Poomsae Fundamentals",
+    items: ["품새의 정의", "품새 수련 원리", "품새 입문"]
+  },
+  {
+    code: "COURSE 02",
+    title: "품새의 과학",
+    englishTitle: "Science of Poomsae",
+    items: ["힘의 원리", "중심 이동", "속도와 리듬"]
+  },
+  {
+    code: "COURSE 03",
+    title: "품새 요결 MASTER 11",
+    englishTitle: "11 Keys to Master Poomsae",
+    items: ["MASTER 11", "품새 요결"]
+  },
+  {
+    code: "COURSE 04",
+    title: "기본동작 MASTER",
+    englishTitle: "BOTEPS Basic Movement System",
+    items: ["서기", "막기", "지르기", "차기", "기본동작"]
+  },
+  {
+    code: "COURSE 05",
+    title: "태극 품새의 이해",
+    englishTitle: "Understanding Taegeuk",
+    items: ["태극의 원리", "태극 품새 구성", "팔괘"]
+  },
+  {
+    code: "COURSE 06",
+    title: "태극 1~8장 MASTER",
+    englishTitle: "Taegeuk Master Course",
     items: ["1장", "2장", "3장", "4장", "5장", "6장", "7장", "8장"]
   },
   {
-    name: "유단자 품새",
+    code: "COURSE 07",
+    title: "유단자 품새 MASTER",
+    englishTitle: "Black Belt Poomsae",
     items: ["고려", "금강", "태백", "평원", "십진", "지태", "천권", "한수", "일여"]
   },
   {
-    name: "기본동작",
-    items: ["아래막기", "몸통막기", "얼굴막기"]
+    code: "COURSE 08",
+    title: "고단자 품새 MASTER",
+    englishTitle: "Master Poomsae",
+    items: ["고단자 품새", "고단자 심화"]
   },
   {
-    name: "서기",
-    items: ["나란히서기", "앞서기", "앞굽이"]
+    code: "COURSE 09",
+    title: "품새 지도자 아카데미",
+    englishTitle: "Poomsae Instructor Academy",
+    items: ["지도법", "수업 운영", "선수 지도"]
   },
   {
-    name: "품새 이론",
-    items: ["품새 이론 1", "품새 이론 2", "품새 이론 3"]
-  },
-  {
-    name: "쇼츠",
-    items: ["쇼츠"]
+    code: "COURSE 10",
+    title: "공방품새 PADD",
+    englishTitle: "Poomsae Attack & Defence Drill",
+    items: ["PADD", "공격과 방어", "응용 훈련"]
   }
+];
+
+export const courseCategoryTree: CourseCategory[] = [
+  ...curriculumPrograms.map(({ code, items }) => ({ name: code, items })),
+  { name: "무료강의", items: ["품새 이론", "기본동작", "태극 품새", "유단자 품새"] },
+  { name: "쇼츠", items: ["쇼츠"] }
 ];
 
 export const categories = ["전체", ...courseCategoryTree.map((category) => category.name)];
 
 export function getSubcategories(category: string) {
   return courseCategoryTree.find((item) => item.name === category)?.items ?? [];
+}
+
+export function getCurriculumProgramCode(course: Pick<Course, "category" | "poomsae" | "title">) {
+  if (curriculumPrograms.some((program) => program.code === course.category)) return course.category;
+
+  if (course.category === "기본동작" || course.category === "서기") return "COURSE 04";
+  if (course.category === "유급자 품새") return "COURSE 06";
+  if (course.category === "유단자 품새") return "COURSE 07";
+  if (course.category === "품새 이론") return "COURSE 01";
+
+  return "COURSE 01";
 }
 
 export const courses: Course[] = [

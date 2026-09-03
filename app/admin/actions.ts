@@ -132,7 +132,7 @@ export async function createCourse(formData: FormData) {
   const videoOrientation = category === "쇼츠" ? "portrait" : clean(formData.get("videoOrientation")) || "landscape";
   const description = clean(formData.get("description"));
   const thumbnailUrl = normalizeCourseThumbnailUrl(clean(formData.get("thumbnailUrl")), gumletVideoId);
-  const isPremium = clean(formData.get("isPremium")) === "true";
+  const isPremium = category === "무료강의" ? false : clean(formData.get("isPremium")) === "true";
   const slug = slugify(title);
 
   if (!title || !category || !poomsae || !slug) {
@@ -206,7 +206,7 @@ export async function updateCourse(formData: FormData) {
   const videoOrientation = category === "쇼츠" ? "portrait" : clean(formData.get("videoOrientation")) || "landscape";
   const description = clean(formData.get("description"));
   const thumbnailUrl = normalizeCourseThumbnailUrl(clean(formData.get("thumbnailUrl")), gumletVideoId);
-  const isPremium = clean(formData.get("isPremium")) === "true";
+  const isPremium = category === "무료강의" ? false : clean(formData.get("isPremium")) === "true";
 
   if (!courseId || !title || !category || !poomsae) {
     throw new Error("강의 ID, 제목, 카테고리, 하위 항목은 필수입니다.");

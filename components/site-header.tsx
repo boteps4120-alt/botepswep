@@ -5,8 +5,8 @@ import { signOut } from "@/app/auth/actions";
 import { NavDropdownBehavior } from "@/components/nav-dropdown-behavior";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
+import { curriculumPrograms } from "@/lib/data";
 
-const courseCategories = ["전체", "유급자 품새", "유단자 품새", "기본동작", "서기", "품새 이론"];
 const mypageMenuItems = [
   { href: "/mypage?tab=profile", label: "회원정보" },
   { href: "/mypage?tab=history", label: "강의 내역" },
@@ -20,10 +20,10 @@ const adminMenuItems = [
   { href: "/admin?tab=support", label: "1:1 문의" }
 ];
 
-function courseHref(access: "all" | "paid" | "free", category: string) {
+function courseHref(access: "all" | "free", category?: string) {
   const params = new URLSearchParams();
   if (access !== "all") params.set("access", access);
-  if (category !== "전체") params.set("category", category);
+  if (category) params.set("category", category);
   const query = params.toString();
   return query ? `/courses?${query}` : "/courses";
 }
@@ -48,33 +48,29 @@ export async function SiteHeader() {
         <ChevronDown size={15} />
       </Link>
       <div className="nav-dropdown-panel course-menu-panel" aria-label="강의 카테고리">
-        <div className="nav-dropdown-column">
-          <strong>전체</strong>
-          {courseCategories.map((category) => (
-            <Link key={`all-${category}`} href={courseHref("all", category)}>
-              {category}
-            </Link>
-          ))}
-        </div>
-        <div className="nav-dropdown-column">
-          <strong>유료강의</strong>
-          {courseCategories.map((category) => (
-            <Link key={`paid-${category}`} href={courseHref("paid", category)}>
-              {category}
-            </Link>
-          ))}
+        <div className="nav-dropdown-column curriculum-menu-column">
+          <strong>BOTEPS 교육과정</strong>
+          <div className="curriculum-menu-grid">
+            {[curriculumPrograms.slice(0, 5), curriculumPrograms.slice(5)].map((programs, index) => (
+              <div className="curriculum-menu-group" key={index === 0 ? "course-01-05" : "course-06-10"}>
+                <small>{index === 0 ? "COURSE 01-05" : "COURSE 06-10"}</small>
+                {programs.map((program) => (
+                  <Link key={program.code} href={courseHref("all", program.code)}>
+                    <span>{program.code}</span>
+                    <b>{program.title}</b>
+                  </Link>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
         <div className="nav-dropdown-column">
           <strong>무료강의</strong>
-          {courseCategories.map((category) => (
-            <Link key={`free-${category}`} href={courseHref("free", category)}>
-              {category}
-            </Link>
-          ))}
+          <Link href={courseHref("free")}>전체 무료강의</Link>
         </div>
-        <div className="nav-dropdown-column shorts-column">
+        <div className="nav-dropdown-column">
           <strong>쇼츠</strong>
-          <Link href={courseHref("all", "쇼츠")}>전체</Link>
+          <Link href={courseHref("all", "쇼츠")}>전체 쇼츠</Link>
         </div>
       </div>
     </div>

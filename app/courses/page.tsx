@@ -48,9 +48,9 @@ export default async function CoursesPage({
   return (
     <section className="page-shell courses-page-shell">
       <div className="page-title">
-        <p className="eyebrow">강의 검색</p>
-        <h1>품새 수업에 바로 연결되는 강의</h1>
-        <p>유급자 품새, 유단자 품새, 기본동작, 서기, 품새 이론 기준으로 강의를 빠르게 고르세요.</p>
+        <p className="eyebrow">BOTEPS ACADEMY</p>
+        <h1>체계적으로 완성하는 품새 교육과정</h1>
+        <p>기초 이론부터 태극·유단자 품새, 지도자 과정까지 COURSE 01~10의 순서로 학습하세요.</p>
       </div>
 
       <CoursesBrowser

@@ -1,17 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { CourseCard } from "@/components/course-card";
-import { courseCategoryTree, getSubcategories, type Course } from "@/lib/data";
+import { curriculumPrograms, getCurriculumProgramCode, type Course } from "@/lib/data";
 
 type AccessFilter = "all" | "paid" | "free";
+type CourseSection = "curriculum" | "free" | "shorts";
+
+function initialSection(access: AccessFilter, category: string): CourseSection {
+  if (category === "쇼츠") return "shorts";
+  if (access === "free" || category === "무료강의") return "free";
+  return "curriculum";
+}
 
 export function CoursesBrowser({
   initialAccessFilter = "all",
   initialBookmarkedSlugs = [],
   initialCategory = "전체",
   initialQuery = "",
-  initialSubcategory = "전체",
   initialCourses
 }: {
   initialAccessFilter?: AccessFilter;
@@ -22,85 +28,62 @@ export function CoursesBrowser({
   initialCourses: Course[];
 }) {
   const [query, setQuery] = useState(initialQuery);
-  const [accessFilter, setAccessFilter] = useState<AccessFilter>(initialAccessFilter);
-  const [category, setCategory] = useState(initialCategory);
-  const [subcategory, setSubcategory] = useState(initialSubcategory);
+  const [section, setSection] = useState<CourseSection>(() => initialSection(initialAccessFilter, initialCategory));
+  const [program, setProgram] = useState(
+    curriculumPrograms.some((item) => item.code === initialCategory) ? initialCategory : "전체"
+  );
   const [sort, setSort] = useState("popular");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 9;
-  const standardCategories = useMemo(() => courseCategoryTree.filter((item) => item.name !== "쇼츠"), []);
-
-  const subcategories = useMemo(() => getSubcategories(category), [category]);
 
   const filteredCourses = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     const list = initialCourses.filter((course) => {
-      const matchesAccess =
-        accessFilter === "all" || (accessFilter === "paid" && course.isPremium) || (accessFilter === "free" && !course.isPremium);
-      const matchesCategory = category === "전체" || course.category === category;
-      const matchesSubcategory = subcategory === "전체" || course.poomsae === subcategory;
+      const isShort = course.category === "쇼츠" || course.videoOrientation === "portrait";
+      const matchesSection =
+        section === "shorts"
+          ? isShort
+          : section === "free"
+            ? !isShort && (!course.isPremium || course.category === "무료강의")
+            : !isShort && course.category !== "무료강의";
+      const matchesProgram =
+        section !== "curriculum" || program === "전체" || getCurriculumProgramCode(course) === program;
       const haystack = `${course.title} ${course.category} ${course.poomsae} ${course.instructor} ${course.description}`.toLowerCase();
-      return matchesAccess && matchesCategory && matchesSubcategory && (!normalized || haystack.includes(normalized));
+
+      return matchesSection && matchesProgram && (!normalized || haystack.includes(normalized));
     });
 
     return [...list].sort((a, b) => {
       if (sort === "new") return b.publishedAt.localeCompare(a.publishedAt);
       if (sort === "difficulty") return a.difficulty.localeCompare(b.difficulty, "ko");
+      if (section === "curriculum" && program === "전체") {
+        return getCurriculumProgramCode(a).localeCompare(getCurriculumProgramCode(b)) || b.popularity - a.popularity;
+      }
       return b.popularity - a.popularity;
     });
-  }, [accessFilter, category, initialCourses, query, sort, subcategory]);
+  }, [initialCourses, program, query, section, sort]);
 
   const pageCount = Math.max(1, Math.ceil(filteredCourses.length / pageSize));
-
-  useEffect(() => {
-    setCurrentPage((page) => Math.min(page, pageCount));
-  }, [pageCount]);
 
   const visibleCourses = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return filteredCourses.slice(start, start + pageSize);
   }, [currentPage, filteredCourses]);
 
-  function selectCategory(nextAccessFilter: AccessFilter, nextCategory: string) {
-    setAccessFilter(nextAccessFilter);
-    setCategory(nextCategory);
+  function selectSection(nextSection: CourseSection) {
+    setSection(nextSection);
+    setProgram("전체");
     setCurrentPage(1);
-    setSubcategory("전체");
   }
 
-  function renderSubcategoryFilters(forAccessFilter: AccessFilter) {
-    if (accessFilter !== forAccessFilter || category === "전체" || subcategories.length === 0) {
-      return null;
-    }
-
-    return (
-      <div className="filter-line filter-subline" aria-label={`${forAccessFilter === "paid" ? "유료강의" : "무료강의"} 하위 항목 필터`}>
-        <span className="filter-label">하위 항목</span>
-        <div className="filter-row">
-          {["전체", ...subcategories].map((item) => (
-            <button
-              key={`${forAccessFilter}-${item}`}
-              className={`filter-button ${item === subcategory ? "active" : ""}`}
-              onClick={() => {
-                setSubcategory(item);
-                setCurrentPage(1);
-              }}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  const resultLabel = [
-    accessFilter === "paid" ? "유료강의" : accessFilter === "free" ? "무료강의" : "전체 강의",
-    category !== "전체" ? category : "",
-    subcategory !== "전체" ? subcategory : ""
-  ]
-    .filter(Boolean)
-    .join(" / ");
+  const resultLabel =
+    section === "curriculum"
+      ? program === "전체"
+        ? "BOTEPS 교육과정"
+        : `${program} ${curriculumPrograms.find((item) => item.code === program)?.title ?? ""}`
+      : section === "free"
+        ? "무료강의"
+        : "쇼츠";
 
   return (
     <>
@@ -112,7 +95,7 @@ export function CoursesBrowser({
             setQuery(event.target.value);
             setCurrentPage(1);
           }}
-          placeholder="예: 고려, 8장, 아래막기, 앞굽이"
+          placeholder="강의명, 품새, 동작 검색"
           aria-label="강의 검색"
         />
         <select
@@ -130,54 +113,46 @@ export function CoursesBrowser({
         </select>
       </div>
 
-      <div className="access-category-filters">
-        <div className="filter-reset-row">
-          <button className={`filter-button ${accessFilter === "all" && category === "전체" ? "active" : ""}`} onClick={() => selectCategory("all", "전체")}>
-            전체 강의
-          </button>
-        </div>
-        <div className="filter-line" aria-label="유료강의 필터">
-          <span className="filter-label">유료강의</span>
-          <div className="filter-row">
-            {["전체", ...standardCategories.map((item) => item.name)].map((item) => (
-              <button
-                key={`paid-${item}`}
-                className={`filter-button ${accessFilter === "paid" && item === category ? "active" : ""}`}
-                onClick={() => selectCategory("paid", item)}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-        {renderSubcategoryFilters("paid")}
-        <div className="filter-line" aria-label="무료강의 필터">
-          <span className="filter-label">무료강의</span>
-          <div className="filter-row">
-            {["전체", ...standardCategories.map((item) => item.name)].map((item) => (
-              <button
-                key={`free-${item}`}
-                className={`filter-button ${accessFilter === "free" && item === category ? "active" : ""}`}
-                onClick={() => selectCategory("free", item)}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-        {renderSubcategoryFilters("free")}
-        <div className="filter-line" aria-label="쇼츠 필터">
-          <span className="filter-label">쇼츠</span>
-          <div className="filter-row">
-            <button
-              className={`filter-button ${accessFilter === "all" && category === "쇼츠" ? "active" : ""}`}
-              onClick={() => selectCategory("all", "쇼츠")}
-            >
-              전체
-            </button>
-          </div>
-        </div>
+      <div className="course-section-tabs" role="tablist" aria-label="강의 분류">
+        <button className={section === "curriculum" ? "active" : ""} onClick={() => selectSection("curriculum")}>
+          BOTEPS 교육과정
+        </button>
+        <button className={section === "free" ? "active" : ""} onClick={() => selectSection("free")}>
+          무료강의
+        </button>
+        <button className={section === "shorts" ? "active" : ""} onClick={() => selectSection("shorts")}>
+          쇼츠
+        </button>
       </div>
+
+      {section === "curriculum" ? (
+        <div className="curriculum-filter" aria-label="BOTEPS 교육과정 선택">
+          <button
+            className={`curriculum-filter-button ${program === "전체" ? "active" : ""}`}
+            onClick={() => {
+              setProgram("전체");
+              setCurrentPage(1);
+            }}
+          >
+            <span>ALL COURSES</span>
+            <strong>전체 교육과정</strong>
+          </button>
+          {curriculumPrograms.map((item) => (
+            <button
+              key={item.code}
+              className={`curriculum-filter-button ${program === item.code ? "active" : ""}`}
+              onClick={() => {
+                setProgram(item.code);
+                setCurrentPage(1);
+              }}
+            >
+              <span>{item.code}</span>
+              <strong>{item.title}</strong>
+              <small>{item.englishTitle}</small>
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       <div className="course-result-bar">
         <strong>{filteredCourses.length}개 강의</strong>
@@ -189,6 +164,8 @@ export function CoursesBrowser({
           <CourseCard key={course.slug} course={course} initialBookmarked={initialBookmarkedSlugs.includes(course.slug)} />
         ))}
       </div>
+
+      {filteredCourses.length === 0 ? <div className="empty-state">이 분류에 등록된 강의가 아직 없습니다.</div> : null}
 
       <nav className="course-pagination" aria-label="강의 페이지 이동">
         <button
