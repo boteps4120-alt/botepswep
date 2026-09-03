@@ -15,6 +15,33 @@ export default async function HomePage() {
   const freeTopCourses = topCourses.filter((course) => !course.isPremium).slice(0, 5);
   const paidTopCourses = topCourses.filter((course) => course.isPremium).slice(0, 5);
   const quickSearches = ["옆차기", "고려", "시합 감점"];
+  const educationAxes = [
+    {
+      code: "THEORY",
+      question: "왜 하는가?",
+      body: "태권도의 역사, 철학, 목적, 구조와 품새의 의미를 이해합니다."
+    },
+    {
+      code: "SCIENCE",
+      question: "힘은 어떻게 만들어지는가?",
+      body: "생체역학, 중심 이동, 회전, 지면반력을 통해 동작의 원리를 분석합니다."
+    },
+    {
+      code: "TECHNIQUE",
+      question: "정확하게 어떻게 하는가?",
+      body: "서기, 막기, 지르기, 차기와 품새 동작을 정확하게 익힙니다."
+    },
+    {
+      code: "APPLICATION",
+      question: "이 기술은 어디에 쓰이는가?",
+      body: "공방, 거리, 타이밍과 전술적 의미를 통해 품새를 실제 기술로 해석합니다."
+    },
+    {
+      code: "TEACHING",
+      question: "어떻게 가르쳐야 하는가?",
+      body: "오류 교정, 평가 기준, 수업 설계와 지도 멘트를 익힙니다."
+    }
+  ];
 
   return (
     <>
@@ -58,6 +85,34 @@ export default async function HomePage() {
               <span>무료·구독 강의 운영</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="section-shell home-academy-band">
+        <div className="home-academy-intro">
+          <p className="eyebrow">왜 BOTEPS인가</p>
+          <h2>품새를 외우는 교육에서,<br />품새를 이해하고 해석하고 지도하는 교육으로.</h2>
+          <p>
+            BOTEPS는 단순히 품새 영상을 제공하는 플랫폼이 아닙니다. 태권도의 원리와 기술을 체계적으로 배우고, 실제 도장 수업과 지도에 적용할 수 있도록 설계된 온라인 아카데미입니다.
+          </p>
+        </div>
+        <div className="home-academy-heading">
+          <p className="eyebrow">BOTEPS 5대 교육축</p>
+          <span>Perform with purpose. Teach with understanding.</span>
+        </div>
+        <div className="education-axis-grid">
+          {educationAxes.map((axis, index) => (
+            <article className="education-axis" key={axis.code}>
+              <span className="education-axis-number">0{index + 1}</span>
+              <p className="education-axis-code">{axis.code}</p>
+              <h3>{axis.question}</h3>
+              <p>{axis.body}</p>
+            </article>
+          ))}
+        </div>
+        <div className="home-academy-message">
+          <strong>배우는 태권도에서, 이해하는 태권도로.</strong>
+          <span>Don&apos;t Just Perform Poomsae. Understand It.</span>
         </div>
       </section>
 
