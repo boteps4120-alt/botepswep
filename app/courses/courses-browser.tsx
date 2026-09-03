@@ -5,11 +5,12 @@ import { CourseCard } from "@/components/course-card";
 import { curriculumPrograms, getCurriculumProgramCode, type Course } from "@/lib/data";
 
 type AccessFilter = "all" | "paid" | "free";
-type CourseSection = "curriculum" | "free" | "shorts";
+type CourseSection = "all" | "curriculum" | "free" | "shorts";
 
 function initialSection(access: AccessFilter, category: string): CourseSection {
   if (category === "쇼츠") return "shorts";
   if (access === "free" || category === "무료강의") return "free";
+  if (category === "전체") return "all";
   return "curriculum";
 }
 
@@ -41,7 +42,9 @@ export function CoursesBrowser({
     const list = initialCourses.filter((course) => {
       const isShort = course.category === "쇼츠" || course.videoOrientation === "portrait";
       const matchesSection =
-        section === "shorts"
+        section === "all"
+          ? true
+          : section === "shorts"
           ? isShort
           : section === "free"
             ? !isShort && (!course.isPremium || course.category === "무료강의")
@@ -77,7 +80,9 @@ export function CoursesBrowser({
   }
 
   const resultLabel =
-    section === "curriculum"
+    section === "all"
+      ? "전체강의"
+      : section === "curriculum"
       ? program === "전체"
         ? "BOTEPS 교육과정"
         : `${program} ${curriculumPrograms.find((item) => item.code === program)?.title ?? ""}`
@@ -114,6 +119,9 @@ export function CoursesBrowser({
       </div>
 
       <div className="course-section-tabs" role="tablist" aria-label="강의 분류">
+        <button className={section === "all" ? "active" : ""} onClick={() => selectSection("all")}>
+          전체강의
+        </button>
         <button className={section === "curriculum" ? "active" : ""} onClick={() => selectSection("curriculum")}>
           BOTEPS 교육과정
         </button>
