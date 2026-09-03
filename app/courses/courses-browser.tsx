@@ -156,7 +156,7 @@ export function CoursesBrowser({
             >
               <span>{item.code}</span>
               <strong>{item.title}</strong>
-              <small>{item.englishTitle}</small>
+              <small className="curriculum-filter-tagline">{item.tagline}</small>
             </button>
           ))}
         </div>

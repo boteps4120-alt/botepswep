@@ -1628,9 +1628,9 @@ h3 {
   line-height: 1.3;
 }
 
-.curriculum-filter-button small {
+.curriculum-filter-tagline {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.3;
 }
 

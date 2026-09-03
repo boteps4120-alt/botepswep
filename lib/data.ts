@@ -15,7 +15,7 @@ export type CourseCategory = {
 export type CurriculumProgram = {
   code: string;
   title: string;
-  englishTitle: string;
+  tagline: string;
   items: string[];
 };
 
@@ -48,61 +48,61 @@ export const curriculumPrograms: CurriculumProgram[] = [
   {
     code: "COURSE 01",
     title: "태권도 품새론 입문",
-    englishTitle: "Poomsae Fundamentals",
+    tagline: "품새를 보는 눈부터 바꾼다.",
     items: ["품새의 정의", "품새 수련 원리", "품새 입문"]
   },
   {
     code: "COURSE 02",
     title: "품새의 과학",
-    englishTitle: "Science of Poomsae",
+    tagline: "팔로 하는 품새에서 몸 전체로 하는 품새로.",
     items: ["힘의 원리", "중심 이동", "속도와 리듬"]
   },
   {
     code: "COURSE 03",
     title: "품새 요결 MASTER 11",
-    englishTitle: "11 Keys to Master Poomsae",
+    tagline: "품새 완성도를 결정하는 11가지 핵심 원리",
     items: ["MASTER 11", "품새 요결"]
   },
   {
     code: "COURSE 04",
     title: "기본동작 MASTER",
-    englishTitle: "BOTEPS Basic Movement System",
+    tagline: "보이는 동작보다 보이지 않는 기본을 먼저 익힌다.",
     items: ["서기", "막기", "지르기", "차기", "기본동작"]
   },
   {
     code: "COURSE 05",
     title: "태극 품새의 이해",
-    englishTitle: "Understanding Taegeuk",
+    tagline: "태극 1장을 배우기 전에 반드시 이해해야 할 원리",
     items: ["태극의 원리", "태극 품새 구성", "팔괘"]
   },
   {
     code: "COURSE 06",
     title: "태극 1~8장 MASTER",
-    englishTitle: "Taegeuk Master Course",
+    tagline: "태극품새를 의미·구조·기술·과학·응용·지도로 완성한다.",
     items: ["1장", "2장", "3장", "4장", "5장", "6장", "7장", "8장"]
   },
   {
     code: "COURSE 07",
     title: "유단자 품새 MASTER",
-    englishTitle: "Black Belt Poomsae",
+    tagline: "태극에서 익힌 기본을 유단자의 복합기술로 확장한다.",
     items: ["고려", "금강", "태백", "평원", "십진", "지태", "천권", "한수", "일여"]
   },
   {
     code: "COURSE 08",
     title: "고단자 품새 MASTER",
-    englishTitle: "Master Poomsae",
+    tagline: "동작을 넘어 품새의 경지와 표현을 다룬다.",
     items: ["고단자 품새", "고단자 심화"]
   },
   {
     code: "COURSE 09",
     title: "품새 지도자 아카데미",
-    englishTitle: "Poomsae Instructor Academy",
+    tagline: "관장·사범·전공생·해외 지도자를 위한 전문 지도자 과정",
     items: ["지도법", "수업 운영", "선수 지도"]
   },
   {
     code: "COURSE 10",
     title: "공방품새 PADD",
-    englishTitle: "Poomsae Attack & Defence Drill",
+    tagline: "품새의 기술을 실제 상대와의 거리·타이밍·공방으로 연결한다.",
     items: ["PADD", "공격과 방어", "응용 훈련"]
   }
 ];
