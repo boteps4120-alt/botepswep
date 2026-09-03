@@ -98,7 +98,6 @@ export default async function HomePage() {
         </div>
         <div className="home-academy-heading">
           <p className="eyebrow">BOTEPS 5대 교육축</p>
-          <span>Perform with purpose. Teach with understanding.</span>
         </div>
         <div className="education-axis-grid">
           {educationAxes.map((axis, index) => (
@@ -112,7 +111,6 @@ export default async function HomePage() {
         </div>
         <div className="home-academy-message">
           <strong>배우는 태권도에서, 이해하는 태권도로.</strong>
-          <span>Don&apos;t Just Perform Poomsae. Understand It.</span>
         </div>
       </section>
 

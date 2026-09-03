@@ -1423,6 +1423,11 @@ h3 {
   max-width: 820px;
 }
 
+.home-academy-intro > .eyebrow,
+.home-academy-heading > .eyebrow {
+  font-size: 26px;
+}
+
 .home-academy-intro h2 {
   font-size: clamp(34px, 4.4vw, 62px);
   line-height: 1.12;
@@ -1448,11 +1453,6 @@ h3 {
 
 .home-academy-heading .eyebrow {
   margin: 0;
-}
-
-.home-academy-heading span {
-  color: var(--muted);
-  font-size: 14px;
 }
 
 .education-axis-grid {
@@ -1516,12 +1516,6 @@ h3 {
 .home-academy-message strong {
   font-size: clamp(24px, 3vw, 42px);
   line-height: 1.2;
-}
-
-.home-academy-message span {
-  color: var(--muted);
-  font-size: 14px;
-  white-space: nowrap;
 }
 
 .watch-page-shell {
