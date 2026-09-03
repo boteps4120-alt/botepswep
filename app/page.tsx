@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BookOpenCheck, CheckCircle2, Clock3, PlayCircle, Search, ShieldCheck, Target } from "lucide-react";
+import { ArrowRight, BookOpenCheck, PlayCircle, Search, ShieldCheck } from "lucide-react";
 import { CourseRail } from "@/components/course-rail";
 import { HomeHeroSlider } from "@/components/home-hero-slider";
 import { getRuntimeCourses } from "@/lib/server-courses";
@@ -58,38 +58,6 @@ export default async function HomePage() {
               <span>무료·구독 강의 운영</span>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="section-shell home-value-band">
-        <div className="home-value-heading">
-          <p className="eyebrow">왜 BOTEPS인가</p>
-          <h2>품새 수업 준비 시간을 줄이고 지도 품질은 더 일정하게</h2>
-        </div>
-        <div className="feature-row">
-          {[
-            {
-              icon: <Target size={24} />,
-              title: "동작별 챕터 학습",
-              body: "필요한 동작 구간으로 바로 이동해 수업 전 체크와 반복 학습을 빠르게 진행합니다."
-            },
-            {
-              icon: <CheckCircle2 size={24} />,
-              title: "지도 포인트 정리",
-              body: "자주 하는 실수, 감점 요소, 수업 멘트를 강의별로 확인할 수 있습니다."
-            },
-            {
-              icon: <Clock3 size={24} />,
-              title: "도장 운영에 맞춘 흐름",
-              body: "무료 강의와 구독 강의를 나눠 운영하고, 회원별 시청 데이터를 기반으로 개선합니다."
-            }
-          ].map((item) => (
-            <div className="feature-item elevated-feature" key={item.title}>
-              {item.icon}
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </div>
-          ))}
         </div>
       </section>
 
