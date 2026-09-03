@@ -741,6 +741,7 @@ h3 {
   grid-template-columns: 26px minmax(0, 1fr) auto;
   max-width: 100%;
   min-height: 64px;
+  margin-bottom: 16px;
   padding: 8px 8px 8px 18px;
   width: 100%;
 }
@@ -790,37 +791,6 @@ h3 {
   background: #111;
   border-color: #111;
   color: var(--red);
-}
-
-.hero-quick-searches {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 12px 0 26px;
-}
-
-.hero-quick-searches::before {
-  color: rgba(255, 255, 255, 0.78);
-  content: "추천 검색어";
-  font-size: 14px;
-  font-weight: 900;
-  margin-right: 2px;
-}
-
-.hero-quick-searches a {
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.26);
-  border-radius: 2px;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 900;
-  padding: 8px 12px;
-}
-
-.hero-quick-searches a:hover {
-  background: rgba(118, 185, 0, 0.24);
-  border-color: var(--red);
 }
 
 .hero-actions {
@@ -4123,10 +4093,6 @@ th {
   .hero-search button {
     grid-column: 1 / -1;
     width: 100%;
-  }
-
-  .hero-quick-searches::before {
-    flex-basis: 100%;
   }
 
   .hero-proof-row span {
